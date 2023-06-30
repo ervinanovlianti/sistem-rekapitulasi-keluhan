@@ -62,8 +62,7 @@
                       <p>Status         : Baru</p>
                       <p>Aksi</p>
                       <a href="" class="btn btn-secondary m-auto">Kembali</a>
-                      <a href="" class="btn btn-danger m-auto">Tolak</a>
-                      <a href="" class="btn btn-success m-auto">Verifikasi</a>
+                      <a href="" class="btn btn-success m-auto">Terima</a>
                     </div>
                   </div>
                 </div> <!-- simple table -->
@@ -94,8 +93,7 @@
                       <p>Status         : Baru</p>
                       <p>Aksi</p>
                       <a href="" class="btn btn-secondary m-auto">Kembali</a>
-                      <a href="" class="btn btn-danger m-auto">Tolak</a>
-                      <a href="" class="btn btn-success m-auto">Verifikasi</a>
+                      <a href="" class="btn btn-success m-auto">Konfirmasi Selesai</a>
                     </div>
                   </div>
                 </div> <!-- simple table -->

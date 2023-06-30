@@ -28,19 +28,19 @@
         </p>
         <li class="nav-item">
         <a href="/keluhan" aria-expanded="false" class="nav-link">
-            <i class="fe fe-folder fe-16"></i>
+            <i class="fe fe-file fe-16"></i>
             <span class="ml-3 item-text">Keluhan</span>
         </a>
         </li>
         <li class="nav-item">
         <a href="/pelanggan" aria-expanded="false" class="nav-link">
-            <i class="fe fe-airplay fe-16"></i>
+            <i class="fe fe-users fe-16"></i>
             <span class="ml-3 item-text">Pelanggan</span>
         </a>
         </li>
         <li class="nav-item">
         <a href="/cs" aria-expanded="false" class="nav-link">
-            <i class="fe fe-activity fe-16"></i>
+            <i class="fe fe-user-check fe-16"></i>
             <span class="ml-3 item-text">Costumer Service</span>
         </a>
         </li>
@@ -49,13 +49,13 @@
         </p>
         <li class="nav-item">
         <a href="/laporan" aria-expanded="false" class="nav-link">
-            <i class="fe fe-file-text fe-16"></i>
+            <i class="fe fe-printer fe-16"></i>
             <span class="ml-3 item-text">Laporan</span>
         </a>
         </li>
         <li class="nav-item">
         <a href="/rekapitulasi" aria-expanded="false" class="nav-link">
-            <i class="fe fe-settings fe-16"></i>
+            <i class="fe fe-file-text fe-16"></i>
             <span class="ml-3 item-text">Rekapitulasi</span>
         </a>
         </li>
@@ -64,7 +64,7 @@
         </p>
         <li class="nav-item">
         <a href="/profil" aria-expanded="false" class="nav-link">
-            <i class="fe fe-settings fe-16"></i>
+            <i class="fe fe-user fe-16"></i>
             <span class="ml-3 item-text">Profil</span>
         </a>
         </li>
