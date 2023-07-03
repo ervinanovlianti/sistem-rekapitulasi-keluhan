@@ -64,8 +64,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php $no=1 ?>
                     <tr>
-                        <td>-</td>
+                        <td>{{ $no++ }}</td>
                         <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur corrupti eos expedita?</td>
                         <td>{{ date('l, d-m-Y  H:i:s') }}</td>
                         <td>PT Samudera Merdeka</td>
@@ -77,7 +78,7 @@
                     </tr>
                 
                     <tr>
-                        <td>2</td>
+                        <td>{{ $no++ }}</td>
                         <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque error, molestiae optio est, numquam nobis fuga ipsum ducimus consequatur tempora rerum, earum repellendus!</td>
                         <td>{{ date('l, d-m-Y  H:i:s') }}</td>
                         <td>PT Samudera Merdeka</td>
@@ -88,7 +89,7 @@
                         <td>Pembayaran</td>
                     </tr>
                     <tr>
-                        <td>2</td>
+                        <td>{{ $no++ }}</td>
                         <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque error, molestiae optio est, numquam nobis fuga ipsum ducimus consequatur tempora rerum, earum repellendus!</td>
                         <td>{{ date('l, d-m-Y  H:i:s') }}</td>
                         <td>PT Samudera Merdeka</td>
@@ -98,8 +99,8 @@
                         <td>Silahkan lakukan input kembali</td>
                         <td>Pembayaran</td>
                     </tr>
-                        <tr>
-                        <td>-</td>
+                    <tr>
+                        <td>{{ $no++ }}</td>
                         <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque error, molestiae optio est, numquam nobis fuga ipsum ducimus consequatur tempora rerum, earum repellendus!</td>
                         <td>{{ date('l, d-m-Y  H:i:s') }}</td>
                         <td>PT Samudera Merdeka</td>
