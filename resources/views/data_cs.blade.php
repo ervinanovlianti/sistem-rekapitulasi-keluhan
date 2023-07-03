@@ -4,7 +4,7 @@
     <div class="col-md-12">
         <h2 class="h4 mb-1">Data Costumer Service</h2>
         {{-- <p class="mb-3">Child rows with additional detailed information</p> --}}
-        <a href="" class="btn btn-primary my-2">Tambah</a>
+        <a href="/input_datacs" class="btn btn-primary my-2">Tambah</a>
         <div class="card shadow">
         <div class="card-body">
             <!-- table -->

@@ -22,6 +22,9 @@ Route::get('/cs', function () {
 Route::get('/input_data', function () {
     return view('input_keluhan');
 });
+Route::get('/input_datacs', function () {
+    return view('input_datacs');
+});
 Route::get('/laporan', function () {
     return view('laporan');
 });

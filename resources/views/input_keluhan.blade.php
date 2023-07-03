@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('content')
-<h5 class="text-center">Input Data Keluhan</h5>
+<h5 class="">Input Data Keluhan</h5>
      <div class="col-md-6">
         <div class="card shadow mb-4">
         {{-- <div class="card-header">
@@ -16,11 +16,14 @@
                     <label for="" class="form-label">Nama Pelapor</label>
                     <input type="text" class="form-control" id="">
                 </div>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Jenis</option>
-                    <option value="1">Perseorangan</option>
-                    <option value="2">Perusahaan</option>
-                </select>
+                <div class="form-group mb-3">
+                    <label for="example-select">Jenis Customer</label>
+                    <select class="form-control" id="example-select">
+                        <option>--Pilih--</option>
+                        <option>Perusahaan</option>
+                        <option>Perseorangan</option>
+                    </select>
+                </div>
                 {{-- jika form select diisi dengan perusahaan muncul form tambahan --}}
                 <div class="mb-3">
                     <label for="" class="form-label">Nama Perusahaan</label>
@@ -31,25 +34,38 @@
                     <input type="text" class="form-control" id="">
                 </div>
                 {{-- Akhir --}}
-                 <select class="form-select" aria-label="Default select example">
-                    <option selected>Via Keluhan</option>
-                    <option value="1">Wa/Hp</option>
-                    <option value="2">Web</option>
-                    <option value="3">Visit</option>
-                    <option value="4">Talkie/Walkie</option>
-                </select>
+                {{-- Jika admin terdapat via keluhan --}}
+                <div class="form-group mb-3">
+                    <label for="example-select">Via Keluhan</label>
+                    <select class="form-control" id="example-select">
+                        <option selected>--Pilih--</option>
+                        <option value="1">Wa/Hp</option>
+                        <option value="2">Web</option>
+                        <option value="3">Visit</option>
+                        <option value="4">Talkie/Walkie</option>
+                    </select>
+                </div>
+                {{-- Akhir via keluhan --}}
+
+                {{-- Pelanggan (add properti hidden)--}}
+                <div class="mb-3">
+                    <label for="" class="form-label">Via Keluhan</label>
+                    <input type="text" class="form-control" id="" placeholder="Website">
+                </div>
+                {{-- Akhir pelanggan --}}
+
                 <div class="mb-3">
                     <label for="" class="form-label">Uraian Masalah</label>
-                    <input type="text" class="form-control" id="">
+                    <input type="text" class="form-control" id="" maxlength="280">
                 </div>
                 <div class="mb-3">
                     <label for="" class="form-label">File/Gambar</label>
                     <input type="file" class="form-control" id="">
                 </div>
-                <a type="kembali" class="btn btn-primary">Kembali</a>
-                <a type="submit" class="btn btn-primary">Submit</a>
+                <a href="" class="btn btn-secondary">Kembali</a>
+                <a href="" class="btn btn-primary">Tambah</a>
             </form>
         </div> <!-- /.card-body -->
-        </div> <!-- /.card -->
-                </div> <!-- /.col -->
+    </div> <!-- /.card -->
+</div> <!-- /.col -->
 @endsection
