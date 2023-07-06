@@ -1,10 +1,70 @@
 @extends('layouts.main')
 @section('content')
 <div class="row">
-    
 <div class="col-md-12">
+<h2 class="h4 mb-1">Data Latih</h2>
+<div class="card shadow mb-5">
+        <div class="card-body">
+        <!-- table -->
+        <table class="table table-hover table-borderless border-v">
+            <thead class="thead-dark">
+                <?php $no=1; ?>
+            <tr class="text-center">
+                <th>No</th>
+                <th>Sebelum</th>
+                <th>Setelah</th>
+                <th>Kategori</th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach ($processedKeluhan as $keluhan)
+                <tr>
+                    <td>{{ $no++ }}</td>
+                    <td>{{ $keluhan['uraian_keluhan'] }}</td>
+                    <td>{{ $keluhan['preprocessed_tokens'] }}</td>
+                    <td>{{ $keluhan['kategori_keluhan'] }}</td>
+                </tr>
+    
+@endforeach
+            </tbody>
+        </table>
+        </div>
+    </div>
+<h2 class="h4 mb-1 ">Menghitung Bobot Kata Untuk Setiap Kategori</h2>
+<div class="card shadow mb-5">
+        <div class="card-body">
+        <!-- table -->
+        <table class="table table-hover table-borderless border-v">
+            <thead class="thead-dark">
+                <?php $no=1; ?>
+            <tr class="text-center">
+                <th>No</th>
+                <th>Kata</th>
+                <th>Pembayaran</th>
+                <th>Pengiriman</th>
+                <th>Penerimaan</th>
+                <th>Administrasi</th>
+                <th>Lainnya</th>
+            </tr>
+            </thead>
+            <tbody>
+                @php
+                    $no = 1;
+                @endphp
+                @foreach ($processedKeluhan as $keluhan)
+                    @foreach ($keluhan['tokens'] as $token)
+                        <tr>
+                            <td>{{ $no++ }}</td>
+                            <td>{{ $token }}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+            </tbody>
+        </table>
+        </div>
+    </div>
 
-    <h2 class="h4 mb-1 text-center">Preprocessing Text Data Keluhan</h2>
+<h2 class="h4 mb-1">Preprocessing Text Data Keluhan</h2>
 <div class="card shadow mb-5">
         <div class="card-body">
         <!-- table -->
@@ -21,17 +81,44 @@
             </thead>
             <tbody>
             <tr>
-                <td>{{ $complaintText }}</td>
+                {{-- <td>{{ $complaintText }}</td>
                 <td>{{ $caseFoldedText }}</td>
                 <td>{{ $tokens }}</td>
                 <td>{{ $stopword }}</td>
-                <td>{{ $stemmedTokens }}</td>
+                <td>{{ $stemmedTokens }}</td> --}}
             </tr>
             </tbody>
         </table>
         </div>
     </div>
-    <h2 class="h4 mb-1 text-center">Perhitungan Naive Bayes</h2>
+<h2 class="h4 mb-1 ">Preprocessing Text Data Keluhan</h2>
+<div class="card shadow mb-5">
+        <div class="card-body">
+        <!-- table -->
+        <table class="table table-hover table-borderless border-v">
+            <thead class="thead-dark">
+                
+            <tr class="text-center">
+                <th>Teks Asli</th>
+                <th>Case Folding</th>
+                <th>Tokenisasi</th>
+                <th>Stopword</th>
+                <th>Stemming</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {{-- <td>{{ $complaintText }}</td>
+                <td>{{ $caseFoldedText }}</td>
+                <td>{{ $tokens }}</td>
+                <td>{{ $stopword }}</td>
+                <td>{{ $stemmedTokens }}</td> --}}
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <h2 class="h4 mb-1 ">Perhitungan Naive Bayes</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
         <!-- table -->
@@ -74,16 +161,16 @@
                 <?php $no = 1; $n = 32; $kosakata = 117 ?>
            <?php
                     // $kalimat = "bayar lunas etiket muncul pesan error failed to confirm payment";
-                    $kata = explode(' ', $stemmedTokens); // Memecah kalimat menjadi array kata
+                    // $kata = explode(' ', $stemmedTokens); // Memecah kalimat menjadi array kata
 
-                    foreach ($kata as $index => $value) {
-                        echo '<tr>';
-                        echo '<td>' . ($index + 1) . '</td>'; // Menampilkan nomor urutan
-                        echo '<td>' . $value . '</td>'; // Menampilkan kata
-                        echo '<td>' . $p = belum dihitung . '</td>'; // Menampilkan kata
+                    // foreach ($kata as $index => $value) {
+                    //     echo '<tr>';
+                    //     echo '<td>' . ($index + 1) . '</td>'; // Menampilkan nomor urutan
+                    //     echo '<td>' . $value . '</td>'; // Menampilkan kata
+                    //     echo '<td>' . $p = 0 . '</td>'; // Menampilkan kata
 
-                        echo '</tr>';
-                    }
+                    //     echo '</tr>';
+                    // }
                 ?> 
             
             </tbody>

@@ -8,9 +8,7 @@ Route::get('/', function () {
 Route::get('/template', function () {
     return view('template');
 });
-Route::get('/keluhan', function () {
-    return view('data_keluhan');
-});
+Route::get('/keluhan', [NaiveBayesController::class, 'index']);
 Route::get('/detail_keluhan', function () {
     return view('detail_keluhan');
 });
@@ -35,6 +33,6 @@ Route::get('/rekapitulasi', function () {
 Route::get('/profil', function () {
     return view('profil');
 });
-Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'index']
+Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']
 );
 // Route::get('/perhitungan-naive-bayes', [Example::class, 'index']);

@@ -22,59 +22,23 @@
           </thead>
           <tbody>
               <?php $no = 1; ?>
-            <tr>
-              <td>{{  $no++ }}</td>
-              <td>PT Mutiara Permata</td>
-              <td>
-                <a href="/perhitungan-naive-bayes"> Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ducimus exercitationem odio et maiores esse quod in aut? Deserunt tempore at vel inventore!</a>
-              </td>
-              <td>28-06-2023 13:12:00</td>
-              <td><span class="badge badge-pill badge-info mr-2">Diterima oleh CS</span><small class="text-muted"></small></td>
-              <td>Pembayaran</td>
-              <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="text-muted sr-only">Action</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                  {{-- <a class="dropdown-item" href="#">Edit</a> --}}
-                  {{-- <a class="dropdown-item" href="#">Remove</a> --}}
-                  <a class="dropdown-item" href="/detail_keluhan">Detail</a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>{{ $no++ }}</td>
-              <td>PT Mutiara Permata</td>
-              <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ducimus exercitationem odio et maiores esse quod in aut? Deserunt tempore at vel inventore!</td>
-              <td>28-06-2023 13:12:00</td>
-              <td><span class="badge badge-pill badge-success mr-2">Selesai</span><small class="text-muted"></small></td>
-              <td>Pembayaran</td>
-              <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="text-muted sr-only">Action</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                  {{-- <a class="dropdown-item" href="#">Edit</a> --}}
-                  {{-- <a class="dropdown-item" href="#">Remove</a> --}}
-                  <a class="dropdown-item" href="/detail_keluhan">Detail</a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>{{ $no++ }}</td>
-              <td>PT Mutiara Permata</td>
-              <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ducimus exercitationem odio et maiores esse quod in aut? Deserunt tempore at vel inventore!</td>
-              <td>28-06-2023 13:12:00</td>
-              <td><span class="badge badge-pill badge-info mr-2">Ditangani oleh CS</span><small class="text-muted"></small></td>
-              <td>Pembayaran</td>
-              <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="text-muted sr-only">Action</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                  {{-- <a class="dropdown-item" href="#">Edit</a> --}}
-                  {{-- <a class="dropdown-item" href="#">Remove</a> --}}
-                  <a class="dropdown-item" href="/detail_keluhan">Detail</a>
-                </div>
-              </td>
-            </tr>
+              @foreach ($data_keluhan as $item)
+              <tr>
+                <td>{{  $no++ }}</td>
+                <td></td>
+                <td><a href="/perhitungan-naive-bayes">{{ $item->uraian_keluhan }}</a></td>
+                <td>{{ $item->tgl_keluhan }}</td>
+                <td class="text-center"><span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
+                <td>{{ $item->kategori_keluhan }}</td>
+                <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted sr-only">Action</span>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#">Tangani</a>
+                              </div>
+                            </td>
+              </tr>
+              @endforeach
           </tbody>
         </table>
         <nav aria-label="Table Paging" class="mb-0 text-muted">
