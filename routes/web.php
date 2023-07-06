@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NaiveBayesController;
 
 Route::get('/', function () {
     return view('dashboard');
@@ -34,3 +35,6 @@ Route::get('/rekapitulasi', function () {
 Route::get('/profil', function () {
     return view('profil');
 });
+Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'index']
+);
+// Route::get('/perhitungan-naive-bayes', [Example::class, 'index']);

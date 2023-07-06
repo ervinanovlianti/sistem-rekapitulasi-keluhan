@@ -25,7 +25,9 @@
             <tr>
               <td>{{  $no++ }}</td>
               <td>PT Mutiara Permata</td>
-              <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ducimus exercitationem odio et maiores esse quod in aut? Deserunt tempore at vel inventore!</td>
+              <td>
+                <a href="/perhitungan-naive-bayes"> Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ducimus exercitationem odio et maiores esse quod in aut? Deserunt tempore at vel inventore!</a>
+              </td>
               <td>28-06-2023 13:12:00</td>
               <td><span class="badge badge-pill badge-info mr-2">Diterima oleh CS</span><small class="text-muted"></small></td>
               <td>Pembayaran</td>

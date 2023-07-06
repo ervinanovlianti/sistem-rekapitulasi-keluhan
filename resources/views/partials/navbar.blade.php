@@ -2,7 +2,7 @@
     <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
     <i class="fe fe-menu navbar-toggler-icon"></i>
     </button>
-    <h3>PT. PELINDO (PERSERO) TERMINAL PETIKEMAS NEW MAKASSAR</h3>
+    <h4>PT. PELINDO (PERSERO) TERMINAL PETIKEMAS NEW MAKASSAR</h4>
     <ul class="nav">
         <li class="nav-item nav-notif">
             <a class="nav-link text-muted my-2" href="./#" data-toggle="modal" data-target=".modal-notif">

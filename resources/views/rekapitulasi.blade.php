@@ -7,14 +7,23 @@
         <div class="card shadow">
         <div class="card-body">
         <!-- table -->
-            <table class="table table-hover table-borderless border-v">
+            <table class="table table-hover table-borderless border-v ">
                 <thead class="thead-dark">
                     <tr class="text-center">
-                        <th>No</th>
-                        <th>Kategori Keluhan</th>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">Kategori Keluhan</th>
                         <th colspan="4">Via Keluhan</th>
-                        <th colspan="2">Status Keluhan</th>
-                        <th colspan="2">Total</th>
+                        <th colspan="3">Status Keluhan</th>
+                        <th rowspan="2" >Total Keluhan</th>
+                    </tr>
+                    <tr role="row">
+                            <th>Visit</th>
+                            <th>Web</th>
+                            <th>HP/Wa</th>
+                            <th>TW</th>
+                            <th>Selesai</th>
+                            <th>Belum Selesai</th>
+                            <th>Tidak Selesai</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,6 +37,7 @@
                         <td>18</td>
                         <td>27</td>
                         <td>19</td>
+                        <td>16</td>
                         <td>16</td>
                     </tr>
                     <tr>
