@@ -44,7 +44,7 @@ class ExampleController extends Controller
     //     ]);
     // }
 
-    function logic() : Returntype {
+    function logic() {
         $keluhan = "Pembayaran Sudah Lunas tapi pada saat e-ticket muncul pesan error 'failed to confirm payment'";
         $keluhanLower = strtolower($keluhan); // Mengubah kalimat menjadi huruf kecil
         $kata = explode(' ', $keluhanLower); // Memecah kalimat menjadi array kata
