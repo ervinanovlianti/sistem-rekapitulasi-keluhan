@@ -35,4 +35,6 @@ Route::get('/profil', function () {
 });
 Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']
 );
+Route::get('/calculate-word-count', [NaiveBayesController::class, 'calculateWordCount']);
+
 // Route::get('/perhitungan-naive-bayes', [Example::class, 'index']);

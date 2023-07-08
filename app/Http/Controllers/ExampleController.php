@@ -5,52 +5,43 @@ namespace App\Http\Controllers;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\StopWordRemover\StopWordRemoverFactoryInterface;
 
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
 class ExampleController extends Controller
 {
-    public function index()
+    public function processKeluhan()
     {
-        $kalimatTanpaStopword = $this->removeStopwords();
+        // Ambil data keluhan yang telah diproses
+        $processedKeluhan = $this->preprocessKeluhan();
 
-        return view('example', compact('kalimatTanpaStopword'));
+        // Inisialisasi variabel untuk menyimpan jumlah kata dalam setiap kategori
+        $wordCount = [];
+
+        // Iterasi melalui setiap keluhan yang telah diproses
+        foreach ($processedKeluhan as $keluhan) {
+            $kategori = $keluhan['kategori'];
+            $tokens = $keluhan['tokens'];
+
+            // Periksa apakah kategori sudah ada dalam $wordCount
+            if (!isset($wordCount[$kategori])) {
+                $wordCount[$kategori] = [];
+            }
+
+            // Iterasi melalui setiap token dalam keluhan dan tingkatkan jumlah kata
+            foreach ($tokens as $token) {
+                if (!isset($wordCount[$kategori][$token])) {
+                    $wordCount[$kategori][$token] = 1;
+                } else {
+                    $wordCount[$kategori][$token]++;
+                }
+            }
+        }
+
+        // Tampilkan hasil perhitungan jumlah kata dalam setiap kategori
+        dd($wordCount);
     }
 
-    public function removeStopwords()
-    {
-        $kalimat = "Pembayaran sudah lunas tapi pada saat e-ticket muncul pesan error 'failed to confirm payment'";
-
-        $stopwordRemoverFactory = new StopWordRemoverFactory();
-        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
-
-        $kalimatTanpaStopword = $stopwordRemover->remove($kalimat);
-
-        return $kalimatTanpaStopword;
-    }
-    // public function processComplaint($complaintText)
-    // {
-    //     // Panggil metode preprocessText()
-    //     $preprocessedText = $this->preprocessText($complaintText);
-
-        
-    //     // Lakukan proses selanjutnya sesuai kebutuhan Anda
-    //     return view('complaint', [
-    //         'complaintText' => $complaintText,
-    //         'caseFoldedText' => $caseFoldedText,
-    //         'tokens' => $tokens,
-    //         'filteredTokens' => $filteredTokens,
-    //         'stemmedTokens' => $stemmedTokens,
-    //     ]);
-    // }
-
-    function logic() {
-        $keluhan = "Pembayaran Sudah Lunas tapi pada saat e-ticket muncul pesan error 'failed to confirm payment'";
-        $keluhanLower = strtolower($keluhan); // Mengubah kalimat menjadi huruf kecil
-        $kata = explode(' ', $keluhanLower); // Memecah kalimat menjadi array kata
-        $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
-
-    }
     
-
 }

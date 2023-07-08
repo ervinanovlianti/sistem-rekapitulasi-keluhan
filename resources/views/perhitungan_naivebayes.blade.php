@@ -24,47 +24,48 @@
                     <td>{{ $keluhan['preprocessed_tokens'] }}</td>
                     <td>{{ $keluhan['kategori_keluhan'] }}</td>
                 </tr>
-    
-@endforeach
+                @endforeach
             </tbody>
         </table>
         </div>
     </div>
 <h2 class="h4 mb-1 ">Menghitung Bobot Kata Untuk Setiap Kategori</h2>
 <div class="card shadow mb-5">
-        <div class="card-body">
-        <!-- table -->
-        <table class="table table-hover table-borderless border-v">
-            <thead class="thead-dark">
-                <?php $no=1; ?>
-            <tr class="text-center">
-                <th>No</th>
-                <th>Kata</th>
-                <th>Pembayaran</th>
-                <th>Pengiriman</th>
-                <th>Penerimaan</th>
-                <th>Administrasi</th>
-                <th>Lainnya</th>
+    <div class="card-body">
+<table class="table table-hover table-borderless border-v">
+    <thead class="thead-dark">
+        <tr class="text-center">
+            <th>No</th>
+            <th>Kata</th>
+            <th>Pembayaran</th>
+            <th>Pengiriman</th>
+            <th>Penerimaan</th>
+            <th>Administrasi</th>
+            <th>Lainnya</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $no=1 ?>
+        @foreach ($formattedData as $data)
+            <tr>
+                <td>{{ $no++ }}</td>
+                {{-- <td>{{ $data['index'] }}</td> --}}
+                <td class="">{{ $data['kata'] }}</td>
+                <td class="text-center">{{ $data['kategori'] === 'Pembayaran' ? $data['jumlah'] : 0 }}</td>
+                <td class="text-center">{{ $data['kategori'] === 'Pengiriman' ? $data['jumlah'] : 0 }}</td>
+                <td class="text-center">{{ $data['kategori'] === 'Penerimaan' ? $data['jumlah'] : 0 }}</td>
+                <td class="text-center">{{ $data['kategori'] === 'Administrasi' ? $data['jumlah'] : 0 }}</td>
+                <td class="text-center">{{ $data['kategori'] === 'Lainnya' ? $data['jumlah'] : 0 }}</td>
+                <td class="text-center">{{ $data['jumlah'] }}</td>
             </tr>
-            </thead>
-            <tbody>
-                @php
-                    $no = 1;
-                @endphp
-                @foreach ($processedKeluhan as $keluhan)
-                    @foreach ($keluhan['tokens'] as $token)
-                        <tr>
-                            <td>{{ $no++ }}</td>
-                            <td>{{ $token }}</td>
-                        </tr>
-                    @endforeach
-                @endforeach
-            </tbody>
-        </table>
-        </div>
-    </div>
+        @endforeach
+    </tbody>
+</table>
 
-<h2 class="h4 mb-1">Preprocessing Text Data Keluhan</h2>
+    </div>
+</div>
+<h2 class="h4 mb-1">Preprocessing Text Data Uji</h2>
 <div class="card shadow mb-5">
         <div class="card-body">
         <!-- table -->
