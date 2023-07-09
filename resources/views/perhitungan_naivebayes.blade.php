@@ -46,24 +46,24 @@
                 </tr>
             </thead>
             <tbody>
-                <?php $no=1 ?>
-                @foreach ($formattedData as $data)
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        {{-- <td>{{ $data['index'] }}</td> --}}
-                        <td class="">{{ $data['kata'] }}</td>
-                        <td class="text-center">{{ $data['kategori'] === 'Pembayaran' ? $data['jumlah'] : 0 }}</td>
-                        <td class="text-center">{{ $data['kategori'] === 'Pengiriman' ? $data['jumlah'] : 0 }}</td>
-                        <td class="text-center">{{ $data['kategori'] === 'Penerimaan' ? $data['jumlah'] : 0 }}</td>
-                        <td class="text-center">{{ $data['kategori'] === 'Administrasi' ? $data['jumlah'] : 0 }}</td>
-                        <td class="text-center">{{ $data['kategori'] === 'Lainnya' ? $data['jumlah'] : 0 }}</td>
-                        <td class="text-center">{{ $data['jumlah'] }}</td>
-                    </tr>
+                @foreach($formattedTotalWordCount as $data)
+                <tr>
+                    <td>{{ $data['index'] }}</td>
+                    <td>{{ $data['kata'] }}</td>
+                    <td>{{ $data['Pembayaran'] }}</td>
+                    <td>{{ $data['Pengiriman'] }}</td>
+                    <td>{{ $data['Penerimaan'] }}</td>
+                    <td>{{ $data['Administrasi'] }}</td>
+                    <td>{{ $data['Lainnya'] }}</td>
+                    <td>{{ $data['total'] }}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
+
     </div>
 </div>
+
 <h2 class="h4 mb-1">Masukkan Data Uji</h2>
 <div class="card shadow mb-5">
     <div class="card-body">
@@ -102,8 +102,7 @@
         </table>
     </div>
 </div>
-
-<h2 class="h4 mb-1 ">Perhitungan Naive Bayes</h2>
+<h2 class="h4 mb-1 ">Probabilitas likehood setiap kategori </h2>
 <div class="card shadow mb-5">
     <div class="card-body">
         <table class="table table-hover table-borderless border-v">
@@ -140,25 +139,18 @@
                         <th>kosakata</th>
                     </tr>
             </thead>
+
             <tbody>
-                <?php $no = 1; $n = 32; $kosakata = 117 ?>
-           <?php
-                    // $kalimat = "bayar lunas etiket muncul pesan error failed to confirm payment";
-                    // $kata = explode(' ', $stemmedTokens); // Memecah kalimat menjadi array kata
 
-                    // foreach ($kata as $index => $value) {
-                    //     echo '<tr>';
-                    //     echo '<td>' . ($index + 1) . '</td>'; // Menampilkan nomor urutan
-                    //     echo '<td>' . $value . '</td>'; // Menampilkan kata
-                    //     echo '<td>' . $p = 0 . '</td>'; // Menampilkan kata
-
-                    //     echo '</tr>';
-                    // }
-                ?> 
-            
+                @foreach($stemmedTokensUji as $index => $kata)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $kata }}</td>
+                </tr>
+                @endforeach
             </tbody>
-            
         </table>
+
         </div>
     </div>
     <h2 class="h4 mb-1 ">Tahap 1: Menghitung Probabilitas Setiap Kategori</h2>
@@ -176,51 +168,19 @@
             </tr>
             </thead>
             <tbody>
-                <?php
-                    $no = 1; $jumlah_kategori = 2; $jumlah_data = 10;
-                    $pembayaran = $jumlah_kategori/$jumlah_data;
-                ?>
-            <tr>
-                <td>{{  $no++ }}</td>
-                <td>pembayaran</td>
-                <td>{{ $jumlah_kategori }}</td>
-                <td>{{ $jumlah_data }}</td>
-                <td>{{ $pembayaran }}</td>
-            </tr>
-            <tr>
-                <td>{{  $no++ }}</td>
-                <td>pengiriman</td>
-               <td>{{ $jumlah_kategori }}</td>
-                <td>{{ $jumlah_data }}</td>
-                <td>{{ $pengiriman = $jumlah_kategori/$jumlah_data  }}</td>
-            </tr>
-            <tr>
-                <td>{{  $no++ }}</td>
-                <td>penerimaan</td>
-               <td>{{ $jumlah_kategori = 2 }}</td>
-                <td>{{ $jumlah_data = 10 }}</td>
-                <td>{{ $pembayaran = $jumlah_kategori/$jumlah_data  }}</td>
-            </tr>
-            
-            <tr>
-                <td>{{  $no++ }}</td>
-                <td>administrasi</td>
-               <td>{{ $jumlah_kategori = 2 }}</td>
-                <td>{{ $jumlah_data = 10 }}</td>
-                <td>{{ $pembayaran = $jumlah_kategori/$jumlah_data  }}</td>
-            </tr>
-            <tr>
-                <td>{{  $no++ }}</td>
-                <td>lainnya</td>
-               <td>{{ $jumlah_kategori = 2 }}</td>
-                <td>{{ $jumlah_data = 10 }}</td>
-                <td>{{ $pembayaran = $jumlah_kategori/$jumlah_data  }}</td>
-            </tr>
-            
+                <?php $no=1; ?>
+               @foreach ($probabilitas as $kategori => $prob)
+                    <tr>
+                        <td>{{ $no++ }}</td>
+                        <td>{{ $kategori }}</td>
+                        <td>{{ $kategoriCount[$kategori] }}</td>
+                        <td>{{ $totalKeluhan }}</td>
+                        <td>{{ $prob }}</td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
-
-        </div>
+    </div>
     </div>
     <h2 class="h4 mb-1 ">Tahap 2: Perhitungan Probabilitas kata yang sama pada kategori yang sama (likehood)</h2>
     <div class="card shadow mb-5">
@@ -239,29 +199,12 @@
             </tr>
             </thead>
             <tbody>
-                <?php $no = 1; ?>
-                <?php
-                    $kalimat = "bayar lunas etiket muncul pesan error failed to confirm payment";
-                    $kata = explode(' ', $kalimat); // Memecah kalimat menjadi array kata
 
-                    foreach ($kata as $index => $value) {
-                        echo '<tr>';
-                        echo '<td>' . ($index + 1) . '</td>'; // Menampilkan nomor urutan
-                        echo '<td>' . $value . '</td>'; // Menampilkan kata
-                        echo '<td>' . ($p = (3+1)/(32+117)) . '</td>'; // Menampilkan kata
-
-                        echo '</tr>';
-                    }
-                ?>                
             </tbody>
             <tbody>
                 <tr>
                     <td colspan="2">Likehood</td>
-                    <td>{{ $p }}</td>
-                    <td>{{ $p }}</td>
-                    <td>{{ $p }}</td>
-                    <td>{{ $p }}</td>
-                    <td>{{ $p }}</td>
+                    
                 </tr>
             </tbody>
         </table>
@@ -282,31 +225,6 @@
             </tr>
             </thead>
             <tbody>
-                <?php $no = 1; ?>
-                <tr>
-                    <td>{{  $no++ }}</td>
-                    <td>Pembayaran</td>
-                    <td>{{ $v_pembayaran = $pembayaran * $p }}</td>
-                    
-                </tr>
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>Pengiriman</td>
-                </tr>
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>Penerimaan</td>
-                </tr>
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>Administrasi</td>
-                </tr>
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>Lainnya</td>
-                </tr>
-                
-                
                 
             </tbody>
         </table>

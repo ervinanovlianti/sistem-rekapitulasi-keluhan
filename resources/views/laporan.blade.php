@@ -64,52 +64,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no=1 ?>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur corrupti eos expedita?</td>
-                        <td>{{ date('l, d-m-Y  H:i:s') }}</td>
-                        <td>PT Samudera Merdeka</td>
-                        <td>Wa</td>
-                        <td><span class="badge badge-secondary">Menunggu Verifikasi Admin</span></td>
-                        <td>{{ date('H:i:s') }}</td>
-                        <td>Silahkan lakukan input kembali</td>
-                        <td>Pembayaran</td>
-                    </tr>
+                     <?php $no = 1; ?>
+              @foreach ($data_keluhan as $item)
+              <tr>
+                <td>{{  $no++ }}</td>
+                <td><a href="/perhitungan-naive-bayes">{{ $item->uraian_keluhan }}</a></td>
+                <td>{{ $item->tgl_keluhan }}</td>
                 
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque error, molestiae optio est, numquam nobis fuga ipsum ducimus consequatur tempora rerum, earum repellendus!</td>
-                        <td>{{ date('l, d-m-Y  H:i:s') }}</td>
-                        <td>PT Samudera Merdeka</td>
-                        <td>Wa</td>
-                        <td><span class="badge badge-warning">Diteruskan Ke CS</span></td>
-                        <td>{{ date('H:i:s') }}</td>
-                        <td>Silahkan lakukan input kembali</td>
-                        <td>Pembayaran</td>
-                    </tr>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque error, molestiae optio est, numquam nobis fuga ipsum ducimus consequatur tempora rerum, earum repellendus!</td>
-                        <td>{{ date('l, d-m-Y  H:i:s') }}</td>
-                        <td>PT Samudera Merdeka</td>
-                        <td>Wa</td>
-                        <td><span class="badge badge-info">Ditangani CS</span></td>
-                        <td>{{ date('H:i:s') }}</td>
-                        <td>Silahkan lakukan input kembali</td>
-                        <td>Pembayaran</td>
-                    </tr>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque error, molestiae optio est, numquam nobis fuga ipsum ducimus consequatur tempora rerum, earum repellendus!</td>
-                        <td>{{ date('l, d-m-Y  H:i:s') }}</td>
-                        <td>PT Samudera Merdeka</td>
-                        <td>Wa</td>
-                        <td><span class="badge badge-success">Selesai</span></td>
-                        <td>{{ date('H:i:s') }}</td>
-                        <td>Silahkan lakukan input kembali</td>
-                        <td>Pembayaran</td>
-                    </tr>
+                <td>{{ $item->id_pengguna }}</td>
+                <td>{{ $item->via_keluhan }}</td>
+                <td class="text-center"><span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
+                <td>{{ $item->waktu_penyelesaian }}</td>
+                <td>{{ $item->aksi }}</td>
+                <td>{{ $item->kategori_keluhan }}</td>
+              @endforeach
                 </tbody>
             </table>
             <nav aria-label="Table Paging" class="mb-0 text-muted">

@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\KeluhanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NaiveBayesController;
 
@@ -24,9 +26,8 @@ Route::get('/input_data', function () {
 Route::get('/input_datacs', function () {
     return view('input_datacs');
 });
-Route::get('/laporan', function () {
-    return view('laporan');
-});
+Route::get('/laporan', [KeluhanController::class, 'index']);
+
 Route::get('/rekapitulasi', function () {
     return view('rekapitulasi');
 });

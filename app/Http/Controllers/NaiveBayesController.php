@@ -84,23 +84,44 @@ class NaiveBayesController extends Controller
                 }
             }
 
-            // Menyusun data dengan format yang diinginkan
-            $formattedData = [];
+            // Menggabungkan jumlah bobot kata dari setiap kategori
+            $totalWordCount = [];
             foreach ($wordCount as $kategori => $kataJumlah) {
-                $index = 1;
                 foreach ($kataJumlah as $kata => $jumlah) {
-                    $formattedData[] = [
-                        'kategori' => $kategori,
-                        'kata' => $kata,
-                        'jumlah' => $jumlah,
-                        'index' => $index,
-                    ];
-                    $index++;
+                    if (!isset($totalWordCount[$kata])) {
+                        $totalWordCount[$kata] = [
+                            'Pembayaran' => 0,
+                            'Pengiriman' => 0,
+                            'Penerimaan' => 0,
+                            'Administrasi' => 0,
+                            'Lainnya' => 0,
+                            'total' => 0,
+                        ];
+                    }
+
+                    // Menambahkan bobot kata ke total bobot
+                    $totalWordCount[$kata][$kategori] += $jumlah;
+                    $totalWordCount[$kata]['total'] += $jumlah;
                 }
             }
 
-            // Tampilkan hasil perhitungan jumlah kata dalam setiap kategori
-            // dd($wordCount);
+            // Menyusun data dengan format yang diinginkan
+            $formattedTotalWordCount = [];
+            $index = 1;
+            foreach ($totalWordCount as $kata => $bobot) {
+                $formattedTotalWordCount[] = [
+                    'index' => $index,
+                    'kata' => $kata,
+                    'Pembayaran' => $bobot['Pembayaran'],
+                    'Pengiriman' => $bobot['Pengiriman'],
+                    'Penerimaan' => $bobot['Penerimaan'],
+                    'Administrasi' => $bobot['Administrasi'],
+                    'Lainnya' => $bobot['Lainnya'],
+                    'total' => $bobot['total'],
+                ];
+                $index++;
+            }
+
         }
 
         $dataUji = $request->input('data_uji');
@@ -128,44 +149,39 @@ class NaiveBayesController extends Controller
         // Memperbarui variabel $stemmedTokens menjadi array
         $stemmedTokensUji = explode(' ', $stemmedTextUji);
 
+        // Menghitung jumlah setiap kategori
+        $kategoriCount = [];
+        $totalKeluhan = count($processedKeluhan);
 
-        return view('perhitungan_naivebayes', compact('processedKeluhan','formattedData','dataUji','textUji','tokenUji','cleanedTextUji','stemmedTextUji'));
+        foreach ($processedKeluhan as $keluhan) {
+            $kategori = $keluhan['kategori_keluhan'];
+
+            if (!isset($kategoriCount[$kategori])) {
+                $kategoriCount[$kategori] = 1;
+            } else {
+                $kategoriCount[$kategori]++;
+            }
+        }
+
+        // Menghitung jumlah seluruh kategori
+        $totalKategori = count($kategoriCount);
+
+        // Menghitung probabilitas
+        $probabilitas = [];
+
+        foreach ($kategoriCount as $kategori => $count) {
+            $probabilitas[$kategori] = $count / $totalKeluhan;
+        }
+        
+        // -----------------------------------------------------------------
+        // -----------------------------------------------------------------
+        // -----------------------------------------------------------------
+
+        return view('perhitungan_naivebayes', compact('processedKeluhan', 'formattedTotalWordCount','dataUji','textUji','tokenUji','cleanedTextUji','stemmedTextUji','stemmedTokensUji', 'probabilitas','kategoriCount','totalKeluhan'));
     }
 
     public function showForm()
     {
         return view('perhitungan_naivebayes');
-    }
-
-    public function prosesDataUji(Request $request)
-    {
-        $dataUji = $request->input('data_uji');
-
-        // Case Folding
-        $text = strtolower($dataUji);
-
-        // Tokenizing
-        $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
-        $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
-
-        // Stopword Removal
-        $stopwordRemoverFactory = new StopWordRemoverFactory();
-        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
-        $textWithoutStopwords = $stopwordRemover->remove($text);
-
-        // Menghapus karakter khusus, simbol, dan angka
-        $cleanedText = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwords);
-
-        // Stemming
-        $stemmerFactory = new StemmerFactory();
-        $stemmer = $stemmerFactory->createStemmer();
-        $stemmedText = $stemmer->stem($cleanedText);
-
-        // Memperbarui variabel $stemmedTokens menjadi array
-        $stemmedTokens = explode(' ', $stemmedText);
-
-        return view('perhitungan_naivebayes', compact('text', 'kataTerkutip','cleanedText', 'stemmedTokens'));
-        // Tampilkan hasil
-        // dd($stemmedTokens);
     }
 }
