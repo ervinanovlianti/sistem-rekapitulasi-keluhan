@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\KeluhanModel;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\Stemmer\StemmerFactory;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,7 +19,7 @@ class NaiveBayesController extends Controller
 
         return view('data_keluhan', compact('data_keluhan'));
     }
-    public function preprocessing()
+    public function preprocessing(Request $request)
     {
         $textkeluhan = DB::table('data_keluhan')
         ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -32,23 +31,26 @@ class NaiveBayesController extends Controller
         foreach ($textkeluhan as $keluhan) {
             $uraianKeluhan = $keluhan->uraian_keluhan;
             $complaintText = $uraianKeluhan;
+
             // Case Folding
             $text = strtolower($complaintText);
             $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
             $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
+
             // Stopword Removal
             $stopwordRemoverFactory = new StopWordRemoverFactory();
             $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
             $textWithoutStopwords = $stopwordRemover->remove($text);
+
             // Menghapus karakter khusus, simbol, dan angka
             $cleanedText = preg_replace('/[^\p{L}\s]/u', '', $textWithoutStopwords);
             $cleanedText = preg_replace('/\d+/', '', $cleanedText);
-            // Menghapus angka, karakter khusus, dan simbol
-            // $cleanedText = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwords); 
+
             // Stemming
             $stemmerFactory = new StemmerFactory();
             $stemmer = $stemmerFactory->createStemmer();
             $stemmedText = $stemmer->stem($cleanedText);
+
             // Memperbarui variabel $stemmedTokens menjadi array
             $stemmedTokens = explode(' ', $stemmedText);
 
@@ -58,9 +60,6 @@ class NaiveBayesController extends Controller
                 'tokens' => $stemmedTokens,
                 'kategori_keluhan' => $keluhan->kategori_keluhan,
             ];
-
-            // Ambil data keluhan yang telah diproses
-            // $processedKeluhan = $stemmedTokens;
 
             // Inisialisasi variabel untuk menyimpan jumlah kata dalam setiap kategori
             $wordCount = [];
@@ -103,42 +102,70 @@ class NaiveBayesController extends Controller
             // Tampilkan hasil perhitungan jumlah kata dalam setiap kategori
             // dd($wordCount);
         }
-        return view('perhitungan_naivebayes', compact('processedKeluhan','formattedData'));
+
+        $dataUji = $request->input('data_uji');
+
+        // Case Folding
+        $textUji = strtolower($dataUji);
+
+        // Tokenizing
+        $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
+        $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
+
+        // Stopword Removal
+        $stopwordRemoverFactory = new StopWordRemoverFactory();
+        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
+        $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
+
+        // Menghapus karakter khusus, simbol, dan angka
+        $cleanedTextUji = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwordsUji);
+
+        // Stemming
+        $stemmerFactory = new StemmerFactory();
+        $stemmer = $stemmerFactory->createStemmer();
+        $stemmedTextUji = $stemmer->stem($cleanedTextUji);
+
+        // Memperbarui variabel $stemmedTokens menjadi array
+        $stemmedTokensUji = explode(' ', $stemmedTextUji);
+
+
+        return view('perhitungan_naivebayes', compact('processedKeluhan','formattedData','dataUji','textUji','tokenUji','cleanedTextUji','stemmedTextUji'));
     }
 
- public function calculateWordCount()
+    public function showForm()
     {
-        // Ambil dataset yang telah diproses dan dikategorikan
-        $dataset = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.id_keluhan', 'data_keluhan.uraian_keluhan', 'data_kategori.kategori_keluhan')
-        ->get();
-
-        // Inisialisasi variabel untuk menyimpan jumlah kata dalam setiap kategori
-        $wordCount = [];
-
-        // Iterasi melalui setiap keluhan dalam dataset
-        foreach ($dataset as $keluhan) {
-            $kategori = $keluhan->kategori_keluhan;
-            $tokens = explode(' ', $keluhan->uraian_keluhan);
-
-            // Periksa apakah kategori sudah ada dalam $wordCount
-            if (!isset($wordCount[$kategori])) {
-                $wordCount[$kategori] = [];
-            }
-
-            // Iterasi melalui setiap token dalam keluhan dan tingkatkan jumlah kata
-            foreach ($tokens as $token) {
-                if (!isset($wordCount[$kategori][$token])) {
-                    $wordCount[$kategori][$token] = 1;
-                } else {
-                    $wordCount[$kategori][$token]++;
-                }
-            }
-        }
-
-        // Tampilkan hasil perhitungan jumlah kata dalam setiap kategori
-        dd($wordCount);
+        return view('perhitungan_naivebayes');
     }
-    
+
+    public function prosesDataUji(Request $request)
+    {
+        $dataUji = $request->input('data_uji');
+
+        // Case Folding
+        $text = strtolower($dataUji);
+
+        // Tokenizing
+        $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
+        $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
+
+        // Stopword Removal
+        $stopwordRemoverFactory = new StopWordRemoverFactory();
+        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
+        $textWithoutStopwords = $stopwordRemover->remove($text);
+
+        // Menghapus karakter khusus, simbol, dan angka
+        $cleanedText = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwords);
+
+        // Stemming
+        $stemmerFactory = new StemmerFactory();
+        $stemmer = $stemmerFactory->createStemmer();
+        $stemmedText = $stemmer->stem($cleanedText);
+
+        // Memperbarui variabel $stemmedTokens menjadi array
+        $stemmedTokens = explode(' ', $stemmedText);
+
+        return view('perhitungan_naivebayes', compact('text', 'kataTerkutip','cleanedText', 'stemmedTokens'));
+        // Tampilkan hasil
+        // dd($stemmedTokens);
+    }
 }

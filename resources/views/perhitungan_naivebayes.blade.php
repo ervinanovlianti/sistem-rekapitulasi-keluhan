@@ -32,43 +32,53 @@
 <h2 class="h4 mb-1 ">Menghitung Bobot Kata Untuk Setiap Kategori</h2>
 <div class="card shadow mb-5">
     <div class="card-body">
-<table class="table table-hover table-borderless border-v">
-    <thead class="thead-dark">
-        <tr class="text-center">
-            <th>No</th>
-            <th>Kata</th>
-            <th>Pembayaran</th>
-            <th>Pengiriman</th>
-            <th>Penerimaan</th>
-            <th>Administrasi</th>
-            <th>Lainnya</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php $no=1 ?>
-        @foreach ($formattedData as $data)
-            <tr>
-                <td>{{ $no++ }}</td>
-                {{-- <td>{{ $data['index'] }}</td> --}}
-                <td class="">{{ $data['kata'] }}</td>
-                <td class="text-center">{{ $data['kategori'] === 'Pembayaran' ? $data['jumlah'] : 0 }}</td>
-                <td class="text-center">{{ $data['kategori'] === 'Pengiriman' ? $data['jumlah'] : 0 }}</td>
-                <td class="text-center">{{ $data['kategori'] === 'Penerimaan' ? $data['jumlah'] : 0 }}</td>
-                <td class="text-center">{{ $data['kategori'] === 'Administrasi' ? $data['jumlah'] : 0 }}</td>
-                <td class="text-center">{{ $data['kategori'] === 'Lainnya' ? $data['jumlah'] : 0 }}</td>
-                <td class="text-center">{{ $data['jumlah'] }}</td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
+        <table class="table table-hover table-borderless border-v">
+            <thead class="thead-dark">
+                <tr class="text-center">
+                    <th>No</th>
+                    <th>Kata</th>
+                    <th>Pembayaran</th>
+                    <th>Pengiriman</th>
+                    <th>Penerimaan</th>
+                    <th>Administrasi</th>
+                    <th>Lainnya</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $no=1 ?>
+                @foreach ($formattedData as $data)
+                    <tr>
+                        <td>{{ $no++ }}</td>
+                        {{-- <td>{{ $data['index'] }}</td> --}}
+                        <td class="">{{ $data['kata'] }}</td>
+                        <td class="text-center">{{ $data['kategori'] === 'Pembayaran' ? $data['jumlah'] : 0 }}</td>
+                        <td class="text-center">{{ $data['kategori'] === 'Pengiriman' ? $data['jumlah'] : 0 }}</td>
+                        <td class="text-center">{{ $data['kategori'] === 'Penerimaan' ? $data['jumlah'] : 0 }}</td>
+                        <td class="text-center">{{ $data['kategori'] === 'Administrasi' ? $data['jumlah'] : 0 }}</td>
+                        <td class="text-center">{{ $data['kategori'] === 'Lainnya' ? $data['jumlah'] : 0 }}</td>
+                        <td class="text-center">{{ $data['jumlah'] }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+<h2 class="h4 mb-1">Masukkan Data Uji</h2>
+<div class="card shadow mb-5">
+    <div class="card-body">
+        <form method="post" action="/perhitungan-naive-bayes">
+            @csrf
+            <label for="data_uji">Data Uji</label>
+            <textarea id="data_uji" name="data_uji" class="form-control mb-4" rows="5" cols="50"></textarea>
+            <button type="submit" class="btn btn-primary">Proses</button>
+        </form>
 
     </div>
 </div>
 <h2 class="h4 mb-1">Preprocessing Text Data Uji</h2>
 <div class="card shadow mb-5">
-        <div class="card-body">
-        <!-- table -->
+    <div class="card-body">
         <table class="table table-hover table-borderless border-v">
             <thead class="thead-dark">
                 
@@ -82,47 +92,20 @@
             </thead>
             <tbody>
             <tr>
-                {{-- <td>{{ $complaintText }}</td>
-                <td>{{ $caseFoldedText }}</td>
-                <td>{{ $tokens }}</td>
-                <td>{{ $stopword }}</td>
-                <td>{{ $stemmedTokens }}</td> --}}
+                <td>{{ $dataUji }}</td>
+                <td>{{ $textUji }}</td>
+                <td>{{ $tokenUji }}</td>
+                <td>{{ $cleanedTextUji }}</td>
+                <td>{{ $stemmedTextUji }}</td>
             </tr>
             </tbody>
         </table>
-        </div>
     </div>
-<h2 class="h4 mb-1 ">Preprocessing Text Data Keluhan</h2>
+</div>
+
+<h2 class="h4 mb-1 ">Perhitungan Naive Bayes</h2>
 <div class="card shadow mb-5">
-        <div class="card-body">
-        <!-- table -->
-        <table class="table table-hover table-borderless border-v">
-            <thead class="thead-dark">
-                
-            <tr class="text-center">
-                <th>Teks Asli</th>
-                <th>Case Folding</th>
-                <th>Tokenisasi</th>
-                <th>Stopword</th>
-                <th>Stemming</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                {{-- <td>{{ $complaintText }}</td>
-                <td>{{ $caseFoldedText }}</td>
-                <td>{{ $tokens }}</td>
-                <td>{{ $stopword }}</td>
-                <td>{{ $stemmedTokens }}</td> --}}
-            </tr>
-            </tbody>
-        </table>
-        </div>
-    </div>
-    <h2 class="h4 mb-1 ">Perhitungan Naive Bayes</h2>
-    <div class="card shadow mb-5">
-        <div class="card-body">
-        <!-- table -->
+    <div class="card-body">
         <table class="table table-hover table-borderless border-v">
             <thead class="thead-dark">
                 <tr class="text-center">
@@ -134,7 +117,6 @@
                         <th colspan="3">Administrasi</th>
                         <th colspan="3">Lainnya</th>
                     </tr>
-                   
                     <tr role="row">
                         {{-- Pembayaran --}}
                         <th>ni</th>
