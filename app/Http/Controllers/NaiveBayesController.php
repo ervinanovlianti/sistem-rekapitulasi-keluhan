@@ -26,6 +26,9 @@ class NaiveBayesController extends Controller
         ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
         ->get();
 
+        // -----------------------------------------------------------------
+        // ------PREPROCESSING DATA LATIH-----------------------------------
+        // -----------------------------------------------------------------
         $processedKeluhan = [];
 
         foreach ($textkeluhan as $keluhan) {
@@ -36,21 +39,17 @@ class NaiveBayesController extends Controller
             $text = strtolower($complaintText);
             $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
             $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
-
             // Stopword Removal
             $stopwordRemoverFactory = new StopWordRemoverFactory();
             $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
             $textWithoutStopwords = $stopwordRemover->remove($text);
-
             // Menghapus karakter khusus, simbol, dan angka
             $cleanedText = preg_replace('/[^\p{L}\s]/u', '', $textWithoutStopwords);
             $cleanedText = preg_replace('/\d+/', '', $cleanedText);
-
             // Stemming
             $stemmerFactory = new StemmerFactory();
             $stemmer = $stemmerFactory->createStemmer();
             $stemmedText = $stemmer->stem($cleanedText);
-
             // Memperbarui variabel $stemmedTokens menjadi array
             $stemmedTokens = explode(' ', $stemmedText);
 
@@ -63,17 +62,14 @@ class NaiveBayesController extends Controller
 
             // Inisialisasi variabel untuk menyimpan jumlah kata dalam setiap kategori
             $wordCount = [];
-
             // Iterasi melalui setiap keluhan yang telah diproses
             foreach ($processedKeluhan as $keluhan) {
                 $kategori = $keluhan['kategori_keluhan'];
                 $tokens = $keluhan['tokens'];
-
                 // Periksa apakah kategori sudah ada dalam $wordCount
                 if (!isset($wordCount[$kategori])) {
                     $wordCount[$kategori] = [];
                 }
-
                 // Iterasi melalui setiap token dalam keluhan dan tingkatkan jumlah kata
                 foreach ($tokens as $token) {
                     if (!isset($wordCount[$kategori][$token])) {
@@ -83,7 +79,6 @@ class NaiveBayesController extends Controller
                     }
                 }
             }
-
             // Menggabungkan jumlah bobot kata dari setiap kategori
             $totalWordCount = [];
             foreach ($wordCount as $kategori => $kataJumlah) {
@@ -98,13 +93,11 @@ class NaiveBayesController extends Controller
                             'total' => 0,
                         ];
                     }
-
                     // Menambahkan bobot kata ke total bobot
                     $totalWordCount[$kata][$kategori] += $jumlah;
                     $totalWordCount[$kata]['total'] += $jumlah;
                 }
             }
-
             // Menyusun data dengan format yang diinginkan
             $formattedTotalWordCount = [];
             $index = 1;
@@ -121,33 +114,10 @@ class NaiveBayesController extends Controller
                 ];
                 $index++;
             }
-
         }
-
-        $dataUji = $request->input('data_uji');
-
-        // Case Folding
-        $textUji = strtolower($dataUji);
-
-        // Tokenizing
-        $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
-        $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
-
-        // Stopword Removal
-        $stopwordRemoverFactory = new StopWordRemoverFactory();
-        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
-        $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
-
-        // Menghapus karakter khusus, simbol, dan angka
-        $cleanedTextUji = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwordsUji);
-
-        // Stemming
-        $stemmerFactory = new StemmerFactory();
-        $stemmer = $stemmerFactory->createStemmer();
-        $stemmedTextUji = $stemmer->stem($cleanedTextUji);
-
-        // Memperbarui variabel $stemmedTokens menjadi array
-        $stemmedTokensUji = explode(' ', $stemmedTextUji);
+        // -----------------------------------------------------------------
+        // ---------------------PROBABILITAS PRIOR--------------------------
+        // -----------------------------------------------------------------
 
         // Menghitung jumlah setiap kategori
         $kategoriCount = [];
@@ -172,12 +142,95 @@ class NaiveBayesController extends Controller
         foreach ($kategoriCount as $kategori => $count) {
             $probabilitas[$kategori] = $count / $totalKeluhan;
         }
-        
+
         // -----------------------------------------------------------------
-        // -----------------------------------------------------------------
+        // ---------------------PREPROCESSING DATA UJI----------------------
         // -----------------------------------------------------------------
 
-        return view('perhitungan_naivebayes', compact('processedKeluhan', 'formattedTotalWordCount','dataUji','textUji','tokenUji','cleanedTextUji','stemmedTextUji','stemmedTokensUji', 'probabilitas','kategoriCount','totalKeluhan'));
+        $dataUji = $request->input('data_uji');
+        // Case Folding
+        $textUji = strtolower($dataUji);
+        // Tokenizing
+        $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
+        $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
+        // Stopword Removal
+        $stopwordRemoverFactory = new StopWordRemoverFactory();
+        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
+        $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
+        // Menghapus karakter khusus, simbol, dan angka
+        $cleanedTextUji = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwordsUji);
+        // Stemming
+        $stemmerFactory = new StemmerFactory();
+        $stemmer = $stemmerFactory->createStemmer();
+        $stemmedTextUji = $stemmer->stem($cleanedTextUji);
+        // Memperbarui variabel $stemmedTokens menjadi array
+        $stemmedTokensUji = explode(' ', $stemmedTextUji);
+
+        // -----------------------------------------------------------------
+        // ----------------------VEKTORISASI DATA UJI-----------------------
+        // -----------------------------------------------------------------
+
+        // Menghitung jumlah kata pada data uji yang sama dengan kata pada data latih
+        $jumlahKataUji = [];
+
+        foreach ($stemmedTokensUji as $kataUji) {
+            $jumlahKataLatih = isset($totalWordCount[$kataUji]['total']) ? $totalWordCount[$kataUji]['total'] : 0;
+            $jumlahKataUji[] = [
+                'kata' => $kataUji,
+                'jumlah_kata_latih' => $jumlahKataLatih,
+                'jumlah_kata_uji' => 1, // Setiap kata pada data uji hanya muncul satu kali
+                'jumlah_kata_kategori' => [
+                    'Pembayaran' => isset($totalWordCount[$kataUji]['Pembayaran']) ? $totalWordCount[$kataUji]['Pembayaran'] : 0,
+                    'Pengiriman' => isset($totalWordCount[$kataUji]['Pengiriman']) ? $totalWordCount[$kataUji]['Pengiriman'] : 0,
+                    'Penerimaan' => isset($totalWordCount[$kataUji]['Penerimaan']) ? $totalWordCount[$kataUji]['Penerimaan'] : 0,
+                    'Administrasi' => isset($totalWordCount[$kataUji]['Administrasi']) ? $totalWordCount[$kataUji]['Administrasi'] : 0,
+                    'Lainnya' => isset($totalWordCount[$kataUji]['Lainnya']) ? $totalWordCount[$kataUji]['Lainnya'] : 0,
+                ],
+                'jumlah_semua_kata_latih' => count($totalWordCount),
+            ];
+        }
+        // Inisialisasi variabel untuk menyimpan total bobot kata untuk setiap kategori
+        $totalBobotKategori = [
+            'Pembayaran' => 0,
+            'Pengiriman' => 0,
+            'Penerimaan' => 0,
+            'Administrasi' => 0,
+            'Lainnya' => 0,
+        ];
+
+        // Iterasi melalui setiap kata pada data latih
+        foreach ($formattedTotalWordCount as $kata) {
+            $totalBobotKategori['Pembayaran'] += $kata['Pembayaran'];
+            $totalBobotKategori['Pengiriman'] += $kata['Pengiriman'];
+            $totalBobotKategori['Penerimaan'] += $kata['Penerimaan'];
+            $totalBobotKategori['Administrasi'] += $kata['Administrasi'];
+            $totalBobotKategori['Lainnya'] += $kata['Lainnya'];
+        }
+        // Menghitung total bobot kata pada data latih
+        $totalBobotDataLatih = array_sum($totalBobotKategori);
+        // Menggabungkan jumlah kata pada data latih dengan jumlah kata pada data uji
+        // $jumlahKata = array_merge($formattedTotalWordCount, $jumlahKataUji);
+
+        
+
+        return view('perhitungan_naivebayes', 
+        compact(
+            'processedKeluhan', 
+            'formattedTotalWordCount',
+            'dataUji',
+            'textUji',
+            'tokenUji',
+            'cleanedTextUji',
+            'stemmedTextUji',
+            'stemmedTokensUji',
+            'probabilitas',
+            'kategoriCount',
+            'totalKeluhan',
+            // 'jumlahKata',
+            'jumlahKataUji',
+            'totalBobotKategori',
+            'totalBobotDataLatih'
+        ));
     }
 
     public function showForm()
