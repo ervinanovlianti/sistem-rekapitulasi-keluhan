@@ -208,10 +208,16 @@ class NaiveBayesController extends Controller
         }
         // Menghitung total bobot kata pada data latih
         $totalBobotDataLatih = array_sum($totalBobotKategori);
-        // Menggabungkan jumlah kata pada data latih dengan jumlah kata pada data uji
-        // $jumlahKata = array_merge($formattedTotalWordCount, $jumlahKataUji);
+
 
         
+        // Menampilkan hasil klasifikasi
+        if (!empty($klasifikasi)) {
+            $hasilKlasifikasi = $klasifikasi[1];
+        } else {
+            $hasilKlasifikasi = 'Tidak Diketahui';
+        }
+ 
 
         return view('perhitungan_naivebayes', 
         compact(
@@ -226,10 +232,10 @@ class NaiveBayesController extends Controller
             'probabilitas',
             'kategoriCount',
             'totalKeluhan',
-            // 'jumlahKata',
             'jumlahKataUji',
             'totalBobotKategori',
-            'totalBobotDataLatih'
+            'totalBobotDataLatih',
+                'hasilKlasifikasi'
         ));
     }
 
