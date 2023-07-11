@@ -174,10 +174,8 @@ class NaiveBayesController extends Controller
         $jumlahKataUji = [];
 
         foreach ($stemmedTokensUji as $kataUji) {
-            $jumlahKataLatih = isset($totalWordCount[$kataUji]['total']) ? $totalWordCount[$kataUji]['total'] : 0;
             $jumlahKataUji[] = [
                 'kata' => $kataUji,
-                'jumlah_kata_latih' => $jumlahKataLatih,
                 'jumlah_kata_uji' => 1, // Setiap kata pada data uji hanya muncul satu kali
                 'jumlah_kata_kategori' => [
                     'Pembayaran' => isset($totalWordCount[$kataUji]['Pembayaran']) ? $totalWordCount[$kataUji]['Pembayaran'] : 0,
@@ -186,37 +184,55 @@ class NaiveBayesController extends Controller
                     'Administrasi' => isset($totalWordCount[$kataUji]['Administrasi']) ? $totalWordCount[$kataUji]['Administrasi'] : 0,
                     'Lainnya' => isset($totalWordCount[$kataUji]['Lainnya']) ? $totalWordCount[$kataUji]['Lainnya'] : 0,
                 ],
-                'jumlah_semua_kata_latih' => count($totalWordCount),
             ];
+            
         }
         // Inisialisasi variabel untuk menyimpan total bobot kata untuk setiap kategori
-        $totalBobotKategori = [
+        $totalBobotKataKategori = [
             'Pembayaran' => 0,
             'Pengiriman' => 0,
             'Penerimaan' => 0,
             'Administrasi' => 0,
             'Lainnya' => 0,
         ];
-
         // Iterasi melalui setiap kata pada data latih
         foreach ($formattedTotalWordCount as $kata) {
-            $totalBobotKategori['Pembayaran'] += $kata['Pembayaran'];
-            $totalBobotKategori['Pengiriman'] += $kata['Pengiriman'];
-            $totalBobotKategori['Penerimaan'] += $kata['Penerimaan'];
-            $totalBobotKategori['Administrasi'] += $kata['Administrasi'];
-            $totalBobotKategori['Lainnya'] += $kata['Lainnya'];
+            $totalBobotKataKategori['Pembayaran'] += $kata['Pembayaran'];
+            $totalBobotKataKategori['Pengiriman'] += $kata['Pengiriman'];
+            $totalBobotKataKategori['Penerimaan'] += $kata['Penerimaan'];
+            $totalBobotKataKategori['Administrasi'] += $kata['Administrasi'];
+            $totalBobotKataKategori['Lainnya'] += $kata['Lainnya'];
         }
         // Menghitung total bobot kata pada data latih
-        $totalBobotDataLatih = array_sum($totalBobotKategori);
+        $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
+// BELUM FIX
+        // foreach ($jumlahKataUji as $ujidata) {
+        //     $probabilitas_pembayaran = ($ujidata['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
+        // }
+        // 
+        // $likehood = [
+        //     'Pembayaran' => 0,
+        //     'Pengiriman' => 0,
+        //     'Penerimaan' => 0,
+        //     'Administrasi' => 0,
+        //     'Lainnya' => 0,
+        // ];
+        // Iterasi melalui setiap kata pada data latih
+        // foreach ($formattedTotalWordCount as $kata) {
+        //     $likehood['Pembayaran'] += $kata['Pembayaran'];
+        //     $likehood['Pengiriman'] += $kata['Pengiriman'];
+        //     $likehood['Penerimaan'] += $kata['Penerimaan'];
+        //     $likehood['Administrasi'] += $kata['Administrasi'];
+        //     $likehood['Lainnya'] += $kata['Lainnya'];
+        // }
 
-        
-        // Menampilkan hasil klasifikasi
-        if (!empty($klasifikasi)) {
-            $hasilKlasifikasi = $klasifikasi[1];
-        } else {
-            $hasilKlasifikasi = 'Tidak Diketahui';
-        }
+        // // Menampilkan hasil klasifikasi
+        // if (!empty($klasifikasi)) {
+        //     $hasilKlasifikasi = $klasifikasi[1];
+        // } else {
+        //     $hasilKlasifikasi = 'Tidak Diketahui';
+        // }
  
 
         return view('perhitungan_naivebayes', 
@@ -233,9 +249,10 @@ class NaiveBayesController extends Controller
             'kategoriCount',
             'totalKeluhan',
             'jumlahKataUji',
-            'totalBobotKategori',
-            'totalBobotDataLatih',
-                'hasilKlasifikasi'
+            'totalBobotKataKategori',
+            'totalBobotKataDataLatih',
+                'hasilKlasifikasi',
+                // 'probabilitas_pembayaran',
         ));
     }
 

@@ -105,6 +105,36 @@
         </div>
     </div>
 
+    
+    <h2 class="h4 mb-1 ">Tahap 1: Menghitung Probabilitas Setiap Kategori</h2>
+    <div class="card shadow mb-5">
+        <div class="card-body">
+        <table class="table table-hover table-borderless border-v">
+            <thead class="thead-dark">
+            <tr>
+                <th>No</th>
+                <th>Kategori</th>
+                <th>Jumlah Kategori</th>
+                <th>Jumlah Seluruh data</th>
+                <th>Probabilitas</th>
+            </tr>
+            </thead>
+            <tbody>
+                <?php $no=1; ?>
+                @foreach ($probabilitas as $kategori => $prob)
+                    <tr>
+                        <td>{{ $no++ }}</td>
+                        <td>{{ $kategori }}</td>
+                        <td>{{ $kategoriCount[$kategori] }}</td>
+                        <td>{{ $totalKeluhan }}</td>
+                        <td>{{ $prob }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        </div>
+    </div>
+    
     <h2 class="h4 mb-1 ">Probabilitas likehood setiap kategori </h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -147,65 +177,36 @@
                     ?>
                     @foreach ($jumlahKataUji as $data)
                 <tr>
-                   
                     <td>{{ $no++ }}</td>
                     <td>{{ $data['kata'] }}</td>
 
                     <td>{{ $data['jumlah_kata_kategori']['Pembayaran'] }}</td>
-                    <td>{{ $totalBobotKategori['Pembayaran'] }}</td>
-                    <td>{{ $totalBobotDataLatih }}</td>
+                    <td>{{ $totalBobotKataKategori['Pembayaran'] }}</td>
+                    <td>{{ $totalBobotKataDataLatih }}</td>
+                    <td>{{ $probabilitas_pembayaran }}</td>
 
                     <td>{{ $data['jumlah_kata_kategori']['Pengiriman'] }}</td>
-                    <td>{{ $totalBobotKategori['Pengiriman'] }}</td>
-                    <td>{{ $totalBobotDataLatih }}</td>
+                    <td>{{ $totalBobotKataKategori['Pengiriman'] }}</td>
+                    <td>{{ $totalBobotKataDataLatih }}</td>
 
                     <td>{{ $data['jumlah_kata_kategori']['Penerimaan'] }}</td>
-                    <td>{{ $totalBobotKategori['Penerimaan'] }}</td>
-                    <td>{{ $totalBobotDataLatih }}</td>
+                    <td>{{ $totalBobotKataKategori['Penerimaan'] }}</td>
+                    <td>{{ $totalBobotKataDataLatih }}</td>
 
                     <td>{{ $data['jumlah_kata_kategori']['Administrasi'] }}</td>
-                    <td>{{ $totalBobotKategori['Administrasi'] }}</td>
-                    <td>{{ $totalBobotDataLatih }}</td>
+                    <td>{{ $totalBobotKataKategori['Administrasi'] }}</td>
+                    <td>{{ $totalBobotKataDataLatih }}</td>
 
                     <td>{{ $data['jumlah_kata_kategori']['Lainnya'] }}</td>
-                    <td>{{ $totalBobotKategori['Lainnya'] }}</td>
-                    <td>{{ $totalBobotDataLatih }}</td>
+                    <td>{{ $totalBobotKataKategori['Lainnya'] }}</td>
+                    <td>{{ $totalBobotKataDataLatih }}</td>
                 </tr>
                 @endforeach
                 </tbody>
             </table>
         </div>
     </div>
-    
-    <h2 class="h4 mb-1 ">Tahap 1: Menghitung Probabilitas Setiap Kategori</h2>
-    <div class="card shadow mb-5">
-        <div class="card-body">
-        <table class="table table-hover table-borderless border-v">
-            <thead class="thead-dark">
-            <tr>
-                <th>No</th>
-                <th>Kategori</th>
-                <th>Jumlah Kategori</th>
-                <th>Jumlah Seluruh data</th>
-                <th>Probabilitas</th>
-            </tr>
-            </thead>
-            <tbody>
-                <?php $no=1; ?>
-                @foreach ($probabilitas as $kategori => $prob)
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>{{ $kategori }}</td>
-                        <td>{{ $kategoriCount[$kategori] }}</td>
-                        <td>{{ $totalKeluhan }}</td>
-                        <td>{{ $prob }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        </div>
-    </div>
-    
+
     <h2 class="h4 mb-1 ">Tahap 2: Perhitungan Probabilitas kata yang sama pada kategori yang sama (likehood)</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -226,24 +227,19 @@
                 <?php $no=1; ?>
                     @foreach ($jumlahKataUji as $data)
                      <?php 
-                        $probs_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran']+1)/($totalBobotKategori['Pembayaran']+ $totalBobotDataLatih );
-                        $probs_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman']+1)/($totalBobotKategori['Pengiriman']+ $totalBobotDataLatih );
-                        $probs_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan']+1)/($totalBobotKategori['Penerimaan']+ $totalBobotDataLatih );
-                        $probs_administrasi = ($data['jumlah_kata_kategori']['Administrasi']+1)/($totalBobotKategori['Administrasi']+ $totalBobotDataLatih );
-                        $probs_lainnya = ($data['jumlah_kata_kategori']['Lainnya']+1)/($totalBobotKategori['Lainnya']+ $totalBobotDataLatih );
+                        $probs_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran']+1)/($totalBobotKataKategori['Pembayaran']+ $totalBobotKataDataLatih );
+                        $probs_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman']+1)/($totalBobotKataKategori['Pengiriman']+ $totalBobotKataDataLatih );
+                        $probs_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan']+1)/($totalBobotKataKategori['Penerimaan']+ $totalBobotKataDataLatih );
+                        $probs_administrasi = ($data['jumlah_kata_kategori']['Administrasi']+1)/($totalBobotKataKategori['Administrasi']+ $totalBobotKataDataLatih );
+                        $probs_lainnya = ($data['jumlah_kata_kategori']['Lainnya']+1)/($totalBobotKataKategori['Lainnya']+ $totalBobotKataDataLatih );
 
-                        $likehood_pembayaran = $probs_pembayaran;
-                        $likehood_pengiriman = $probs_pengiriman;
-                        $likehood_penerimaan = $probs_penerimaan;
-                        $likehood_administrasi = $probs_administrasi;
-                        $likehood_lainnya = $probs_lainnya;
-
+                        // $probs_pembayaran *= $probs_pembayaran;
                         // Lakukan perkalian probabilitas dengan nilai probabilitas kategori yang sesuai
-                        $likehood_pembayaran *= $probs_pembayaran;
-                        $likehood_pengiriman *= $probs_pengiriman;
-                        $likehood_penerimaan *= $probs_penerimaan;
-                        $likehood_administrasi *= $probs_administrasi;
-                        $likehood_lainnya *= $probs_lainnya;
+                        // $likehood_pembayaran *= $likehood_pembayaran;
+                        // $likehood_pengiriman *= $probs_pengiriman;
+                        // $likehood_penerimaan *= $probs_penerimaan;
+                        // $likehood_administrasi *= $probs_administrasi;
+                        // $likehood_lainnya *= $probs_lainnya;
                     ?>
                 <tr>
                     <td>{{ $no++ }}</td>
@@ -259,6 +255,13 @@
 
             <tbody>
                 <tr>
+                    <?php 
+                        $likehood_pembayaran = pow($probs_pembayaran,10);
+                        $likehood_pengiriman = $probs_pengiriman;
+                        $likehood_penerimaan = $probs_penerimaan;
+                        $likehood_administrasi = $probs_administrasi;
+                        $likehood_lainnya = $probs_lainnya;
+                    ?>
                     <td colspan="2">Likehood</td>
                     <td>{{ $likehood_pembayaran }}</td>
                     <td>{{ $likehood_pengiriman }}</td>
