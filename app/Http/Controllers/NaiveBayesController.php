@@ -227,12 +227,12 @@ class NaiveBayesController extends Controller
         //     $likehood['Lainnya'] += $kata['Lainnya'];
         // }
 
-        // // Menampilkan hasil klasifikasi
-        // if (!empty($klasifikasi)) {
-        //     $hasilKlasifikasi = $klasifikasi[1];
-        // } else {
-        //     $hasilKlasifikasi = 'Tidak Diketahui';
-        // }
+        // Menampilkan hasil klasifikasi
+        if (!empty($klasifikasi)) {
+            $hasilKlasifikasi = $klasifikasi[1];
+        } else {
+            $hasilKlasifikasi = 'Tidak Diketahui';
+        }
  
 
         return view('perhitungan_naivebayes', 

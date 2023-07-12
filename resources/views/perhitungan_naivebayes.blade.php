@@ -183,7 +183,7 @@
                     <td>{{ $data['jumlah_kata_kategori']['Pembayaran'] }}</td>
                     <td>{{ $totalBobotKataKategori['Pembayaran'] }}</td>
                     <td>{{ $totalBobotKataDataLatih }}</td>
-                    <td>{{ $probabilitas_pembayaran }}</td>
+                    {{-- <td>{{ $probabilitas_pembayaran }}</td> --}}
 
                     <td>{{ $data['jumlah_kata_kategori']['Pengiriman'] }}</td>
                     <td>{{ $totalBobotKataKategori['Pengiriman'] }}</td>
@@ -252,7 +252,7 @@
                 </tr>
                 @endforeach
             </tbody>
-
+            {{-- BUTUH PERBAIKAN LOGIKA --}}
             <tbody>
                 <tr>
                     <?php 
