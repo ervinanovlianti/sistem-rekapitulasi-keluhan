@@ -2,10 +2,16 @@
 @section('content')
 <div class="row">
 <div class="col-md-12">
-
+    <p>
+        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            Tampilkan Data Latih
+        </button>
+    </p>
+    <div class="collapse" id="collapseExample">
+    
     <h2 class="h4 mb-1">Data Latih</h2>
     <div class="card shadow mb-5">
-            <div class="card-body">
+        <div class="card-body">
             <!-- table -->
             <table class="table table-hover table-borderless border-v">
                 <thead class="thead-dark">
@@ -65,6 +71,7 @@
 
         </div>
     </div>
+</div>
 
     <h2 class="h4 mb-1">Masukkan Data Uji</h2>
     <div class="card shadow mb-5">
@@ -73,7 +80,7 @@
                 @csrf
                 <label for="data_uji">Data Uji</label>
                 <textarea id="data_uji" name="data_uji" class="form-control mb-4" rows="2" cols="50"></textarea>
-                <button type="submit" class="btn btn-primary">Proses</button>
+                <button type="submit" class="btn btn-primary" >Proses</button>
             </form>
 
         </div>
@@ -105,7 +112,6 @@
         </div>
     </div>
 
-    
     <h2 class="h4 mb-1 ">Tahap 1: Menghitung Probabilitas Setiap Kategori</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -134,7 +140,6 @@
         </table>
         </div>
     </div>
-    
     <h2 class="h4 mb-1 ">Probabilitas likehood setiap kategori </h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -206,7 +211,6 @@
             </table>
         </div>
     </div>
-
     <h2 class="h4 mb-1 ">Tahap 2: Perhitungan Probabilitas kata yang sama pada kategori yang sama (likehood)</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -226,20 +230,30 @@
             <tbody>
                 <?php $no=1; ?>
                     @foreach ($jumlahKataUji as $data)
-                     <?php 
+                    <?php 
                         $probs_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran']+1)/($totalBobotKataKategori['Pembayaran']+ $totalBobotKataDataLatih );
                         $probs_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman']+1)/($totalBobotKataKategori['Pengiriman']+ $totalBobotKataDataLatih );
                         $probs_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan']+1)/($totalBobotKataKategori['Penerimaan']+ $totalBobotKataDataLatih );
                         $probs_administrasi = ($data['jumlah_kata_kategori']['Administrasi']+1)/($totalBobotKataKategori['Administrasi']+ $totalBobotKataDataLatih );
                         $probs_lainnya = ($data['jumlah_kata_kategori']['Lainnya']+1)/($totalBobotKataKategori['Lainnya']+ $totalBobotKataDataLatih );
+                        
+                        $likehood_pembayaran = $probs_pembayaran;
+                        $likehood_pengiriman = $probs_pengiriman;
+                        $likehood_penerimaan = $probs_penerimaan;
+                        $likehood_administrasi = $probs_administrasi;
+                        $likehood_lainnya = $probs_lainnya;
 
-                        // $probs_pembayaran *= $probs_pembayaran;
+                        $likehood_pembayaran *= $likehood_pembayaran;
+                        $probs_pengiriman *= $probs_pengiriman;
+                        $probs_penerimaan *= $probs_penerimaan;
+                        $probs_administrasi *= $probs_administrasi;
+                        $probs_lainnya *= $probs_lainnya;
                         // Lakukan perkalian probabilitas dengan nilai probabilitas kategori yang sesuai
-                        // $likehood_pembayaran *= $likehood_pembayaran;
-                        // $likehood_pengiriman *= $probs_pengiriman;
-                        // $likehood_penerimaan *= $probs_penerimaan;
-                        // $likehood_administrasi *= $probs_administrasi;
-                        // $likehood_lainnya *= $probs_lainnya;
+                        $likehood_pembayaran = $likehood_pembayaran;
+                        $likehood_pengiriman = $probs_pengiriman;
+                        $likehood_penerimaan = $probs_penerimaan;
+                        $likehood_administrasi = $probs_administrasi;
+                        $likehood_lainnya = $probs_lainnya;
                     ?>
                 <tr>
                     <td>{{ $no++ }}</td>
@@ -250,18 +264,14 @@
                     <td>{{ number_format($probs_administrasi, 9) }}</td>
                     <td>{{ number_format($probs_lainnya, 9)  }}</td>
                 </tr>
-                @endforeach
             </tbody>
             {{-- BUTUH PERBAIKAN LOGIKA --}}
             <tbody>
                 <tr>
                     <?php 
-                        $likehood_pembayaran = pow($probs_pembayaran,10);
-                        $likehood_pengiriman = $probs_pengiriman;
-                        $likehood_penerimaan = $probs_penerimaan;
-                        $likehood_administrasi = $probs_administrasi;
-                        $likehood_lainnya = $probs_lainnya;
+                        
                     ?>
+                @endforeach
                     <td colspan="2">Likehood</td>
                     <td>{{ $likehood_pembayaran }}</td>
                     <td>{{ $likehood_pengiriman }}</td>
@@ -269,6 +279,7 @@
                     <td>{{ $likehood_administrasi }}</td>
                     <td>{{ $likehood_lainnya }}</td>
                 </tr>
+
                 {{-- <tr>
                     <td>{{ number_format($likehood_pembayaran, 20) }}</td>
                     <td>{{ number_format($likehood_pengiriman, 20) }}</td>
@@ -335,7 +346,6 @@
         
         </div>
     </div>
-    
 </div>
 </div> 
 @endsection
