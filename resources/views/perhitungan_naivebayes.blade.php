@@ -228,70 +228,27 @@
             </tr>
             </thead>
             <tbody>
-                <?php $no=1; ?>
-                    @foreach ($jumlahKataUji as $data)
-                    <?php 
-                        $probs_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran']+1)/($totalBobotKataKategori['Pembayaran']+ $totalBobotKataDataLatih );
-                        $probs_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman']+1)/($totalBobotKataKategori['Pengiriman']+ $totalBobotKataDataLatih );
-                        $probs_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan']+1)/($totalBobotKataKategori['Penerimaan']+ $totalBobotKataDataLatih );
-                        $probs_administrasi = ($data['jumlah_kata_kategori']['Administrasi']+1)/($totalBobotKataKategori['Administrasi']+ $totalBobotKataDataLatih );
-                        $probs_lainnya = ($data['jumlah_kata_kategori']['Lainnya']+1)/($totalBobotKataKategori['Lainnya']+ $totalBobotKataDataLatih );
-                        
-                        $likehood_pembayaran = $probs_pembayaran;
-                        $likehood_pengiriman = $probs_pengiriman;
-                        $likehood_penerimaan = $probs_penerimaan;
-                        $likehood_administrasi = $probs_administrasi;
-                        $likehood_lainnya = $probs_lainnya;
-
-                        $likehood_pembayaran *= $likehood_pembayaran;
-                        $probs_pengiriman *= $probs_pengiriman;
-                        $probs_penerimaan *= $probs_penerimaan;
-                        $probs_administrasi *= $probs_administrasi;
-                        $probs_lainnya *= $probs_lainnya;
-                        // Lakukan perkalian probabilitas dengan nilai probabilitas kategori yang sesuai
-                        $likehood_pembayaran = $likehood_pembayaran;
-                        $likehood_pengiriman = $probs_pengiriman;
-                        $likehood_penerimaan = $probs_penerimaan;
-                        $likehood_administrasi = $probs_administrasi;
-                        $likehood_lainnya = $probs_lainnya;
-                    ?>
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $data['kata'] }}</td>
-                    <td>{{ number_format($probs_pembayaran, 9) }}</td>
-                    <td>{{ number_format($probs_pengiriman , 9) }}</td>
-                    <td>{{ number_format($probs_penerimaan, 9) }}</td>
-                    <td>{{ number_format($probs_administrasi, 9) }}</td>
-                    <td>{{ number_format($probs_lainnya, 9)  }}</td>
-                </tr>
+                @foreach($likelihoodKategori as $index => $data)
+        <tr>
+            <td>{{ $index }}</td>
+            <td>{{ $data['kata'] }}</td>
+            <td>{{ number_format($data['Pembayaran'], 9)  }}</td>
+            <td>{{ $data['Pengiriman'] }}</td>
+            <td>{{ $data['Penerimaan'] }}</td>
+            <td>{{ $data['Administrasi'] }}</td>
+            <td>{{ $data['Lainnya'] }}</td>
+        </tr>
+        @endforeach
+        <tr>
+            <td colspan="2">Likehood</td>
+            <td>{{ $hasil_perkalian_probabilitas_pembayaran }}</td>
+            <td>{{ $hasil_perkalian_probabilitas_pengiriman }}</td>
+            <td>{{ $hasil_perkalian_probabilitas_penerimaan }}</td>
+            <td>{{ $hasil_perkalian_probabilitas_administrasi }}</td>
+            <td>{{ $hasil_perkalian_probabilitas_lainnya }}</td>
+        </tr>
             </tbody>
-            {{-- BUTUH PERBAIKAN LOGIKA --}}
-            <tbody>
-                <tr>
-                    <?php 
-                        
-                    ?>
-                @endforeach
-                    <td colspan="2">Likehood</td>
-                    <td>{{ $likehood_pembayaran }}</td>
-                    <td>{{ $likehood_pengiriman }}</td>
-                    <td>{{ $likehood_penerimaan }}</td>
-                    <td>{{ $likehood_administrasi }}</td>
-                    <td>{{ $likehood_lainnya }}</td>
-                </tr>
-
-                {{-- <tr>
-                    <td>{{ number_format($likehood_pembayaran, 20) }}</td>
-                    <td>{{ number_format($likehood_pengiriman, 20) }}</td>
-                    <td>{{ number_format($likehood_penerimaan, 20) }}</td>
-                    <td>{{ number_format($likehood_administrasi, 20) }}</td>
-                    <td>{{ number_format($likehood_lainnya, 20) }}</td> --}}
-
-                </tr>
-            </tbody>
-           
         </table>
-        
         </div>
     </div>
     <h2 class="h4 mb-1 ">Tahap 3: Perhitungan </h2>
@@ -307,40 +264,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                        $no=1;
-                        // $posterior_pembayaran = $probs_pembayaran * $likehood_pembayaran;
-                        // $posterior_pengiriman = $probs_pengiriman * $likehood_pengiriman;
-                        // $posterior_penerimaan = $probs_penerimaan * $likehood_penerimaan;
-                        // $posterior_administrasi = $probs_administrasi* $likehood_administrasi;
-                        // $posterior_lainnya =   $probs_lainnya * $likehood_lainnya;
-                    ?>
-                    {{-- <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Pembayaran</td>
-                        <td>{{ $posterior_pembayaran }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Pengiriman</td>
-                        <td>{{ $posterior_pengiriman }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Penerimaan</td>
-                        <td>{{ $posterior_penerimaan }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Administrasi</td>
-                        <td>{{ $posterior_administrasi }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Lainnya</td>
-                        <td>{{ $posterior_lainnya }}</td>
-                    </tr> --}}
+                    
+                    
                 </tbody>
             </table>
         

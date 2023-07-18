@@ -206,26 +206,41 @@ class NaiveBayesController extends Controller
         // Menghitung total bobot kata pada data latih
         $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
-// BELUM FIX
-        // foreach ($jumlahKataUji as $ujidata) {
-        //     $probabilitas_pembayaran = ($ujidata['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
-        // }
-        // 
-        // $likehood = [
-        //     'Pembayaran' => 0,
-        //     'Pengiriman' => 0,
-        //     'Penerimaan' => 0,
-        //     'Administrasi' => 0,
-        //     'Lainnya' => 0,
-        // ];
-        // Iterasi melalui setiap kata pada data latih
-        // foreach ($formattedTotalWordCount as $kata) {
-        //     $likehood['Pembayaran'] += $kata['Pembayaran'];
-        //     $likehood['Pengiriman'] += $kata['Pengiriman'];
-        //     $likehood['Penerimaan'] += $kata['Penerimaan'];
-        //     $likehood['Administrasi'] += $kata['Administrasi'];
-        //     $likehood['Lainnya'] += $kata['Lainnya'];
-        // }
+        // Perhitungan likelihood setiap kategori untuk data uji
+        $likelihoodKategori = [];
+
+        foreach ($jumlahKataUji as $data) {
+            $kata = $data['kata'];
+            $likelihood_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
+            $likelihood_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman'] + 1) / ($totalBobotKataKategori['Pengiriman'] + $totalBobotKataDataLatih);
+            $likelihood_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan'] + 1) / ($totalBobotKataKategori['Penerimaan'] + $totalBobotKataDataLatih);
+            $likelihood_administrasi = ($data['jumlah_kata_kategori']['Administrasi'] + 1) / ($totalBobotKataKategori['Administrasi'] + $totalBobotKataDataLatih);
+            $likelihood_lainnya = ($data['jumlah_kata_kategori']['Lainnya'] + 1) / ($totalBobotKataKategori['Lainnya'] + $totalBobotKataDataLatih);
+
+            $likelihoodKategori[] = [
+                'kata' => $kata,
+                'Pembayaran' => $likelihood_pembayaran,
+                'Pengiriman' => $likelihood_pengiriman,
+                'Penerimaan' => $likelihood_penerimaan,
+                'Administrasi' => $likelihood_administrasi,
+                'Lainnya' => $likelihood_lainnya,
+            ];
+            // Mengalikan semua nilai probabilitas pada kategori Pembayaran
+            $hasil_perkalian_probabilitas_pembayaran = 1;
+            $hasil_perkalian_probabilitas_pengiriman = 1;
+            $hasil_perkalian_probabilitas_penerimaan = 1;
+            $hasil_perkalian_probabilitas_administrasi = 1;
+            $hasil_perkalian_probabilitas_lainnya = 1;
+            foreach ($likelihoodKategori as $data) {
+                $hasil_perkalian_probabilitas_pembayaran *= $data['Pembayaran'];
+                $hasil_perkalian_probabilitas_pengiriman *= $data['Pengiriman'];
+                $hasil_perkalian_probabilitas_penerimaan *= $data['Penerimaan'];
+                $hasil_perkalian_probabilitas_administrasi *= $data['Administrasi'];
+                $hasil_perkalian_probabilitas_lainnya *= $data['Lainnya'];
+            }
+
+        }
+
 
         // Menampilkan hasil klasifikasi
         if (!empty($klasifikasi)) {
@@ -233,7 +248,6 @@ class NaiveBayesController extends Controller
         } else {
             $hasilKlasifikasi = 'Tidak Diketahui';
         }
- 
 
         return view('perhitungan_naivebayes', 
         compact(
@@ -252,9 +266,18 @@ class NaiveBayesController extends Controller
             'totalBobotKataKategori',
             'totalBobotKataDataLatih',
                 'hasilKlasifikasi',
+                // 'likelihoods',
+                // 'perkalianProbabilitas'
                 // 'probabilitas_pembayaran',
+                'likelihoodKategori',
+                'hasil_perkalian_probabilitas_pembayaran',
+                'hasil_perkalian_probabilitas_pengiriman',
+                'hasil_perkalian_probabilitas_penerimaan',
+                'hasil_perkalian_probabilitas_administrasi',
+                'hasil_perkalian_probabilitas_lainnya',
         ));
     }
+
 
     public function showForm()
     {
