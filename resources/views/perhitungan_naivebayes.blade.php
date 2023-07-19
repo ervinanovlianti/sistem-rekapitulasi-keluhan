@@ -228,15 +228,15 @@
             </tr>
             </thead>
             <tbody>
-                @foreach($likelihoodKategori as $index => $data)
+                @foreach($likehoodKategori as $index => $data)
         <tr>
             <td>{{ $index }}</td>
             <td>{{ $data['kata'] }}</td>
             <td>{{ number_format($data['Pembayaran'], 9)  }}</td>
-            <td>{{ $data['Pengiriman'] }}</td>
-            <td>{{ $data['Penerimaan'] }}</td>
-            <td>{{ $data['Administrasi'] }}</td>
-            <td>{{ $data['Lainnya'] }}</td>
+            <td>{{ number_format($data['Pengiriman'], 9) }}</td>
+            <td>{{ number_format($data['Penerimaan'], 9) }}</td>
+            <td>{{ number_format($data['Administrasi'], 9) }}</td>
+            <td>{{ number_format($data['Lainnya'], 9) }}</td>
         </tr>
         @endforeach
         <tr>

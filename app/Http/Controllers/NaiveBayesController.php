@@ -26,11 +26,8 @@ class NaiveBayesController extends Controller
         ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
         ->get();
 
-        // -----------------------------------------------------------------
-        // ------PREPROCESSING DATA LATIH-----------------------------------
-        // -----------------------------------------------------------------
+        // --------------PREPROCESSING DATA LATIH---------------------------
         $processedKeluhan = [];
-
         foreach ($textkeluhan as $keluhan) {
             $uraianKeluhan = $keluhan->uraian_keluhan;
             $complaintText = $uraianKeluhan;
@@ -115,14 +112,10 @@ class NaiveBayesController extends Controller
                 $index++;
             }
         }
-        // -----------------------------------------------------------------
         // ---------------------PROBABILITAS PRIOR--------------------------
-        // -----------------------------------------------------------------
-
         // Menghitung jumlah setiap kategori
         $kategoriCount = [];
         $totalKeluhan = count($processedKeluhan);
-
         foreach ($processedKeluhan as $keluhan) {
             $kategori = $keluhan['kategori_keluhan'];
 
@@ -132,20 +125,16 @@ class NaiveBayesController extends Controller
                 $kategoriCount[$kategori]++;
             }
         }
-
         // Menghitung jumlah seluruh kategori
         $totalKategori = count($kategoriCount);
 
         // Menghitung probabilitas
         $probabilitas = [];
-
         foreach ($kategoriCount as $kategori => $count) {
             $probabilitas[$kategori] = $count / $totalKeluhan;
         }
 
-        // -----------------------------------------------------------------
         // ---------------------PREPROCESSING DATA UJI----------------------
-        // -----------------------------------------------------------------
 
         $dataUji = $request->input('data_uji');
         // Case Folding
@@ -166,9 +155,7 @@ class NaiveBayesController extends Controller
         // Memperbarui variabel $stemmedTokens menjadi array
         $stemmedTokensUji = explode(' ', $stemmedTextUji);
 
-        // -----------------------------------------------------------------
         // ----------------------VEKTORISASI DATA UJI-----------------------
-        // -----------------------------------------------------------------
 
         // Menghitung jumlah kata pada data uji yang sama dengan kata pada data latih
         $jumlahKataUji = [];
@@ -206,24 +193,24 @@ class NaiveBayesController extends Controller
         // Menghitung total bobot kata pada data latih
         $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
-        // Perhitungan likelihood setiap kategori untuk data uji
-        $likelihoodKategori = [];
+        // Perhitungan likehood setiap kategori untuk data uji
+        $likehoodKategori = [];
 
         foreach ($jumlahKataUji as $data) {
             $kata = $data['kata'];
-            $likelihood_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
-            $likelihood_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman'] + 1) / ($totalBobotKataKategori['Pengiriman'] + $totalBobotKataDataLatih);
-            $likelihood_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan'] + 1) / ($totalBobotKataKategori['Penerimaan'] + $totalBobotKataDataLatih);
-            $likelihood_administrasi = ($data['jumlah_kata_kategori']['Administrasi'] + 1) / ($totalBobotKataKategori['Administrasi'] + $totalBobotKataDataLatih);
-            $likelihood_lainnya = ($data['jumlah_kata_kategori']['Lainnya'] + 1) / ($totalBobotKataKategori['Lainnya'] + $totalBobotKataDataLatih);
+            $likehood_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
+            $likehood_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman'] + 1) / ($totalBobotKataKategori['Pengiriman'] + $totalBobotKataDataLatih);
+            $likehood_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan'] + 1) / ($totalBobotKataKategori['Penerimaan'] + $totalBobotKataDataLatih);
+            $likehood_administrasi = ($data['jumlah_kata_kategori']['Administrasi'] + 1) / ($totalBobotKataKategori['Administrasi'] + $totalBobotKataDataLatih);
+            $likehood_lainnya = ($data['jumlah_kata_kategori']['Lainnya'] + 1) / ($totalBobotKataKategori['Lainnya'] + $totalBobotKataDataLatih);
 
-            $likelihoodKategori[] = [
+            $likehoodKategori[] = [
                 'kata' => $kata,
-                'Pembayaran' => $likelihood_pembayaran,
-                'Pengiriman' => $likelihood_pengiriman,
-                'Penerimaan' => $likelihood_penerimaan,
-                'Administrasi' => $likelihood_administrasi,
-                'Lainnya' => $likelihood_lainnya,
+                'Pembayaran' => $likehood_pembayaran,
+                'Pengiriman' => $likehood_pengiriman,
+                'Penerimaan' => $likehood_penerimaan,
+                'Administrasi' => $likehood_administrasi,
+                'Lainnya' => $likehood_lainnya,
             ];
             // Mengalikan semua nilai probabilitas pada kategori Pembayaran
             $hasil_perkalian_probabilitas_pembayaran = 1;
@@ -231,7 +218,7 @@ class NaiveBayesController extends Controller
             $hasil_perkalian_probabilitas_penerimaan = 1;
             $hasil_perkalian_probabilitas_administrasi = 1;
             $hasil_perkalian_probabilitas_lainnya = 1;
-            foreach ($likelihoodKategori as $data) {
+            foreach ($likehoodKategori as $data) {
                 $hasil_perkalian_probabilitas_pembayaran *= $data['Pembayaran'];
                 $hasil_perkalian_probabilitas_pengiriman *= $data['Pengiriman'];
                 $hasil_perkalian_probabilitas_penerimaan *= $data['Penerimaan'];
@@ -258,7 +245,7 @@ class NaiveBayesController extends Controller
             'Lainnya' => 1,
         ];
 
-        foreach ($likelihoodKategori as $data) {
+        foreach ($likehoodKategori as $data) {
             $kata = $data['kata'];
             $hasilPerkalianProbabilitas['Pembayaran'] *= $data['Pembayaran'];
             $hasilPerkalianProbabilitas['Pengiriman'] *= $data['Pengiriman'];
@@ -301,10 +288,10 @@ class NaiveBayesController extends Controller
             'totalBobotKataKategori',
             'totalBobotKataDataLatih',
                 // 'hasilKlasifikasi',
-                // 'likelihoods',
+                // 'likehoods',
                 // 'perkalianProbabilitas'
                 // 'probabilitas_pembayaran',
-                'likelihoodKategori',
+                'likehoodKategori',
                 'hasil_perkalian_probabilitas_pembayaran',
                 'hasil_perkalian_probabilitas_pengiriman',
                 'hasil_perkalian_probabilitas_penerimaan',
