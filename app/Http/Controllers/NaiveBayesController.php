@@ -241,13 +241,48 @@ class NaiveBayesController extends Controller
 
         }
 
+        // Menampilkan setiap kategori
+        $kategoriList = array_keys($probabilitas);
 
-        // Menampilkan hasil klasifikasi
-        if (!empty($klasifikasi)) {
-            $hasilKlasifikasi = $klasifikasi[1];
-        } else {
-            $hasilKlasifikasi = 'Tidak Diketahui';
+        // Menampilkan hasil probabilitas untuk setiap kategori
+        $hasilProbabilitas = [];
+        foreach ($probabilitas as $kategori => $prob) {
+            $hasilProbabilitas[$kategori] = $prob;
         }
+
+        $hasilPerkalianProbabilitas = [
+            'Pembayaran' => 1,
+            'Pengiriman' => 1,
+            'Penerimaan' => 1,
+            'Administrasi' => 1,
+            'Lainnya' => 1,
+        ];
+
+        foreach ($likelihoodKategori as $data) {
+            $kata = $data['kata'];
+            $hasilPerkalianProbabilitas['Pembayaran'] *= $data['Pembayaran'];
+            $hasilPerkalianProbabilitas['Pengiriman'] *= $data['Pengiriman'];
+            $hasilPerkalianProbabilitas['Penerimaan'] *= $data['Penerimaan'];
+            $hasilPerkalianProbabilitas['Administrasi'] *= $data['Administrasi'];
+            $hasilPerkalianProbabilitas['Lainnya'] *= $data['Lainnya'];
+        }
+
+        // Menghitung hasil akhir
+        $hasilAkhir = [];
+        foreach ($hasilPerkalianProbabilitas as $kategori => $hasil) {
+            $hasilAkhir[$kategori] = $hasil * $probabilitas[$kategori];
+        }
+        // Mencari kategori dengan nilai terbesar (hasil akhir maksimum)
+        $kategoriTerbesar = '';
+        $nilaiTerbesar = 0;
+        foreach ($hasilAkhir as $kategori => $hasil) {
+            if ($hasil > $nilaiTerbesar) {
+                $kategoriTerbesar = $kategori;
+                $nilaiTerbesar = $hasil;
+            }
+        }
+
+
 
         return view('perhitungan_naivebayes', 
         compact(
@@ -265,7 +300,7 @@ class NaiveBayesController extends Controller
             'jumlahKataUji',
             'totalBobotKataKategori',
             'totalBobotKataDataLatih',
-                'hasilKlasifikasi',
+                // 'hasilKlasifikasi',
                 // 'likelihoods',
                 // 'perkalianProbabilitas'
                 // 'probabilitas_pembayaran',
@@ -275,6 +310,8 @@ class NaiveBayesController extends Controller
                 'hasil_perkalian_probabilitas_penerimaan',
                 'hasil_perkalian_probabilitas_administrasi',
                 'hasil_perkalian_probabilitas_lainnya',
+                'kategoriList', 'hasilProbabilitas', 'hasilPerkalianProbabilitas', 'hasilAkhir',
+                'kategoriTerbesar'
         ));
     }
 

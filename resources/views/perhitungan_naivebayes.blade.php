@@ -251,7 +251,7 @@
         </table>
         </div>
     </div>
-    <h2 class="h4 mb-1 ">Tahap 3: Perhitungan </h2>
+    <h2 class="h4 mb-1 ">Tahap 3: Perhitungan Probabilitas Tertinggi </h2>
     <div class="card shadow mb-5">
         <div class="card-body">
             <table class="table table-hover table-borderless border-v">
@@ -259,16 +259,35 @@
                 <tr>
                     <th>No</th>
                     <th>Kategori</th>
+                    <th>Prior Probabilitas</th>
+                    <th>Likehood</th>
                     <th>Posterior</th>
-                    
                 </tr>
                 </thead>
                 <tbody>
-                    
-                    
+                    <?php $no=1; ?>
+                    @foreach ($hasilAkhir as $kategori => $hasil)
+                    <tr>
+                        <td>{{ $no++ }}</td>
+                        <td>{{ $kategori }}</td>
+                        <td>{{ $hasilProbabilitas[$kategori] }}</td>
+                        <td>{{ $hasilPerkalianProbabilitas[$kategori] }}</td>
+                        <td>{{ $hasil }}</td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
-        
+
+    
+        </div>
+    </div>
+    <h2 class="h4 mb-1 ">Hasil Klasifikasi Kategori</h2>
+    <div class="card shadow mb-5">
+        <div class="card-body">
+            <!-- Menampilkan kategori dengan nilai terbesar -->
+    <p>Kategori dengan nilai terbesar adalah: {{ $kategoriTerbesar }}</p>
+    <p>Jadi Keluhan <strong>"{{ $dataUji }}" </strong>  termasuk kategori <strong>{{ $kategoriTerbesar }}</strong></p>
+
         </div>
     </div>
 </div>
