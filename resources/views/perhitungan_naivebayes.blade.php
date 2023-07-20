@@ -120,9 +120,9 @@
             <tr>
                 <th>No</th>
                 <th>Kategori</th>
-                <th>Jumlah Kategori</th>
-                <th>Jumlah Seluruh data</th>
-                <th>Probabilitas</th>
+                <th class="text-center">Jumlah Kategori</th>
+                <th class="text-center">Jumlah Seluruh data</th>
+                <th class="text-center">Probabilitas</th>
             </tr>
             </thead>
             <tbody>
@@ -140,6 +140,7 @@
         </table>
         </div>
     </div>
+
     <h2 class="h4 mb-1 ">Probabilitas likehood setiap kategori </h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -211,6 +212,7 @@
             </table>
         </div>
     </div>
+
     <h2 class="h4 mb-1 ">Tahap 2: Perhitungan Probabilitas kata yang sama pada kategori yang sama (likehood)</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -251,6 +253,7 @@
         </table>
         </div>
     </div>
+
     <h2 class="h4 mb-1 ">Tahap 3: Perhitungan Probabilitas Tertinggi </h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -281,15 +284,16 @@
     
         </div>
     </div>
+
     <h2 class="h4 mb-1 ">Hasil Klasifikasi Kategori</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
             <!-- Menampilkan kategori dengan nilai terbesar -->
-    <p>Kategori dengan nilai terbesar adalah: {{ $kategoriTerbesar }}</p>
-    <p>Jadi Keluhan <strong>"{{ $dataUji }}" </strong>  termasuk kategori <strong>{{ $kategoriTerbesar }}</strong></p>
-
+            <p>Kategori dengan nilai terbesar adalah: {{ $kategoriTerbesar }}</p>
+            <p>Jadi Keluhan <strong>"{{ $dataUji }}" </strong>  termasuk kategori <strong>{{ $kategoriTerbesar }}</strong></p>
         </div>
     </div>
+
 </div>
 </div> 
 @endsection

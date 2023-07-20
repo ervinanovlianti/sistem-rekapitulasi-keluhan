@@ -135,7 +135,6 @@ class NaiveBayesController extends Controller
         }
 
         // ---------------------PREPROCESSING DATA UJI----------------------
-
         $dataUji = $request->input('data_uji');
         // Case Folding
         $textUji = strtolower($dataUji);
@@ -156,7 +155,6 @@ class NaiveBayesController extends Controller
         $stemmedTokensUji = explode(' ', $stemmedTextUji);
 
         // ----------------------VEKTORISASI DATA UJI-----------------------
-
         // Menghitung jumlah kata pada data uji yang sama dengan kata pada data latih
         $jumlahKataUji = [];
 
@@ -269,7 +267,10 @@ class NaiveBayesController extends Controller
             }
         }
 
-
+        // $dataKeluhan = new KeluhanModel();
+        // $dataKeluhan->uraian_keluhan = $dataUji; // Data uji yang telah di-preprocessing
+        // $dataKeluhan->kategori_id = $kategoriTerbesar; // Kategori dengan nilai terbesar
+        // $dataKeluhan->save();
 
         return view('perhitungan_naivebayes', 
         compact(
