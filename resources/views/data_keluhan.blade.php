@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('content')
- <div class="row">
+<div class="row">
   <div class="col-md-12">
     <h2 class="h4 mb-1 text-center">Data Keluhan</h2>
     {{-- <p class="mb-3">Child rows with additional detailed information</p> --}}
@@ -42,7 +42,7 @@
               @endforeach
           </tbody>
         </table>
-        {{-- <nav aria-label="Table Paging" class="mb-0 text-muted">
+        <nav aria-label="Table Paging" class="mb-0 text-muted">
             <ul class="pagination justify-content-end mb-0">
                 <li class="page-item"><a class="page-link" href="#">Previous</a></li>
                 <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -50,7 +50,7 @@
                 <li class="page-item"><a class="page-link" href="#">3</a></li>
                 <li class="page-item"><a class="page-link" href="#">Next</a></li>
             </ul>
-        </nav> --}}
+        </nav>
       </div>
     </div>
   </div>

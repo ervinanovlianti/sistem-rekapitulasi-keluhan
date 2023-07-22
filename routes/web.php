@@ -20,10 +20,8 @@ Route::get('/pelanggan', function () {
 Route::get('/cs', function () {
     return view('data_cs');
 });
-
 Route::get('/input_keluhan', [KeluhanController::class, 'showInputForm']);
 Route::post('/input_keluhan', [KeluhanController::class, 'store']);
-
 Route::get('/input_datacs', function () {
     return view('input_datacs');
 });
@@ -38,3 +36,10 @@ Route::get('/profil', function () {
 
 Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
 Route::post('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
+
+Route::get('/dashboard-cs', function () {
+    return view('cs.dashboard_cs');
+});
+Route::get('/dashboard-pj', function () {
+    return view('pengguna_jasa.dashboard_pj');
+});

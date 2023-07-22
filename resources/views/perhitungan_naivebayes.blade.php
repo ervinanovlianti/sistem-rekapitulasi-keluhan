@@ -78,11 +78,87 @@
         <div class="card-body">
             <form method="post" action="/perhitungan-naive-bayes">
                 @csrf
-                <label for="data_uji">Data Uji</label>
-                <textarea id="data_uji" name="data_uji" class="form-control mb-4" rows="2" cols="50"></textarea>
+                <div class="mb-3">
+                    {{-- <label for="" class="form-label">Tanggal Keluhan</label> --}}
+                    {{-- <input type="hidden" class="form-control" name="tgl_keluhan" id="exampleInputEmail1" aria-describedby="" value="{{ date("Y-m-d h:i:sa") }}"> --}}
+                </div>
+                {{-- Identitas Pengguna Jasa --}}
+                <div class="mb-3">
+                    <label for="" class="form-label">Nama Pelapor</label>
+                    <input type="text" class="form-control" id="" name="nama">
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">No. Telepon</label>
+                    <input type="text" class="form-control" name="no_telepon" id="">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="example-select">Jenis Customer</label>
+                    <select class="form-control" id="example-select" name="jenis_pengguna">
+                        <option>--Pilih--</option>
+                        <option value="Perusahaan">Perusahaan</option>
+                        <option value="Perseorangan">Perseorangan</option>
+                    </select>
+                </div>
+                {{-- jika form select diisi dengan perusahaan muncul form tambahan --}}
+                {{-- <div class="mb-3">
+                    <label for="" class="form-label">Nama Perusahaan</label>
+                    <input type="text" class="form-control" id="exampleInputPassword1">
+                </div> --}}
+                {{-- Akhir --}}
+
+                {{-- Via Keluhan --}}
+                {{-- Jika admin terdapat via keluhan --}}
+                <div class="form-group mb-3">
+                    <label for="example-select">Via Keluhan</label>
+                    <select class="form-control" id="example-select" name="via_keluhan">
+                        <option selected>--Pilih--</option>
+                        <option value="Wa/Hp">Wa/Hp</option>
+                        <option value="Web">Web</option>
+                        <option value="Visit">Visit</option>
+                        <option value="Talkie/Walkie">Talkie/Walkie</option>
+                    </select>
+                </div>
+                {{-- Akhir via keluhan --}}
+                 {{-- Pelanggan (add properti hidden)--}}
+                <div class="mb-3">
+                    <label for="" class="form-label">Alamat Email</label>
+                    <input type="text" class="form-control" id="" name="email" placeholder="">
+                </div>
+
+                {{-- <div class="mb-3">
+                    <label for="" class="form-label">Uraian Masalah</label>
+                    <input type="text" class="form-control" id="" maxlength="280" name="uraian_keluhan">
+                </div> --}}
+                {{-- Akhir pelanggan --}}
+                {{-- <div class="mb-3">
+                    <label for="" class="form-label">File/Gambar</label>
+                    <input type="file" class="form-control" id="">
+                </div> --}}
+                <label for="uraian_keluhan">Uraian Keluhan Data Uji</label>
+                <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="2" cols="50" maxlength="300"></textarea>
                 <button type="submit" class="btn btn-primary" >Proses</button>
             </form>
 
+        </div>
+    </div>
+     <h2 class="h4 mb-1">Preview Data Keluhan</h2>
+    <div class="card shadow mb-5">
+        <div class="card-body">
+            <h5>Identitas Customer</h5>
+            <p>Id Pelanggan: {{ $idPengguna }}</p>
+            <p>Nama Lengkap: {{ $namaPengguna }}</p>
+            <p>Alamat Email: {{ $email }}</p>
+            <p>No Telepon: {{ $noTelepon }}</p>
+            <p>Jenis Customer: {{ $jenisPengguna }}</p>
+            <p>Hak Akses: {{ $hakAkses }}</p>
+            <h5>Data Keluhan</h5>
+            <p>Id Keluhan: {{ $idKeluhan }}</p>
+            <p>Tanggal Keluhan: {{ $tglKeluhan }}</p>
+            <p>Id Pelanggan: {{ $idPengguna }}</p>
+            <p>Via Keluhan: {{ $viaKeluhan }}</p>
+            <p>Uraian Keluhan: {{ $dataUji }}</p>
+            <p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
+            
         </div>
     </div>
 

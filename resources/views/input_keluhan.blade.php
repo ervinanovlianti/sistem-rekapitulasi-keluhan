@@ -10,11 +10,11 @@
             <form>
                 <div class="mb-3">
                     <label for="" class="form-label">Tanggal Keluhan</label>
-                    <input type="text" class="form-control" name="tgl_keluhan" id="exampleInputEmail1" aria-describedby="" value="{{ date('l, d-m-Y  H:i') }}">
+                    <input type="text" class="form-control" name="tgl_keluhan" id="exampleInputEmail1" aria-describedby="" value="{{ date("Y-m-d h:i:sa") }}">
                 </div>
                 {{-- Identitas Pengguna Jasa --}}
                 <div class="mb-3">
-                    <label for="" class="form-label">Nama Pengguna</label>
+                    <label for="" class="form-label">Nama Pelapor</label>
                     <input type="text" class="form-control" id="" name="nama_pengguna">
                 </div>
                 <div class="mb-3">
@@ -30,10 +30,10 @@
                     </select>
                 </div>
                 {{-- jika form select diisi dengan perusahaan muncul form tambahan --}}
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="" class="form-label">Nama Perusahaan</label>
                     <input type="text" class="form-control" id="exampleInputPassword1">
-                </div>
+                </div> --}}
                 {{-- Akhir --}}
 
                 {{-- Via Keluhan --}}
@@ -60,10 +60,10 @@
                     <input type="text" class="form-control" id="" maxlength="280" name="uraian_keluhan">
                 </div>
                 {{-- Akhir pelanggan --}}
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="" class="form-label">File/Gambar</label>
                     <input type="file" class="form-control" id="">
-                </div>
+                </div> --}}
                 <a href="" class="btn btn-secondary">Kembali</a>
                 <button type="submit" href="" class="btn btn-primary">Tambah</button>
             </form>

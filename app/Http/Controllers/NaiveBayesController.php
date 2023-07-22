@@ -8,6 +8,9 @@ use Sastrawi\Stemmer\StemmerFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+
 class NaiveBayesController extends Controller
 {
     public function index()
@@ -135,7 +138,18 @@ class NaiveBayesController extends Controller
         }
 
         // ---------------------PREPROCESSING DATA UJI----------------------
-        $dataUji = $request->input('data_uji');
+        $tanggal_sekarang = Carbon::now()->format('YmdHis'); // Mengambil tanggal dan waktu sekarang dalam format YmdHis (contoh: 20230704141530)
+        $kode_unik = Str::random(4); // Menghasilkan string acak dengan panjang 4 karakter
+        $idKeluhan = 'KEL' . $tanggal_sekarang . $kode_unik; // Menggabungkan tanggal dan waktu dengan kode unik dan menambahkan prefix 'KEL'
+        $tglKeluhan = $tanggal_sekarang;
+        $idPengguna = 'CUST'. $kode_unik;
+        $namaPengguna = $request->input('nama');
+        $email = $request->input('email');
+        $noTelepon = $request->input('no_telepon');
+        $jenisPengguna = $request->input('jenis_pengguna');
+        $hakAkses = 'pengguna_jasa';
+        $viaKeluhan = $request->input('via_keluhan');
+        $dataUji = $request->input('uraian_keluhan');
         // Case Folding
         $textUji = strtolower($dataUji);
         // Tokenizing
@@ -276,6 +290,15 @@ class NaiveBayesController extends Controller
         compact(
             'processedKeluhan', 
             'formattedTotalWordCount',
+            'idKeluhan',
+            'tglKeluhan',
+            'idPengguna',
+            'namaPengguna',
+            'email',
+            'noTelepon',
+            'jenisPengguna',
+            'hakAkses',
+            'viaKeluhan',
             'dataUji',
             'textUji',
             'tokenUji',
@@ -288,22 +311,17 @@ class NaiveBayesController extends Controller
             'jumlahKataUji',
             'totalBobotKataKategori',
             'totalBobotKataDataLatih',
-                // 'hasilKlasifikasi',
-                // 'likehoods',
-                // 'perkalianProbabilitas'
-                // 'probabilitas_pembayaran',
-                'likehoodKategori',
-                'hasil_perkalian_probabilitas_pembayaran',
-                'hasil_perkalian_probabilitas_pengiriman',
-                'hasil_perkalian_probabilitas_penerimaan',
-                'hasil_perkalian_probabilitas_administrasi',
-                'hasil_perkalian_probabilitas_lainnya',
-                'kategoriList', 'hasilProbabilitas', 'hasilPerkalianProbabilitas', 'hasilAkhir',
-                'kategoriTerbesar'
+            'likehoodKategori',
+            'hasil_perkalian_probabilitas_pembayaran',
+            'hasil_perkalian_probabilitas_pengiriman',
+            'hasil_perkalian_probabilitas_penerimaan',
+            'hasil_perkalian_probabilitas_administrasi',
+            'hasil_perkalian_probabilitas_lainnya',
+            'kategoriList', 'hasilProbabilitas', 'hasilPerkalianProbabilitas', 'hasilAkhir',
+            'kategoriTerbesar',
+
         ));
     }
-
-
     public function showForm()
     {
         return view('perhitungan_naivebayes');
