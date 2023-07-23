@@ -15,12 +15,7 @@ class NaiveBayesController extends Controller
 {
     public function index()
     {
-        $data_keluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
-        ->get();
-
-        return view('data_keluhan', compact('data_keluhan'));
+        
     }
     public function preprocessing(Request $request)
     {
@@ -138,9 +133,27 @@ class NaiveBayesController extends Controller
         }
 
         // ---------------------PREPROCESSING DATA UJI----------------------
+        $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
+        $lastCode = DB::table('data_keluhan')
+        ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
+        ->orderBy('id_keluhan', 'desc')
+            ->value('id_keluhan');
+
+        if ($lastCode) {
+            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
+            $lastNumber = (int) substr($lastCode, -5);
+            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+        } else {
+            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
+            $newNumber = '00001';
+        }
+
+        $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
+        // return $newKodeKeluhan;
+
         $tanggal_sekarang = Carbon::now()->format('YmdHis'); // Mengambil tanggal dan waktu sekarang dalam format YmdHis (contoh: 20230704141530)
         $kode_unik = Str::random(4); // Menghasilkan string acak dengan panjang 4 karakter
-        $idKeluhan = 'KEL' . $tanggal_sekarang . $kode_unik; // Menggabungkan tanggal dan waktu dengan kode unik dan menambahkan prefix 'KEL'
+        $idKeluhan = $newKodeKeluhan; // Menggabungkan tanggal dan waktu dengan kode unik dan menambahkan prefix 'KEL'
         $tglKeluhan = $tanggal_sekarang;
         $idPengguna = 'CUST'. $kode_unik;
         $namaPengguna = $request->input('nama');
@@ -148,6 +161,7 @@ class NaiveBayesController extends Controller
         $noTelepon = $request->input('no_telepon');
         $jenisPengguna = $request->input('jenis_pengguna');
         $hakAkses = 'pengguna_jasa';
+        $statusKeluhan = 'menunggu verifikasi admin';
         $viaKeluhan = $request->input('via_keluhan');
         $dataUji = $request->input('uraian_keluhan');
         // Case Folding
@@ -281,11 +295,6 @@ class NaiveBayesController extends Controller
             }
         }
 
-        // $dataKeluhan = new KeluhanModel();
-        // $dataKeluhan->uraian_keluhan = $dataUji; // Data uji yang telah di-preprocessing
-        // $dataKeluhan->kategori_id = $kategoriTerbesar; // Kategori dengan nilai terbesar
-        // $dataKeluhan->save();
-
         return view('perhitungan_naivebayes', 
         compact(
             'processedKeluhan', 
@@ -299,6 +308,7 @@ class NaiveBayesController extends Controller
             'jenisPengguna',
             'hakAkses',
             'viaKeluhan',
+            'statusKeluhan',
             'dataUji',
             'textUji',
             'tokenUji',
@@ -322,8 +332,46 @@ class NaiveBayesController extends Controller
 
         ));
     }
+
+    public function saveDataToDatabase(Request $request)
+    {
+        // Simpan data pelanggan ke dalam database
+        $dataPelanggan = [
+            'id_pengguna' => $request->input('id_pengguna'),
+            'nama' => $request->input('nama'),
+            'email' => $request->input('email'),
+            'no_telepon' => $request->input('no_telepon'),
+            'jenis_pengguna' => $request->input('jenis_pengguna'),
+            'hak_akses' => $request->input('hak_akses')
+        ];
+
+        DB::table('data_pengguna_jasa')->insert($dataPelanggan);
+
+        // Simpan data keluhan ke dalam database
+        $dataKeluhan = [
+            'id_keluhan' => $request->input('id_keluhan'),
+            'tgl_keluhan' => $request->input('tgl_keluhan'),
+            'id_pengguna' => $request->input('id_pengguna'),
+            'via_keluhan' =>  $request->input('via_keluhan'),
+            'uraian_keluhan' =>  $request->input('uraian_keluhan'),
+            'kategori_id' =>  $request->input('kategori_id'),
+            'status_keluhan' =>  $request->input('status_keluhan'),
+        ];
+
+        DB::table('data_keluhan')->insert($dataKeluhan);
+        return redirect('keluhan');
+    }
+
     public function showForm()
     {
         return view('perhitungan_naivebayes');
+    }
+    public function formInputDataCS()
+    {
+        return view('input_datacs');
+    }
+    public function inputDataCs()
+    {
+        
     }
 }
