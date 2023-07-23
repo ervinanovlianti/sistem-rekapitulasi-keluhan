@@ -8,23 +8,21 @@ Route::get('/', function () {
     return view('dashboard');
 });
 
-Route::get('/keluhan', [NaiveBayesController::class, 'index']);
+Route::get('/keluhan', [KeluhanController::class, 'index']);
 
 Route::get('/detail_keluhan', function () {
     return view('detail_keluhan');
 });
 
-Route::get('/pelanggan', function () {
-    return view('data_pelanggan');
-});
+Route::get('/pengguna-jasa', [KeluhanController::class, 'dataPenggunaJasa']);
 Route::get('/cs', function () {
     return view('data_cs');
 });
 Route::get('/input_keluhan', [KeluhanController::class, 'showInputForm']);
 Route::post('/input_keluhan', [KeluhanController::class, 'store']);
-Route::get('/input_datacs', function () {
-    return view('input_datacs');
-});
+Route::get('/input_datacs', [NaiveBayesController::class, 'formInputDataCs']);
+Route::post('/input_datacs', [NaiveBayesController::class, 'inputDataCs']);
+
 Route::get('/laporan', [KeluhanController::class, 'index']);
 
 Route::get('/rekapitulasi', function () {
@@ -43,3 +41,6 @@ Route::get('/dashboard-cs', function () {
 Route::get('/dashboard-pj', function () {
     return view('pengguna_jasa.dashboard_pj');
 });
+
+// Route untuk menyimpan hasil klasifikasi ke dalam database
+Route::post('/simpan-ke-database', [NaiveBayesController::class, 'saveDataToDatabase']);

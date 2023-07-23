@@ -33,7 +33,7 @@
         </a>
         </li>
         <li class="nav-item">
-        <a href="/pelanggan" aria-expanded="false" class="nav-link">
+        <a href="/pengguna-jasa" aria-expanded="false" class="nav-link">
             <i class="fe fe-users fe-16"></i>
             <span class="ml-3 item-text">Pelanggan</span>
         </a>

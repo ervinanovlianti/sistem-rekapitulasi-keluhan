@@ -144,7 +144,60 @@
      <h2 class="h4 mb-1">Preview Data Keluhan</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
-            <h5>Identitas Customer</h5>
+            <!-- ... kode lainnya ... -->
+
+<h5>Identitas Customer</h5>
+<p>Id Pelanggan: {{ $idPengguna }}</p>
+<p>Nama Lengkap: {{ $namaPengguna }}</p>
+<p>Alamat Email: {{ $email }}</p>
+<p>No Telepon: {{ $noTelepon }}</p>
+<p>Jenis Customer: {{ $jenisPengguna }}</p>
+
+<h5>Data Keluhan</h5>
+<p>Id Keluhan: {{ $idKeluhan }}</p>
+<p>Tanggal Keluhan: {{ $tglKeluhan }}</p>
+<p>Id Pelanggan: {{ $idPengguna }}</p>
+<p>Via Keluhan: {{ $viaKeluhan }}</p>
+<p>Uraian Keluhan: {{ $dataUji }}</p>
+<p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
+<p>Status Keluhan: {{ $statusKeluhan }}</p>
+
+<!-- Add a button to save the data -->
+<form action="/simpan-ke-database" method="post">
+    @csrf
+    <input type="hidden" name="id_pengguna" value="{{ $idPengguna }}">
+    <input type="hidden" name="nama" value="{{ $namaPengguna }}">
+    <input type="hidden" name="email" value="{{ $email }}">
+    <input type="hidden" name="no_telepon" value="{{ $noTelepon }}">
+    <input type="hidden" name="jenis_pengguna" value="{{ $jenisPengguna }}">
+    <input type="hidden" name="hak_akses" value="pengguna_jasa">
+    <input type="hidden" name="id_keluhan" value="{{ $idKeluhan }}">
+    <input type="hidden" name="tgl_keluhan" value="{{ $tglKeluhan }}">
+    <input type="hidden" name="via_keluhan" value="{{ $viaKeluhan }}">
+    <input type="hidden" name="uraian_keluhan" value="{{ $dataUji }}">
+    <input type="hidden" name="status_keluhan" value="menunggu verifikasi">
+    <?php 
+        if ($kategoriTerbesar == "Pembayaran") {
+            $kategori_id = 1;
+        } else if ($kategoriTerbesar == "Pengiriman") {
+            $kategori_id = 2;
+        } else if ($kategoriTerbesar == "Penerimaan") {
+            $kategori_id = 3;
+        } else if ($kategoriTerbesar == "Administrasi") {
+            $kategori_id = 4;
+        } else {
+            $kategori_id = 5;
+        }
+        
+    ?>
+    <input type="hidden" name="" value="{{ $kategoriTerbesar }}">
+    <input type="hidden" name="kategori_id" value="{{ $kategori_id }}">
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<!-- ... kode lainnya ... -->
+
+            {{-- <h5>Identitas Customer</h5>
             <p>Id Pelanggan: {{ $idPengguna }}</p>
             <p>Nama Lengkap: {{ $namaPengguna }}</p>
             <p>Alamat Email: {{ $email }}</p>
@@ -158,7 +211,7 @@
             <p>Via Keluhan: {{ $viaKeluhan }}</p>
             <p>Uraian Keluhan: {{ $dataUji }}</p>
             <p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
-            
+            <a href="" class="btn btn-primary">Simpan</a> --}}
         </div>
     </div>
 
