@@ -20,20 +20,15 @@
             </thead>
             <tbody>
                 <?php $no = 1; ?>
+                @foreach($data_cs as $cs)
                 <tr>
                     <td>{{ $no++ }}</td>
-                    <td>Cs 1</td>
-                    <td>cs1@pelindo.com</td>
-                    <td>0987</td>
-                    <td>Ilcs</td>
+                    <td>{{ $cs->nama }}</td>
+                    <td>{{ $cs->email }}</td>
+                    <td>{{ $cs->no_telepon }}</td>
+                    <td>{{ $cs->jenis_pengguna }}</td>
                 </tr>
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>Cs 2</td>
-                    <td>cs2@pelindo.com</td>
-                    <td>1234</td>
-                    <td>Ill</td>
-                </tr>
+                @endforeach
             </tbody>
             </table>
         </div>
