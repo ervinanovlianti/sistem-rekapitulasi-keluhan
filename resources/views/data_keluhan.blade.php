@@ -27,16 +27,27 @@
                 <td>{{  $no++ }}</td>
                 <td>{{ $item->nama }}</td>
                 {{-- <td></td> --}}
-                <td><a href="/perhitungan-naive-bayes">{{ $item->uraian_keluhan }}</a></td>
+                <td>{{ $item->uraian_keluhan }}</a></td>
                 <td>{{ $item->tgl_keluhan }}</td>
-                <td class="text-center"><span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
+                <td class="text-center">
+                  @if ($item->status_keluhan == 'selesai')
+                  <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span></td>
+                  @elseif ($item->status_keluhan == 'menunggu verifikasi')
+                  <span class="badge badge-pill badge-warning mr-2">{{ $item->status_keluhan }}</span></td>
+                  @else
+                  <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
+                  @endif
                 <td>{{ $item->kategori_keluhan }}</td>
                 <td>
                   <button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="text-muted sr-only">Action</span>
                   </button>
                   <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#">Tangani</a>
+
+                    {{-- <a href="/detail-keluhan/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a> --}}
+                    {{-- <a href="{{ route('detail-keluhan', ['id' => $item->id_keluhan]) }}" class="btn btn-primary">Detail</a> --}}
+                    <a href="/detail-keluhan/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a>
+                    {{-- <a class="dropdown-item" href="{{ route('data-keluhan.tangani', ['id' => $item->id_keluhan]) }}">Tangani</a> --}}
                   </div>
                 </td>
               </tr>
