@@ -13,31 +13,25 @@
                     <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>No. Kontak</th>
+                    <th>Email</th>
+                    <th>No. Telepon</th>
                     <th>Jenis Pelanggan</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no = 1; ?>
-                    <tr>
-                        <td>{{  $no++ }}</td>
-                        <td>Ervina</td>
-                        <td>123</td>
-                        <td>Perusahaan</td>
-                    </tr>
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>PT Mutiara Permata</td>
-                        <td>1234</td>
-                        <td>Perusahaan</td>
-                    </tr>
-
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>Mudyna</td>
-                        <td>1234</td>
-                        <td>Perseorangan</td>
-                    </tr>
+                <?php $no = 1; ?>
+                @foreach($data_penggunajasa as $pengguna)
+                <tr>
+                    <td>{{ $no++ }}</td>
+                    <td> {{ $pengguna->nama }}</td>
+                    <td> {{ $pengguna->email }}</td>
+                    <td> {{ $pengguna->no_telepon }}</td>
+                    <td> {{ $pengguna->jenis_pengguna }}</td>
+                </tr>
+                    
+    <!-- Tambahkan kode lain sesuai dengan kolom yang ingin ditampilkan -->
+@endforeach
+                    
                 </tbody>
             </table>
             <nav aria-label="Table Paging" class="mb-0 text-muted">
