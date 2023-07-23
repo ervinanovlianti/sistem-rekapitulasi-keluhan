@@ -54,9 +54,10 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php $no=1; ?>
                     @foreach($formattedTotalWordCount as $data)
                     <tr>
-                        <td>{{ $data['index'] }}</td>
+                        <td>{{ $no++ }}</td>
                         <td>{{ $data['kata'] }}</td>
                         <td>{{ $data['Pembayaran'] }}</td>
                         <td>{{ $data['Pengiriman'] }}</td>
@@ -72,15 +73,14 @@
         </div>
     </div>
 </div>
-
-    <h2 class="h4 mb-1">Masukkan Data Uji</h2>
+<h2 class="h4 mb-1">Masukkan Data Uji</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
-            <form method="post" action="/perhitungan-naive-bayes">
+            <form method="post" action="/perhitungan-naive-bayes" id="dataForm">
                 @csrf
                 <div class="mb-3">
                     {{-- <label for="" class="form-label">Tanggal Keluhan</label> --}}
-                    {{-- <input type="hidden" class="form-control" name="tgl_keluhan" id="exampleInputEmail1" aria-describedby="" value="{{ date("Y-m-d h:i:sa") }}"> --}}
+                    <input type="hidden" class="form-control" name="tgl_keluhan" id="exampleInputEmail1" aria-describedby="" value="{{ date("Y-m-d h:i:sa") }}">
                 </div>
                 {{-- Identitas Pengguna Jasa --}}
                 <div class="mb-3">
@@ -119,7 +119,7 @@
                     </select>
                 </div>
                 {{-- Akhir via keluhan --}}
-                 {{-- Pelanggan (add properti hidden)--}}
+                {{-- Pelanggan (add properti hidden)--}}
                 <div class="mb-3">
                     <label for="" class="form-label">Alamat Email</label>
                     <input type="text" class="form-control" id="" name="email" placeholder="">
@@ -138,72 +138,18 @@
                 <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="2" cols="50" maxlength="300"></textarea>
                 <button type="submit" class="btn btn-primary" >Proses</button>
             </form>
-
         </div>
     </div>
-     <h2 class="h4 mb-1">Preview Data Keluhan</h2>
-    <div class="card shadow mb-5">
+<h2 class="h4 mb-1">Preview Data Keluhan</h2>
+    <div class="card shadow mb-5" id="previewKeluhan">
         <div class="card-body">
-            <!-- ... kode lainnya ... -->
-
-<h5>Identitas Customer</h5>
-<p>Id Pelanggan: {{ $idPengguna }}</p>
-<p>Nama Lengkap: {{ $namaPengguna }}</p>
-<p>Alamat Email: {{ $email }}</p>
-<p>No Telepon: {{ $noTelepon }}</p>
-<p>Jenis Customer: {{ $jenisPengguna }}</p>
-
-<h5>Data Keluhan</h5>
-<p>Id Keluhan: {{ $idKeluhan }}</p>
-<p>Tanggal Keluhan: {{ $tglKeluhan }}</p>
-<p>Id Pelanggan: {{ $idPengguna }}</p>
-<p>Via Keluhan: {{ $viaKeluhan }}</p>
-<p>Uraian Keluhan: {{ $dataUji }}</p>
-<p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
-<p>Status Keluhan: {{ $statusKeluhan }}</p>
-
-<!-- Add a button to save the data -->
-<form action="/simpan-ke-database" method="post">
-    @csrf
-    <input type="hidden" name="id_pengguna" value="{{ $idPengguna }}">
-    <input type="hidden" name="nama" value="{{ $namaPengguna }}">
-    <input type="hidden" name="email" value="{{ $email }}">
-    <input type="hidden" name="no_telepon" value="{{ $noTelepon }}">
-    <input type="hidden" name="jenis_pengguna" value="{{ $jenisPengguna }}">
-    <input type="hidden" name="hak_akses" value="pengguna_jasa">
-    <input type="hidden" name="id_keluhan" value="{{ $idKeluhan }}">
-    <input type="hidden" name="tgl_keluhan" value="{{ $tglKeluhan }}">
-    <input type="hidden" name="via_keluhan" value="{{ $viaKeluhan }}">
-    <input type="hidden" name="uraian_keluhan" value="{{ $dataUji }}">
-    <input type="hidden" name="status_keluhan" value="menunggu verifikasi">
-    <?php 
-        if ($kategoriTerbesar == "Pembayaran") {
-            $kategori_id = 1;
-        } else if ($kategoriTerbesar == "Pengiriman") {
-            $kategori_id = 2;
-        } else if ($kategoriTerbesar == "Penerimaan") {
-            $kategori_id = 3;
-        } else if ($kategoriTerbesar == "Administrasi") {
-            $kategori_id = 4;
-        } else {
-            $kategori_id = 5;
-        }
-        
-    ?>
-    <input type="hidden" name="" value="{{ $kategoriTerbesar }}">
-    <input type="hidden" name="kategori_id" value="{{ $kategori_id }}">
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
-
-<!-- ... kode lainnya ... -->
-
-            {{-- <h5>Identitas Customer</h5>
+            <h5>Identitas Customer</h5>
             <p>Id Pelanggan: {{ $idPengguna }}</p>
             <p>Nama Lengkap: {{ $namaPengguna }}</p>
             <p>Alamat Email: {{ $email }}</p>
             <p>No Telepon: {{ $noTelepon }}</p>
             <p>Jenis Customer: {{ $jenisPengguna }}</p>
-            <p>Hak Akses: {{ $hakAkses }}</p>
+
             <h5>Data Keluhan</h5>
             <p>Id Keluhan: {{ $idKeluhan }}</p>
             <p>Tanggal Keluhan: {{ $tglKeluhan }}</p>
@@ -211,7 +157,40 @@
             <p>Via Keluhan: {{ $viaKeluhan }}</p>
             <p>Uraian Keluhan: {{ $dataUji }}</p>
             <p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
-            <a href="" class="btn btn-primary">Simpan</a> --}}
+            <p>Status Keluhan: {{ $statusKeluhan }}</p>
+
+            <!-- Add a button to save the data -->
+            <form action="/simpan-ke-database" method="post">
+                @csrf
+                <input type="hidden" name="id_pengguna" value="{{ $idPengguna }}">
+                <input type="hidden" name="nama" value="{{ $namaPengguna }}">
+                <input type="hidden" name="email" value="{{ $email }}">
+                <input type="hidden" name="no_telepon" value="{{ $noTelepon }}">
+                <input type="hidden" name="jenis_pengguna" value="{{ $jenisPengguna }}">
+                <input type="hidden" name="hak_akses" value="pengguna_jasa">
+                <input type="hidden" name="id_keluhan" value="{{ $idKeluhan }}">
+                <input type="hidden" name="tgl_keluhan" value="{{ $tglKeluhan }}">
+                <input type="hidden" name="via_keluhan" value="{{ $viaKeluhan }}">
+                <input type="hidden" name="uraian_keluhan" value="{{ $dataUji }}">
+                <input type="hidden" name="status_keluhan" value="menunggu verifikasi">
+                <?php 
+                    if ($kategoriTerbesar == "Pembayaran") {
+                        $kategori_id = 1;
+                    } else if ($kategoriTerbesar == "Pengiriman") {
+                        $kategori_id = 2;
+                    } else if ($kategoriTerbesar == "Penerimaan") {
+                        $kategori_id = 3;
+                    } else if ($kategoriTerbesar == "Administrasi") {
+                        $kategori_id = 4;
+                    } else {
+                        $kategori_id = 5;
+                    }
+                    
+                ?>
+                <input type="hidden" name="" value="{{ $kategoriTerbesar }}">
+                <input type="hidden" name="kategori_id" value="{{ $kategori_id }}">
+                <button type="submit" class="btn btn-primary" onclick="onClick()">Save</button>
+            </form>
         </div>
     </div>
 
@@ -359,25 +338,26 @@
             </tr>
             </thead>
             <tbody>
+                    <?php $no=1; ?>
                 @foreach($likehoodKategori as $index => $data)
-        <tr>
-            <td>{{ $index }}</td>
-            <td>{{ $data['kata'] }}</td>
-            <td>{{ number_format($data['Pembayaran'], 9)  }}</td>
-            <td>{{ number_format($data['Pengiriman'], 9) }}</td>
-            <td>{{ number_format($data['Penerimaan'], 9) }}</td>
-            <td>{{ number_format($data['Administrasi'], 9) }}</td>
-            <td>{{ number_format($data['Lainnya'], 9) }}</td>
-        </tr>
-        @endforeach
-        <tr>
-            <td colspan="2">Likehood</td>
-            <td>{{ $hasil_perkalian_probabilitas_pembayaran }}</td>
-            <td>{{ $hasil_perkalian_probabilitas_pengiriman }}</td>
-            <td>{{ $hasil_perkalian_probabilitas_penerimaan }}</td>
-            <td>{{ $hasil_perkalian_probabilitas_administrasi }}</td>
-            <td>{{ $hasil_perkalian_probabilitas_lainnya }}</td>
-        </tr>
+                <tr>
+                    <td>{{ $no++ }}</td>
+                    <td>{{ $data['kata'] }}</td>
+                    <td>{{ number_format($data['Pembayaran'], 9)  }}</td>
+                    <td>{{ number_format($data['Pengiriman'], 9) }}</td>
+                    <td>{{ number_format($data['Penerimaan'], 9) }}</td>
+                    <td>{{ number_format($data['Administrasi'], 9) }}</td>
+                    <td>{{ number_format($data['Lainnya'], 9) }}</td>
+                </tr>
+                @endforeach
+                <tr>
+                    <td colspan="2">Likehood</td>
+                    <td>{{ $hasil_perkalian_probabilitas_pembayaran }}</td>
+                    <td>{{ $hasil_perkalian_probabilitas_pengiriman }}</td>
+                    <td>{{ $hasil_perkalian_probabilitas_penerimaan }}</td>
+                    <td>{{ $hasil_perkalian_probabilitas_administrasi }}</td>
+                    <td>{{ $hasil_perkalian_probabilitas_lainnya }}</td>
+                </tr>
             </tbody>
         </table>
         </div>
