@@ -4,7 +4,7 @@
   <div class="col-md-12">
     <h2 class="h4 mb-1 text-center">Data Keluhan</h2>
     {{-- <p class="mb-3">Child rows with additional detailed information</p> --}}
-    <a href="/input_keluhan" class="btn btn-primary my-2">Tambah</a>
+    <a href="/perhitungan-naive-bayes" class="btn btn-primary my-2">Tambah</a>
     <div class="card shadow">
       <div class="card-body">
         <!-- table -->
@@ -25,7 +25,8 @@
               @foreach ($data_keluhan as $item)
               <tr>
                 <td>{{  $no++ }}</td>
-                <td></td>
+                <td>{{ $item->nama }}</td>
+                {{-- <td></td> --}}
                 <td><a href="/perhitungan-naive-bayes">{{ $item->uraian_keluhan }}</a></td>
                 <td>{{ $item->tgl_keluhan }}</td>
                 <td class="text-center"><span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
