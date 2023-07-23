@@ -10,14 +10,13 @@ Route::get('/', function () {
 
 Route::get('/keluhan', [KeluhanController::class, 'index']);
 
-Route::get('/detail_keluhan', function () {
-    return view('detail_keluhan');
-});
+// Route::get('/detail_keluhan', function () {
+//     return view('detail_keluhan');
+// });
 
 Route::get('/pengguna-jasa', [KeluhanController::class, 'dataPenggunaJasa']);
-Route::get('/cs', function () {
-    return view('data_cs');
-});
+Route::get('/cs', [KeluhanController::class, 'dataCS']);
+
 Route::get('/input_keluhan', [KeluhanController::class, 'showInputForm']);
 Route::post('/input_keluhan', [KeluhanController::class, 'store']);
 Route::get('/input_datacs', [NaiveBayesController::class, 'formInputDataCs']);
@@ -34,6 +33,11 @@ Route::get('/profil', function () {
 
 Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
 Route::post('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
+
+Route::get('/detail-keluhan/{id}', [KeluhanController::class, 'detailKeluhan']);
+Route::get('/verifikasi-keluhan/{id}', [KeluhanController::class, 'verifikasiKeluhan']);
+Route::get('/terima-keluhan/{id}', [KeluhanController::class, 'terimaKeluhan']);
+Route::get('/keluhan-selesai/{id}', [KeluhanController::class, 'keluhanSelesai']);
 
 Route::get('/dashboard-cs', function () {
     return view('cs.dashboard_cs');
