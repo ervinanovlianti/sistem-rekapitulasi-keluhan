@@ -4,29 +4,19 @@ use App\Http\Controllers\KeluhanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NaiveBayesController;
 
-Route::get('/', function () {
-    return view('dashboard');
-});
-
+Route::get('/', [KeluhanController::class, 'dashboard']);
 Route::get('/keluhan', [KeluhanController::class, 'index']);
-
-// Route::get('/detail_keluhan', function () {
-//     return view('detail_keluhan');
-// });
 
 Route::get('/pengguna-jasa', [KeluhanController::class, 'dataPenggunaJasa']);
 Route::get('/cs', [KeluhanController::class, 'dataCS']);
 
 Route::get('/input_keluhan', [KeluhanController::class, 'showInputForm']);
 Route::post('/input_keluhan', [KeluhanController::class, 'store']);
-Route::get('/input_datacs', [NaiveBayesController::class, 'formInputDataCs']);
-Route::post('/input_datacs', [NaiveBayesController::class, 'inputDataCs']);
+Route::get('/input_datacs', [KeluhanController::class, 'formInputDataCS']);
+Route::post('/input-datacs', [KeluhanController::class, 'inputDataCS']);
 
-Route::get('/laporan', [KeluhanController::class, 'index']);
-
-Route::get('/rekapitulasi', function () {
-    return view('rekapitulasi');
-});
+Route::get('/laporan', [KeluhanController::class, 'laporan']);
+Route::get('/rekapitulasi', [KeluhanController::class, 'index']);
 Route::get('/profil', function () {
     return view('profil');
 });
