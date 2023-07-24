@@ -147,15 +147,30 @@ class NaiveBayesController extends Controller
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumber = '00001';
         }
-
+        
         $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
-        // return $newKodeKeluhan;
 
-        $tanggal_sekarang = Carbon::now()->format('YmdHis'); // Mengambil tanggal dan waktu sekarang dalam format YmdHis (contoh: 20230704141530)
-        $kode_unik = Str::random(4); // Menghasilkan string acak dengan panjang 4 karakter
-        $idKeluhan = $newKodeKeluhan; // Menggabungkan tanggal dan waktu dengan kode unik dan menambahkan prefix 'KEL'
-        $tglKeluhan = $tanggal_sekarang;
-        $idPengguna = 'CUST'. $kode_unik;
+        // Simpan data pelanggan ke dalam database
+        $kodePJ = DB::table('data_pengguna_jasa')
+        ->where('id_pengguna', 'like', "CUST%")
+        ->orderBy('id_pengguna', 'desc')
+        ->value('id_pengguna');
+
+        if ($kodePJ) {
+            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
+            $lastNumberPJ = (int) substr($kodePJ, -4);
+            $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
+            $newNumberPJ = '0001';
+        }
+        $newKodePJ = "CUST-$newNumberPJ";
+
+        date_default_timezone_set('Asia/Makassar');
+        // Mendapatkan waktu sekarang
+        $idKeluhan = $newKodeKeluhan; 
+        $tglKeluhan = date('d/m/y H:i:s');
+        $idPengguna = $newKodePJ;
         $namaPengguna = $request->input('nama');
         $email = $request->input('email');
         $noTelepon = $request->input('no_telepon');
@@ -164,6 +179,7 @@ class NaiveBayesController extends Controller
         $statusKeluhan = 'menunggu verifikasi admin';
         $viaKeluhan = $request->input('via_keluhan');
         $dataUji = $request->input('uraian_keluhan');
+        
         // Case Folding
         $textUji = strtolower($dataUji);
         // Tokenizing
@@ -182,7 +198,7 @@ class NaiveBayesController extends Controller
         // Memperbarui variabel $stemmedTokens menjadi array
         $stemmedTokensUji = explode(' ', $stemmedTextUji);
 
-        // ----------------------VEKTORISASI DATA UJI-----------------------
+        // -----------VEKTORISASI DATA UJI------------
         // Menghitung jumlah kata pada data uji yang sama dengan kata pada data latih
         $jumlahKataUji = [];
 
@@ -198,7 +214,6 @@ class NaiveBayesController extends Controller
                     'Lainnya' => isset($totalWordCount[$kataUji]['Lainnya']) ? $totalWordCount[$kataUji]['Lainnya'] : 0,
                 ],
             ];
-            
         }
         // Inisialisasi variabel untuk menyimpan total bobot kata untuk setiap kategori
         $totalBobotKataKategori = [
@@ -366,12 +381,5 @@ class NaiveBayesController extends Controller
     {
         return view('perhitungan_naivebayes');
     }
-    public function formInputDataCS()
-    {
-        return view('input_datacs');
-    }
-    public function inputDataCs()
-    {
-        
-    }
+    
 }
