@@ -14,7 +14,7 @@
                     <div class="form-group col-4 mr-4">
                         <label for="search" class="sr-only">Search</label>
                         <input type="text" name="" id="" class="form-control" placeholder="Search">
-                        {{-- <input type="text" class="form-control" id="search" value="" placeholder="Search"> --}}
+                        
                     </div>
                     <div class="form-group col-3">
                         {{-- <label class="my-1 mr-2 sr-only" for="inlineFormCustomSelectPref">Status</label> --}}
@@ -43,7 +43,7 @@
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="actionMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Export </button>
                 <div class="dropdown-menu" aria-labelledby="actionMenuButton">
                     <a class="dropdown-item" href="#">PDF</a>
-                    <a class="dropdown-item" href="#">EXCEl</a>
+                    <a class="dropdown-item" href="#">EXCEL</a>
                 </div>
                 </div>
             </div>
@@ -59,25 +59,25 @@
                         <th>Via Keluhan</th>
                         <th>Status Keluhan</th>
                         <th>Waktu Selesai</th>
-                        <th>Aksi</th>
                         <th>Kategori</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                     <?php $no = 1; ?>
-              @foreach ($data_keluhan as $item)
-              <tr>
+                    <?php $no = 1; ?>
+                @foreach ($keluhan as $item)
+            <tr>
                 <td>{{  $no++ }}</td>
-                <td><a href="/perhitungan-naive-bayes">{{ $item->uraian_keluhan }}</a></td>
+                <td>{{ $item->uraian_keluhan }}</a></td>
                 <td>{{ $item->tgl_keluhan }}</td>
                 
                 <td>{{ $item->id_pengguna }}</td>
                 <td>{{ $item->via_keluhan }}</td>
                 <td class="text-center"><span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
                 <td>{{ $item->waktu_penyelesaian }}</td>
-                <td>{{ $item->aksi }}</td>
                 <td>{{ $item->kategori_keluhan }}</td>
-              @endforeach
+                <td>{{ $item->aksi }}</td>
+            @endforeach
                 </tbody>
             </table>
             <nav aria-label="Table Paging" class="mb-0 text-muted">
