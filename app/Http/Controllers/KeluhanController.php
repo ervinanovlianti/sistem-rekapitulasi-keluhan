@@ -6,6 +6,11 @@ use App\Models\KeluhanModel;
 use App\Models\PenggunaJasaModel;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+// use Maatwebsite\Excel\Concerns\ToModel;
+// use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use App\Imports\ImportKeluhan;
+
 
 use Illuminate\Http\Request;
 
@@ -20,6 +25,81 @@ class KeluhanController extends Controller
             ->get();
 
         return view('data_keluhan', compact('data_keluhan'));
+    }
+    public function rekapitulasi() {
+
+        // $jumlahPembayaran = DB::table('data_keluhan')
+        // ->where('kategori_id', 1)
+        // ->where('via_keluhan', 'Visit')
+        // ->count();
+        // $jumlahPengiriman = DB::table('data_keluhan')
+        // ->where('kategori_id', 2)
+        // ->where('via_keluhan', 'Visit')
+        // ->count();
+        // $jumlahPenerimaan = DB::table('data_keluhan')
+        // ->where('kategori_id', 3)
+        // ->where('via_keluhan', 'Visit')
+        // ->count();
+        // $jumlahAdministrasi = DB::table('data_keluhan')
+        // ->where('kategori_id', 4)
+        // ->where('via_keluhan', 'Visit')
+        // ->count();
+        // $jumlahLainnya = DB::table('data_keluhan')
+        // ->where('kategori_id', 5)
+        // ->where('via_keluhan', 'Visit')
+        // ->count();
+
+        // $jumlahPembayaran1 = DB::table('data_keluhan')
+        // ->where('kategori_id', 1)
+        // ->where('via_keluhan', 'Wa/HP')
+        // ->count();
+        // $jumlahPengiriman1 = DB::table('data_keluhan')
+        // ->where('kategori_id', 2)
+        // ->where('via_keluhan', 'Wa/HP')
+        // ->count();
+        // $jumlahPenerimaan1 = DB::table('data_keluhan')
+        // ->where('kategori_id', 3)
+        // ->where('via_keluhan', 'Wa/HP')
+        // ->count();
+        // $jumlahAdministrasi1 = DB::table('data_keluhan')
+        // ->where('kategori_id', 4)
+        // ->where('via_keluhan', 'Wa/HP')
+        // ->count();
+        // $jumlahLainnya1 = DB::table('data_keluhan')
+        // ->where('kategori_id', 5)
+        // ->where('via_keluhan', 'Wa/HP')
+        // ->count();
+
+        $visitKeluhan = 'Visit';
+        $visitKeluhan1 = 'Wa/HP';
+        $visitKeluhan2 = 'Web';
+        $visitKeluhan3 = 'Talkie/Walkie';
+
+        $jumlahKategoriKeluhan = KeluhanModel::where('via_keluhan', $visitKeluhan)
+        ->select('kategori_id', DB::raw('COUNT(*) as kategori_id'))
+        ->groupBy('kategori_id')
+        ->get();
+        $jumlahKategoriKeluhan1 = KeluhanModel::where('via_keluhan', $visitKeluhan1)
+        ->select('kategori_id', DB::raw('COUNT(*) as kategori_id'))
+        ->groupBy('kategori_id')
+        ->get();
+
+        // return $jumlahKategoriKeluhan;
+        
+        return view('rekapitulasi', compact(
+            // 'jumlahPembayaran',
+            // 'jumlahPengiriman',
+            // 'jumlahPenerimaan',
+            // 'jumlahAdministrasi',
+            // 'jumlahLainnya',
+            // 'jumlahPembayaran1',
+            // 'jumlahPengiriman1',
+            // 'jumlahPenerimaan1',
+            // 'jumlahAdministrasi1',
+            // 'jumlahLainnya1',
+            'jumlahKategoriKeluhan',
+            'jumlahKategoriKeluhan1',
+        ));
     }
     public function laporan() {
         $keluhan = DB::table('data_keluhan')
@@ -111,8 +191,7 @@ class KeluhanController extends Controller
 
         // Redirect ke halaman sebelumnya dengan pesan sukses
         return redirect('cs');
-    }
-    
+    } 
     public function detailKeluhan($id) {
         $keluhan = DB::table('data_keluhan')
         ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -181,4 +260,166 @@ class KeluhanController extends Controller
             return redirect('keluhan')->with('error', 'Keluhan tidak ditemukan.');
         }
     }
+    function formImportData() {
+        return view('import');
+    }
+
+    // public function importData(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'required|mimes:xls,xlsx'
+    //     ]);
+
+    //     try {
+    //         $file = $request->file('file');
+
+    //         Excel::import(new KeluhanImport, $file);
+
+    //         return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
+    //     } catch (\Exception $e) {
+    //         $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
+    //         return redirect()->back()->with('error', $errorMessage);
+    //     }
+    // }
+    public function importData(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        $file = $request->file('file');
+
+        try {
+            Excel::import(new ImportKeluhan, $file);
+
+            return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
+        } catch (\Exception $e) {
+            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan.';
+            return redirect()->back()->with('error', $errorMessage);
+        }
+    }
+    public function importDataUtama(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        $file = $request->file('file');
+
+        try {
+            Excel::import(new ImportKeluhan, $file);
+
+            return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
+        } catch (\Exception $e) {
+            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan.';
+            return redirect()->back()->with('error', $errorMessage);
+        }
+    }
+    public function importData2(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        try {
+            $file = $request->file('file');
+
+            // Mengabaikan row pertama (heading) dari file Excel
+            $data = Excel::toArray([], $file);
+            $data = array_slice($data[0], 1);
+
+            // Menentukan id_keluhan sesuai dengan format khusus
+            $bulanTahun = date('my');
+            $lastNumber = KeluhanModel::where('id_keluhan', 'like', "KEL-$bulanTahun%")->max('id_keluhan');
+            $lastNumber = ($lastNumber) ? (int) substr($lastNumber, -5) : 0;
+            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+            $idKeluhan = "KEL-$bulanTahun-$newNumber";
+
+            foreach ($data as $row) {
+                $keluhan = [
+                    'id_keluhan'        => $idKeluhan,
+                    'tgl_keluhan'       => $row[0],
+                    'id_pengguna'       => $row[1],
+                    'via_keluhan'       => $row[2],
+                    'uraian_keluhan'    => $row[3],
+                    'kategori_id'       => $row[4],
+                    'penanggungjawab'   => $row[5],
+                    'waktu_penyelesaian' => $row[6],
+                    'aksi'              => $row[7],
+                    'status_keluhan'    => $row[8],
+                    // Sesuaikan dengan kolom-kolom pada model KeluhanModel
+                ];
+
+                // Simpan data ke dalam database
+                KeluhanModel::create($keluhan);
+            }
+
+            return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
+        } catch (\Exception $e) {
+            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
+            return redirect()->back()->with('error', $errorMessage);
+        }
+    }
+    function importData1(Request $request) {
+
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        $file = $request->file('file');
+
+        try {
+            $data = Excel::toArray([], $file);
+
+            // Mengabaikan row pertama (heading) dari file Excel
+            $data = array_slice($data[0], 1);
+
+            // Menentukan id_keluhan sesuai dengan format khusus
+            $bulanTahun = date('my');
+            $lastNumber = KeluhanModel::where('id_keluhan', 'like', "KEL-$bulanTahun%")->max('id_keluhan');
+            $lastNumber = ($lastNumber) ? (int) substr($lastNumber, -5) : 0;
+            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+            $idKeluhan = "KEL-$bulanTahun-$newNumber";
+
+            // $lastNumberPJ = KeluhanModel::where('id_pengguna', 'like', "CUST%")->max('id_pengguna');
+            // $lastNumberPJ = ($lastNumberPJ) ? (int) substr($lastNumberPJ, -4) : 0;
+            // $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
+            // $idPengguna = "CUST-$newNumberPJ";
+
+            foreach ($data as $row) {
+                $keluhan = new KeluhanModel([
+                    'id_keluhan'        => $row['id_keluhan'],
+                    'tgl_keluhan'       => $row['tgl_keluhan'],
+                    'id_pengguna'       => $row['id_pengguna'],
+                    'via_keluhan'       => $row['via_keluhan'],
+                    'uraian_keluhan'    => $row['uraian_keluhan'],
+                    'kategori_id'       => $row['kategori_id'],
+                    'penanggungjawab'   => $row['penanggungjawab'],
+                    'waktu_penyelesaian'=> $row['waktu_penyelesaian'],
+                    'aksi'              => $row['aksi'],
+                    'status_keluhan'    => $row['status_keluhan'],
+                    // Sesuaikan dengan kolom-kolom pada model Keluhan
+                ]);
+                // $penggunaJasa = [
+                //     'id_pengguna'       => 1,
+                //     'nama' => $row['nama'],
+                //     'no_telepon' => $row['no_telepon'],
+                //     'jenis_pengguna' => $row['jenis_pengguna'],
+                //     'hak_akses' => 'pengguna_jasa',
+
+                //     // Sesuaikan dengan kolom-kolom pada model PenggunaJasa
+                // ];
+
+                // Simpan data ke dalam database
+                // DB::table('data_keluhan')->insert($keluhan);
+                // DB::table('data_pengguna_jasa')->insert($penggunaJasa);
+                $keluhan->save();
+            }
+
+            return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.');
+        }
+    }
+    
 }

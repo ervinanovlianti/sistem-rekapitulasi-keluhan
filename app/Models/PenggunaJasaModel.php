@@ -14,7 +14,7 @@ class PenggunaJasaModel extends Model
         'nama',
         'email',
         'password',
-        'no_telpon',
+        'no_telepon',
         'jenis_pengguna',
         'hak_akses',
     ];

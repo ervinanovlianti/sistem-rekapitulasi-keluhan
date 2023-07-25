@@ -5,6 +5,7 @@
     <h2 class="h4 mb-1 text-center">Data Keluhan</h2>
     {{-- <p class="mb-3">Child rows with additional detailed information</p> --}}
     <a href="/perhitungan-naive-bayes" class="btn btn-primary my-2">Tambah</a>
+    <a href="/import-data" class="btn btn-info my-2">Import</a>
     <div class="card shadow">
       <div class="card-body">
         <!-- table -->

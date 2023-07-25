@@ -7,7 +7,7 @@
         <div class="card shadow">
         <div class="card-body">
         <!-- table -->
-            <table class="table table-hover table-borderless border-v ">
+            {{-- <table class="table table-hover table-borderless border-v ">
                 <thead class="thead-dark">
                     <tr class="text-center">
                         <th rowspan="2">No</th>
@@ -31,62 +31,61 @@
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>Pembayaran</td>
-                        <td>23</td>
-                        <td>12</td>
-                        <td>15</td>
-                        <td>18</td>
-                        <td>27</td>
-                        <td>19</td>
-                        <td>16</td>
-                        <td>16</td>
+                        <td>{{ $jumlahPembayaran }}</td>
+                        <td>{{ $jumlahPembayaran1 }}</td>
+                        
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>Penerimaan</td>
-                        <td>23</td>
-                        <td>12</td>
-                        <td>15</td>
-                        <td>18</td>
-                        <td>27</td>
-                        <td>19</td>
-                        <td>16</td>
+                        <td>{{ $jumlahPengiriman }}</td>
+                        <td>{{ $jumlahPengiriman1 }}</td>
+                       
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>Pengiriman</td>
-                        <td>23</td>
-                        <td>12</td>
-                        <td>15</td>
-                        <td>18</td>
-                        <td>27</td>
-                        <td>19</td>
-                        <td>16</td>
+                        
+                        <td>{{ $jumlahPenerimaan }}</td>
+                        <td>{{ $jumlahPenerimaan1 }}</td>
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>Administrasi</td>
-                        <td>23</td>
-                        <td>12</td>
-                        <td>15</td>
-                        <td>18</td>
-                        <td>27</td>
-                        <td>19</td>
-                        <td>16</td>
+                        <td>{{ $jumlahAdministrasi }}</td>
+                        <td>{{ $jumlahAdministrasi1 }}</td>
+                        
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>Lainnya</td>
-                        <td>23</td>
-                        <td>12</td>
-                        <td>15</td>
-                        <td>18</td>
-                        <td>27</td>
-                        <td>19</td>
-                        <td>16</td>
+                        <td>{{ $jumlahLainnya }}</td>
+                        <td>{{ $jumlahLainnya1 }}</td>
                     </tr>
                 </tbody>
-            </table>
-            
+            </table> --}}
+
+
+            <h1>Hasil Perhitungan Jumlah Kategori Keluhan</h1>
+
+    <table>
+        <tr>
+            <th>Kategori Keluhan</th>
+            <th>Jumlah</th>
+        </tr>
+        @foreach ($jumlahKategoriKeluhan as $data)
+        <tr>
+            {{-- <td>{{ $data->kategori_id }}</td> --}}
+            <td>{{ $data->jumlah_kategori }}</td>
+        </tr>
+        @endforeach
+        @foreach ($jumlahKategoriKeluhan1 as $data1)
+        <tr>
+            <td>{{ $data1->kategori_id }}</td>
+            <td>{{ $data1->jumlah_kategori }}</td>
+        </tr>
+        @endforeach
+    </table>
         </div>
         </div>
     </div> <!-- simple table -->

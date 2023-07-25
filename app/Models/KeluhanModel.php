@@ -12,10 +12,16 @@ class KeluhanModel extends Model
     protected  $table = 'data_keluhan';
 
     protected $fillable = [
+        'id_keluhan',
         'tgl_keluhan',
         'id_pengguna',
         'via_keluhan',
         'uraian_keluhan',
+        'kategori_id',
+        'penanggungjawab',
+        'waktu_penyelesaian',
+        'aksi',
+        'status_keluhan'
     ];
 
     protected $hidden = [

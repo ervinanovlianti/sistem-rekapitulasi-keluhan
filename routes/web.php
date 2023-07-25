@@ -15,8 +15,12 @@ Route::post('/input_keluhan', [KeluhanController::class, 'store']);
 Route::get('/input_datacs', [KeluhanController::class, 'formInputDataCS']);
 Route::post('/input-datacs', [KeluhanController::class, 'inputDataCS']);
 
+Route::get('/import-data', [KeluhanController::class, 'formImportData']);
+Route::post('/import-data', [KeluhanController::class, 'importData']);
+
 Route::get('/laporan', [KeluhanController::class, 'laporan']);
-Route::get('/rekapitulasi', [KeluhanController::class, 'index']);
+Route::get('/rekapitulasi', [KeluhanController::class, 'rekapitulasi']);
+
 Route::get('/profil', function () {
     return view('profil');
 });
