@@ -27,79 +27,196 @@ class KeluhanController extends Controller
         return view('data_keluhan', compact('data_keluhan'));
     }
     public function rekapitulasi() {
+        $jumlahPembayaran = DB::table('data_keluhan')
+        ->where('kategori_id', 1)
+        ->where('via_keluhan', 'Visit')
+        ->count();
+        $jumlahPengiriman = DB::table('data_keluhan')
+        ->where('kategori_id', 2)
+        ->where('via_keluhan', 'Visit')
+        ->count();
+        $jumlahPenerimaan = DB::table('data_keluhan')
+        ->where('kategori_id', 3)
+        ->where('via_keluhan', 'Visit')
+        ->count();
+        $jumlahAdministrasi = DB::table('data_keluhan')
+        ->where('kategori_id', 4)
+        ->where('via_keluhan', 'Visit')
+        ->count();
+        $jumlahLainnya = DB::table('data_keluhan')
+        ->where('kategori_id', 5)
+        ->where('via_keluhan', 'Visit')
+        ->count();
 
-        // $jumlahPembayaran = DB::table('data_keluhan')
-        // ->where('kategori_id', 1)
-        // ->where('via_keluhan', 'Visit')
-        // ->count();
-        // $jumlahPengiriman = DB::table('data_keluhan')
-        // ->where('kategori_id', 2)
-        // ->where('via_keluhan', 'Visit')
-        // ->count();
-        // $jumlahPenerimaan = DB::table('data_keluhan')
-        // ->where('kategori_id', 3)
-        // ->where('via_keluhan', 'Visit')
-        // ->count();
-        // $jumlahAdministrasi = DB::table('data_keluhan')
-        // ->where('kategori_id', 4)
-        // ->where('via_keluhan', 'Visit')
-        // ->count();
-        // $jumlahLainnya = DB::table('data_keluhan')
-        // ->where('kategori_id', 5)
-        // ->where('via_keluhan', 'Visit')
-        // ->count();
+        $jumlahPembayaran1 = DB::table('data_keluhan')
+        ->where('kategori_id', 1)
+        ->where('via_keluhan', 'Wa/HP')
+        ->count();
+        $jumlahPengiriman1 = DB::table('data_keluhan')
+        ->where('kategori_id', 2)
+        ->where('via_keluhan', 'Wa/HP')
+        ->count();
+        $jumlahPenerimaan1 = DB::table('data_keluhan')
+        ->where('kategori_id', 3)
+        ->where('via_keluhan', 'Wa/HP')
+        ->count();
+        $jumlahAdministrasi1 = DB::table('data_keluhan')
+        ->where('kategori_id', 4)
+        ->where('via_keluhan', 'Wa/HP')
+        ->count();
+        $jumlahLainnya1 = DB::table('data_keluhan')
+        ->where('kategori_id', 5)
+        ->where('via_keluhan', 'Wa/HP')
+        ->count();
 
-        // $jumlahPembayaran1 = DB::table('data_keluhan')
-        // ->where('kategori_id', 1)
-        // ->where('via_keluhan', 'Wa/HP')
-        // ->count();
-        // $jumlahPengiriman1 = DB::table('data_keluhan')
-        // ->where('kategori_id', 2)
-        // ->where('via_keluhan', 'Wa/HP')
-        // ->count();
-        // $jumlahPenerimaan1 = DB::table('data_keluhan')
-        // ->where('kategori_id', 3)
-        // ->where('via_keluhan', 'Wa/HP')
-        // ->count();
-        // $jumlahAdministrasi1 = DB::table('data_keluhan')
-        // ->where('kategori_id', 4)
-        // ->where('via_keluhan', 'Wa/HP')
-        // ->count();
-        // $jumlahLainnya1 = DB::table('data_keluhan')
-        // ->where('kategori_id', 5)
-        // ->where('via_keluhan', 'Wa/HP')
-        // ->count();
+        $jumlahPembayaran2 = DB::table('data_keluhan')
+        ->where('kategori_id', 1)
+        ->where('via_keluhan', 'Web')
+        ->count();
+        $jumlahPengiriman2 = DB::table('data_keluhan')
+        ->where('kategori_id', 2)
+        ->where('via_keluhan', 'Web')
+        ->count();
+        $jumlahPenerimaan2 = DB::table('data_keluhan')
+        ->where('kategori_id', 3)
+        ->where('via_keluhan', 'Web')
+        ->count();
+        $jumlahAdministrasi2 = DB::table('data_keluhan')
+        ->where('kategori_id', 4)
+        ->where('via_keluhan', 'Web')
+        ->count();
+        $jumlahLainnya2 = DB::table('data_keluhan')
+        ->where('kategori_id', 5)
+        ->where('via_keluhan', 'Web')
+        ->count();
 
-        $visitKeluhan = 'Visit';
-        $visitKeluhan1 = 'Wa/HP';
-        $visitKeluhan2 = 'Web';
-        $visitKeluhan3 = 'Talkie/Walkie';
+        $jumlahPembayaran3 = DB::table('data_keluhan')
+        ->where('kategori_id', 1)
+        ->where('via_keluhan', 'Talkie Walkie')
+        ->count();
+        $jumlahPengiriman3 = DB::table('data_keluhan')
+        ->where('kategori_id', 2)
+        ->where('via_keluhan', 'Talkie Walkie')
+        ->count();
+        $jumlahPenerimaan3 = DB::table('data_keluhan')
+        ->where('kategori_id', 3)
+        ->where('via_keluhan', 'Talkie Walkie')
+        ->count();
+        $jumlahAdministrasi3 = DB::table('data_keluhan')
+        ->where('kategori_id', 4)
+        ->where('via_keluhan', 'Talkie Walkie')
+        ->count();
+        $jumlahLainnya3 = DB::table('data_keluhan')
+        ->where('kategori_id', 5)
+        ->where('via_keluhan', 'Talkie Walkie')
+        ->count();
 
-        $jumlahKategoriKeluhan = KeluhanModel::where('via_keluhan', $visitKeluhan)
-        ->select('kategori_id', DB::raw('COUNT(*) as kategori_id'))
-        ->groupBy('kategori_id')
-        ->get();
-        $jumlahKategoriKeluhan1 = KeluhanModel::where('via_keluhan', $visitKeluhan1)
-        ->select('kategori_id', DB::raw('COUNT(*) as kategori_id'))
-        ->groupBy('kategori_id')
-        ->get();
+        $kategoriId = 1;
+        $statusKeluhan = ['menunggu verifikasi', 'dialihkan ke cs','ditangani oleh cs'];
 
-        // return $jumlahKategoriKeluhan;
+        $statusKeluhanPembayaran1 = DB::table('data_keluhan')
+        ->where('kategori_id', $kategoriId)
+        ->whereIn('status_keluhan', $statusKeluhan)
+        ->count();
+
+        $statusKeluhanPembayaran2 = DB::table('data_keluhan')
+        ->where('kategori_id', $kategoriId)
+        ->where('status_keluhan', 'selesai')
+        ->count();
+
+        $statusKeluhanPembayaran3 = DB::table('data_keluhan')
+        ->where('kategori_id', $kategoriId)
+        ->where(function ($query) {
+            $query->where('status_keluhan', 'ditolak')
+            ->orWhere('status_keluhan', 'tidak selesai');
+        })
+        ->count();
         
+        // $rekapPembayaranVisit = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Visit');
+        // $rekapPembayaranWaHp = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'WA/HP');
+        // $rekapPembayaranWeb = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Web');
+        // $rekapPembayaranTW = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Talkie Walkie');
+
+        // $rekapPengirimanVisit = $this->rekapKeluhanByCategoryAndVia('Pengiriman', 'Visit');
+        // $rekapPengirimanWaHp = $this->rekapKeluhanByCategoryAndVia('Pengiriman', 'WA/HP');
+
+        // $rekapPenerimaanVisit = $this->rekapKeluhanByCategoryAndVia('Penerimaan', 'Visit');
+        // $rekapPenerimaanWaHp = $this->rekapKeluhanByCategoryAndVia('Penerimaan', 'WA/HP');
+
+        // $rekapAdministrasiVisit = $this->rekapKeluhanByCategoryAndVia('Administrasi', 'Visit');
+        // $rekapAdministrasiWaHp = $this->rekapKeluhanByCategoryAndVia('Administrasi', 'WA/HP');
+
+        // $rekapLainnyaVisit = $this->rekapKeluhanByCategoryAndVia('Lainnya', 'Visit');
+        // $rekapLainnyaWaHp = $this->rekapKeluhanByCategoryAndVia('Lainnya', 'WA/HP');
+
         return view('rekapitulasi', compact(
-            // 'jumlahPembayaran',
-            // 'jumlahPengiriman',
-            // 'jumlahPenerimaan',
-            // 'jumlahAdministrasi',
-            // 'jumlahLainnya',
-            // 'jumlahPembayaran1',
-            // 'jumlahPengiriman1',
-            // 'jumlahPenerimaan1',
-            // 'jumlahAdministrasi1',
-            // 'jumlahLainnya1',
-            'jumlahKategoriKeluhan',
-            'jumlahKategoriKeluhan1',
+            // 'rekapPembayaranVisit',
+            // 'rekapPembayaranWaHp',
+            // 'rekapPembayaranWeb',
+            // 'rekapPembayaranTW',
+            // 'rekapPengirimanVisit',
+            // 'rekapPengirimanWaHp',
+            // 'rekapPenerimaanVisit',
+            // 'rekapPenerimaanWaHp',
+            // 'rekapAdministrasiVisit',
+            // 'rekapAdministrasiWaHp',
+            // 'rekapLainnyaVisit',
+            // 'rekapLainnyaWaHp',
+            'statusKeluhanPembayaran1',
+            'statusKeluhanPembayaran2',
+            'statusKeluhanPembayaran3',
+            'jumlahPembayaran',
+            'jumlahPengiriman',
+            'jumlahPenerimaan',
+            'jumlahAdministrasi',
+            'jumlahLainnya',
+            'jumlahPembayaran1',
+            'jumlahPembayaran2',
+            'jumlahPembayaran3',
+            'jumlahPengiriman1',
+            'jumlahPengiriman2',
+            'jumlahPengiriman3',
+            'jumlahPenerimaan1',
+            'jumlahPenerimaan2',
+            'jumlahPenerimaan3',
+            'jumlahAdministrasi1',
+            'jumlahAdministrasi2',
+            'jumlahAdministrasi3',
+            'jumlahLainnya1',
+            'jumlahLainnya2',
+            'jumlahLainnya3',
+            
         ));
+    }
+    private function rekapKeluhanByCategoryAndVia($kategori, $via)
+    {
+        return DB::table('data_keluhan')
+        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+        ->select('data_kategori.kategori_keluhan', 'data_keluhan.via_keluhan', DB::raw('COUNT(*) as jumlah_keluhan'))
+        ->where('data_keluhan.via_keluhan', $via)
+            ->where('data_kategori.kategori_keluhan', $kategori)
+            ->groupBy('data_kategori.kategori_keluhan', 'data_keluhan.via_keluhan')
+            ->get();
+    }
+    public function showKeluhanByCategory()
+    {
+        $categories = DB::table('keluhan')
+        ->select('kategori_keluhan')
+        ->where('via_keluhan', 'Visit')
+        ->orWhere('via_keluhan', 'Wa/HP')
+        ->orWhere('via_keluhan', 'Talkie Walkie')
+        ->orWhere('via_keluhan', 'website')
+        ->distinct()
+            ->pluck('kategori_keluhan');
+
+        $statusCounts = DB::table('keluhan')
+        ->select('kategori_keluhan', 'status_keluhan', DB::raw('count(*) as count'))
+        ->whereIn('via_keluhan', ['Visit', 'Wa/HP', 'Talkie Walkie', 'website'])
+        ->whereIn('status_keluhan', ['menunggu verifikasi', 'dialihkan ke cs', 'selesai'])
+        ->groupBy('kategori_keluhan', 'status_keluhan')
+        ->get();
+
+        return view('keluhan.index', compact('categories', 'statusCounts'));
     }
     public function laporan() {
         $keluhan = DB::table('data_keluhan')
