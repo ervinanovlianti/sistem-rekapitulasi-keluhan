@@ -11,11 +11,16 @@
             <div class="col">
                 <form class="form-inline">
                 <div class="form-row">
-                    <div class="form-group col-4 mr-4">
+                    <form class="form-inline" action="{{ route('laporan') }}" method="GET">
+                    <div class="form-group col-4 mr-1">
                         <label for="search" class="sr-only">Search</label>
-                        <input type="text" name="" id="" class="form-control" placeholder="Search">
-                        
+                        <input type="text" name="keyword" id="search" class="form-control" placeholder="Search" value="{{ request ('keyword') }}">
                     </div>
+                    <div class="form-group col-1 mr-4">
+
+                        <button type="submit" class="btn btn-primary form-control">Cari</button>
+                    </div>
+                    </form>
                     <div class="form-group col-3">
                         {{-- <label class="my-1 mr-2 sr-only" for="inlineFormCustomSelectPref">Status</label> --}}
                         <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
