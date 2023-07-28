@@ -72,7 +72,7 @@
 
         </div>
     </div>
-</div>
+    </div>
 <h2 class="h4 mb-1">Masukkan Data Uji</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
@@ -124,12 +124,6 @@
                     <label for="" class="form-label">Alamat Email</label>
                     <input type="text" class="form-control" id="" name="email" placeholder="">
                 </div>
-
-                {{-- <div class="mb-3">
-                    <label for="" class="form-label">Uraian Masalah</label>
-                    <input type="text" class="form-control" id="" maxlength="280" name="uraian_keluhan">
-                </div> --}}
-                {{-- Akhir pelanggan --}}
                 {{-- <div class="mb-3">
                     <label for="" class="form-label">File/Gambar</label>
                     <input type="file" class="form-control" id="">
@@ -140,7 +134,10 @@
             </form>
         </div>
     </div>
-<h2 class="h4 mb-1">Preview Data Keluhan</h2>
+    @if ()
+        
+    @endif
+    <h2 class="h4 mb-1">Preview Data Keluhan</h2>
     <div class="card shadow mb-5" id="previewKeluhan">
         <div class="card-body">
             <h5>Identitas Customer</h5>
