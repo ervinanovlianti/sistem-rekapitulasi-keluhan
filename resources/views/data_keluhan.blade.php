@@ -27,7 +27,6 @@
               <tr>
                 <td>{{  $no++ }}</td>
                 <td>{{ $item->nama }}</td>
-                {{-- <td></td> --}}
                 <td>{{ $item->uraian_keluhan }}</a></td>
                 <td>{{ $item->tgl_keluhan }}</td>
                 <td class="text-center">
@@ -57,11 +56,7 @@
         </table>
         <nav aria-label="Table Paging" class="mb-0 text-muted">
             <ul class="pagination justify-content-end mb-0">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+              {{ $data_keluhan->links('pagination::bootstrap-4') }}
             </ul>
         </nav>
       </div>
