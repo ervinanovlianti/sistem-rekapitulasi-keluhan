@@ -10,8 +10,6 @@ use Maatwebsite\Excel\Facades\Excel;
 // use Maatwebsite\Excel\Concerns\ToModel;
 // use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use App\Imports\ImportKeluhan;
-
-
 use Illuminate\Http\Request;
 
 class KeluhanController extends Controller
@@ -23,8 +21,7 @@ class KeluhanController extends Controller
             ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
             ->orderBy('tgl_keluhan', 'desc')
-            ->get();
-
+            ->paginate(10);
         return view('data_keluhan', compact('data_keluhan'));
     }
     public function rekapitulasi()
@@ -200,7 +197,80 @@ class KeluhanController extends Controller
             ->groupBy('data_kategori.kategori_keluhan', 'data_keluhan.via_keluhan')
             ->get();
     }
-    public function laporan(Request $request)
+    public function laporan()
+    {
+        $keluhan = DB::table('data_keluhan')
+        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+        ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
+        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
+        ->orderBy('tgl_keluhan', 'desc')
+        ->paginate(10);
+
+        return view('laporan', compact('keluhan'));
+    }
+
+    public function cari(Request $request)
+    {
+        $keyword = $request->input('cari');
+        $bulan = $request->input('bulan');
+        $kategori = $request->input('kategori');
+
+        $keluhan = DB::table('data_keluhan')
+        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+        ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
+        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
+        ->where(function ($query) use ($keyword, $bulan, $kategori) {
+            if (!empty($keyword)) {
+                $query->where('uraian_keluhan', 'LIKE', "%$keyword%")
+                    ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('data_pengguna_jasa.nama', 'LIKE', '%' . $keyword . '%'); // Menambahkan pencarian berdasarkan nama pengguna jasa
+                //     ->orWhere('tgl_keluhan', 'LIKE', '%' . $keyword . '%')
+                //     ->orWhere('waktu_penyelesaian', 'LIKE', '%' . $keyword . '%')
+                //     ->orWhere('kategori_keluhan', 'LIKE', '%' . $keyword . '%')
+                //     ->orWhere('aksi', 'LIKE', '%' . $keyword . '%');
+            }
+
+            if (!empty($bulan)) {
+                $query->whereRaw("DATE_FORMAT(tgl_keluhan, '%Y-%m') = ?", [$bulan]);
+            }
+
+            if (!empty($kategori)) {
+                $query->where('kategori_keluhan', $kategori);
+            }
+
+            // if (!empty($id_kategori)) {
+            //     $query->where('id_kategori', $id_kategori);
+            // }
+        })
+            ->orderBy('tgl_keluhan', 'desc')
+            ->paginate(10);
+        
+        // $query = DB::table('data_keluhan')
+        // ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+        // ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
+        // ->where('uraian_keluhan', 'LIKE', '%' . $keyword . '%')
+        //     ->orWhere('tgl_keluhan', 'LIKE', '%' . $keyword . '%')
+        //     ->orWhere('data_pengguna_jasa.nama', 'LIKE', '%' . $keyword . '%') // Menambahkan pencarian berdasarkan nama pengguna jasa
+        //     ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
+        //     ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
+        //     ->orWhere('waktu_penyelesaian', 'LIKE', '%' . $keyword . '%')
+        //     ->orWhere('kategori_keluhan', 'LIKE', '%' . $keyword . '%')
+        //     ->orWhere('aksi', 'LIKE', '%' . $keyword . '%');
+
+        // if (!empty($bulan)) {
+        //     $query->whereRaw("DATE_FORMAT(tgl_keluhan, '%Y-%m') = ?", [$bulan]);
+        // }
+
+        // if (!empty($kategori)) {
+        //     $query->where('kategori_keluhan', $kategori);
+        // }
+
+        // $keluhan = $query->paginate(10);
+
+        return view('laporan', compact('keluhan', 'keyword', 'bulan', 'kategori'));
+    }
+    public function laporan2(Request $request)
     {
         $keyword = $request->input('keyword');
         $bulan = $request->input('bulan');
@@ -231,57 +301,6 @@ class KeluhanController extends Controller
 
         return view('laporan', compact('keluhan'));
     }
-    public function laporan1(Request $request)
-    {
-        $keyword = $request->input('keyword');
-
-
-
-        if (!empty($keyword)) {
-            $keluhan = DB::table('data_keluhan')
-                ->select('data_keluhan.*')
-                ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-                ->where('uraian_keluhan', 'LIKE', '%$keyword%')
-                ->orWhere('tgl_keluhan', 'LIKE', '%$keyword%')
-                ->orWhere('id_pengguna', 'LIKE', '%$keyword%')
-                ->orWhere('via_keluhan', 'LIKE', '%$keyword%')
-                ->orWhere('status_keluhan', 'LIKE', '%$keyword%')
-                ->orWhere('waktu_penyelesaian', 'LIKE', '%$keyword%')
-                ->orWhere('kategori_keluhan', 'LIKE', '%$keyword%')
-                ->orWhere('aksi', 'LIKE', '%$keyword%')
-                ->get();
-        }
-        if (empty($keyword)) {
-            $keluhan = DB::table('data_keluhan')
-                ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-                ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
-                ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
-                ->orderBy('tgl_keluhan', 'desc')
-                ->get();
-        }
-
-        return view('laporan', compact('keluhan'));
-    }
-    public function cari(Request $request)
-    {
-
-        $keyword = $request->input('cari');
-        $keluhan = DB::table('data_keluhan')
-            ->select('data_keluhan.*')
-            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-            ->where('uraian_keluhan', 'LIKE', '%$keyword%')
-            ->orWhere('tgl_keluhan', 'LIKE', '%$keyword%')
-            ->orWhere('id_pengguna', 'LIKE', '%$keyword%')
-            ->orWhere('via_keluhan', 'LIKE', '%$keyword%')
-            ->orWhere('status_keluhan', 'LIKE', '%$keyword%')
-            ->orWhere('waktu_penyelesaian', 'LIKE', '%$keyword%')
-            ->orWhere('kategori_keluhan', 'LIKE', '%$keyword%')
-            ->orWhere('aksi', 'LIKE', '%$keyword%')
-            ->get();
-
-        return view('laporan', compact('keluhan'));
-    }
-
 
     function dashboard()
     {
@@ -389,10 +408,10 @@ class KeluhanController extends Controller
             DB::table('data_keluhan')->where('id_keluhan', $id)->update(['status_keluhan' => 'dialihkan ke cs']);
 
             // Redirect kembali ke halaman data keluhan dengan pesan sukses
-            return redirect('keluhan')->with('success', 'Keluhan telah diverifikasi.');
+            return redirect()->back()->with('success', 'Keluhan telah diverifikasi.');
         } else {
             // Jika data keluhan tidak ditemukan, redirect kembali ke halaman data keluhan dengan pesan error
-            return redirect('keluhan')->with('error', 'Keluhan tidak ditemukan.');
+            return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
     }
     public function terimaKeluhan($id)
@@ -411,10 +430,10 @@ class KeluhanController extends Controller
                 ]);
 
             // Redirect kembali ke halaman data keluhan dengan pesan sukses
-            return redirect('keluhan')->with('success', 'Keluhan telah ditangan CS.');
+            return redirect()->back()->with('success', 'Keluhan telah ditangan CS.');
         } else {
             // Jika data keluhan tidak ditemukan, redirect kembali ke halaman data keluhan dengan pesan error
-            return redirect('keluhan')->with('error', 'Keluhan tidak ditemukan.');
+            return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
     }
     public function keluhanSelesai($id)
@@ -433,10 +452,10 @@ class KeluhanController extends Controller
                 ]);
 
             // Redirect kembali ke halaman data keluhan dengan pesan sukses
-            return redirect('keluhan')->with('success', 'Keluhan telah ditangan CS.');
+            return redirect()->back()->with('success', 'Keluhan telah ditangan CS.');
         } else {
             // Jika data keluhan tidak ditemukan, redirect kembali ke halaman data keluhan dengan pesan error
-            return redirect('keluhan')->with('error', 'Keluhan tidak ditemukan.');
+            return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
     }
     function formImportData()
