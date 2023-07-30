@@ -31,9 +31,9 @@ Route::post('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preproces
 Route::post('/simpan-ke-database', [NaiveBayesController::class, 'saveDataToDatabase']);
 
 Route::get('/detail-keluhan/{id}', [KeluhanController::class, 'detailKeluhan']);
-Route::get('/verifikasi-keluhan/{id}', [KeluhanController::class, 'verifikasiKeluhan']);
+Route::post('/verifikasi-keluhan', [KeluhanController::class, 'verifikasiKeluhan']);
 Route::get('/terima-keluhan/{id}', [KeluhanController::class, 'terimaKeluhan']);
-Route::get('/keluhan-selesai/{id}', [KeluhanController::class, 'keluhanSelesai']);
+Route::post('/konfirmasi-selesai', [KeluhanController::class, 'keluhanSelesai']);
 
 Route::get('/dashboard-cs', function () {
     return view('cs.dashboard_cs');
