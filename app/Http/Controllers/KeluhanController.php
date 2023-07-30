@@ -270,37 +270,6 @@ class KeluhanController extends Controller
 
         return view('laporan', compact('keluhan', 'keyword', 'bulan', 'kategori'));
     }
-    public function laporan2(Request $request)
-    {
-        $keyword = $request->input('keyword');
-        $bulan = $request->input('bulan');
-        $kategori = $request->input('kategori');
-
-        $query = KeluhanModel::query();
-
-        if (!empty($keyword)) {
-            $query->where('uraian_keluhan', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('aksi', 'LIKE', '%' . $keyword . '%');
-        }
-
-        if (!empty($bulan)) {
-            // Lakukan filter berdasarkan bulan laporan
-            // Misalnya, jika kolom tanggal laporan bernama 'tgl_laporan'
-            $query->whereMonth('tgl_laporan', $bulan);
-        }
-
-        if (!empty($kategori)) {
-            // Lakukan filter berdasarkan kategori keluhan
-            // Misalnya, jika kolom kategori keluhan bernama 'kategori_id'
-            $query->where('kategori_id', $kategori);
-        }
-
-        $keluhan = $query->get();
-
-        return view('laporan', compact('keluhan'));
-    }
 
     function dashboard()
     {
@@ -394,69 +363,61 @@ class KeluhanController extends Controller
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
             ->where('data_keluhan.id_keluhan', $id)
             ->first();
+        $cs= DB::table('data_pengguna_jasa')
+            ->where('hak_akses', 'customer_service')
+            ->get();
 
-        return view('detail_keluhan', compact('keluhan'));
+        return view('detail_keluhan', compact('keluhan', 'cs'));
     }
-    public function verifikasiKeluhan($id)
+    public function verifikasiKeluhan(Request $request)
     {
-        // Cari data keluhan berdasarkan ID
-        $keluhan = DB::table('data_keluhan')->where('id_keluhan', $id)->first();
+        // Dapatkan data keluhan berdasarkan id_keluhan
+        $keluhan = DB::table('data_keluhan')->where('id_keluhan', $request->id_keluhan)->first();
 
-        // Jika data keluhan ditemukan
-        if ($keluhan) {
-            // Lakukan update status keluhan menjadi "Terverifikasi"
-            DB::table('data_keluhan')->where('id_keluhan', $id)->update(['status_keluhan' => 'dialihkan ke cs']);
-
-            // Redirect kembali ke halaman data keluhan dengan pesan sukses
-            return redirect()->back()->with('success', 'Keluhan telah diverifikasi.');
-        } else {
-            // Jika data keluhan tidak ditemukan, redirect kembali ke halaman data keluhan dengan pesan error
+        if (!$keluhan) {
             return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
+
+        // Update data keluhan dengan data verifikasi
+        DB::table('data_keluhan')
+            ->where('id_keluhan', $request->id_keluhan)
+            ->update([
+                'status_keluhan' => 'dialihkan ke cs',
+                'penanggungjawab' => $request->penanggungjawab,
+            ]);
+
+        return redirect()->back()->with('success', 'Keluhan berhasil diverifikasi.');
     }
     public function terimaKeluhan($id)
     {
-        // Cari data keluhan berdasarkan ID
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $id)->first();
-
-        // Jika data keluhan ditemukan
         if ($keluhan) {
-            // Lakukan update status keluhan menjadi "Terverifikasi"
             DB::table('data_keluhan')
                 ->where('id_keluhan', $id)
                 ->update([
                     'status_keluhan' => 'ditangani oleh cs',
                     'penanggungjawab' => 'CS 1',
                 ]);
-
-            // Redirect kembali ke halaman data keluhan dengan pesan sukses
-            return redirect()->back()->with('success', 'Keluhan telah ditangan CS.');
+            return redirect()->back()->with('success', 'Keluhan sedang ditangan CS.');
         } else {
-            // Jika data keluhan tidak ditemukan, redirect kembali ke halaman data keluhan dengan pesan error
             return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
     }
-    public function keluhanSelesai($id)
+    public function keluhanSelesai(Request $request)
     {
-        // Cari data keluhan berdasarkan ID
-        $keluhan = DB::table('data_keluhan')->where('id_keluhan', $id)->first();
+        $keluhan = DB::table('data_keluhan')->where('id_keluhan', $request->id_keluhan)->first();
 
-        // Jika data keluhan ditemukan
-        if ($keluhan) {
-            // Lakukan update status keluhan menjadi "Terverifikasi"
+        if (!$keluhan) {
+            return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
+        }
             DB::table('data_keluhan')
-                ->where('id_keluhan', $id)
+                ->where('id_keluhan', $request->id_keluhan)
                 ->update([
                     'status_keluhan' => 'selesai',
                     'waktu_penyelesaian' => Carbon::now(),
+                    'aksi' => $request->aksi,
                 ]);
-
-            // Redirect kembali ke halaman data keluhan dengan pesan sukses
-            return redirect()->back()->with('success', 'Keluhan telah ditangan CS.');
-        } else {
-            // Jika data keluhan tidak ditemukan, redirect kembali ke halaman data keluhan dengan pesan error
-            return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
-        }
+        return redirect()->back()->with('success', 'Keluhan Terselesaikan!!!');
     }
     function formImportData()
     {
