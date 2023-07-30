@@ -76,7 +76,7 @@
 <h2 class="h4 mb-1">Masukkan Data Uji</h2>
     <div class="card shadow mb-5">
         <div class="card-body">
-            <form method="post" action="/perhitungan-naive-bayes" id="dataForm">
+            <form method="post" action="/perhitungan-naive-bayes" id="dataForm" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     {{-- <label for="" class="form-label">Tanggal Keluhan</label> --}}
@@ -112,9 +112,9 @@
                     <label for="example-select">Via Keluhan</label>
                     <select class="form-control" id="example-select" name="via_keluhan">
                         <option selected>--Pilih--</option>
+                        <option value="Visit">Visit</option>
                         <option value="Wa/Hp">Wa/Hp</option>
                         <option value="Web">Web</option>
-                        <option value="Visit">Visit</option>
                         <option value="Talkie/Walkie">Talkie/Walkie</option>
                     </select>
                 </div>
@@ -124,12 +124,18 @@
                     <label for="" class="form-label">Alamat Email</label>
                     <input type="text" class="form-control" id="" name="email" placeholder="">
                 </div>
+                <div class="mb-3">
+                    <label for="uraian_keluhan">Uraian Keluhan Data Uji</label>
+                    <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="2" cols="50" maxlength="300"></textarea>
+                </div>
+                {{-- Gambar hanya untuk role pelanggan jika ingin menambahkan screenshot dari error pada aplikasi --}}
                 {{-- <div class="mb-3">
-                    <label for="" class="form-label">File/Gambar</label>
-                    <input type="file" class="form-control" id="">
+                    <label for="" class="form-label">Gambar (optional)</label>
+                    <input type="file" class="form-control" name="gambar">
+                    @error('gambar')
+                        <div style="color: red;">{{ $message }}</div>
+                    @enderror
                 </div> --}}
-                <label for="uraian_keluhan">Uraian Keluhan Data Uji</label>
-                <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="2" cols="50" maxlength="300"></textarea>
                 <button type="submit" class="btn btn-primary" >Proses</button>
             </form>
         </div>

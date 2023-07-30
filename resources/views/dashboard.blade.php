@@ -119,8 +119,6 @@
                 @else
                     <p>Tidak ada keluhan yang tercatat hari ini.</p>
                 @endif
-                
-                
                 </div><!-- / .list-group-item -->
             </div> <!-- / .list-group -->
             </div> <!-- / .card-body -->

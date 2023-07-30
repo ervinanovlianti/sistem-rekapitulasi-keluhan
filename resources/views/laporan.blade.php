@@ -79,8 +79,17 @@
                         <td>{{ date('d-m-Y H:m:s', strtotime($item->tgl_keluhan)) }}</td>
                         <td>{{ $item->nama }}</td>
                         <td>{{ $item->via_keluhan }}</td>
-                        <td class="text-center"><span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
-                        <td>{{ date('d-m-Y H:m:s', strtotime($item->waktu_penyelesaian)) }} }}</td>
+                        <td>
+                            {{-- @if ($item->status_keluhan == 'selesai')
+                            <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span></td>
+                            @elseif ($item->status_keluhan == 'menunggu verifikasi')
+                            <span class="badge badge-pill badge-warning mr-2">{{ $item->status_keluhan }}</span></td>
+                            @else
+                            <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
+                            @endif --}}
+                            {{ $item->status_keluhan }}
+                        </td>
+                        <td>{{ $item->waktu_penyelesaian }}</td>
                         <td>{{ $item->kategori_keluhan }}</td>
                         <td>{{ $item->aksi }}</td>
                     </tr>

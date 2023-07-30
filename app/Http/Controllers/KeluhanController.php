@@ -292,16 +292,28 @@ class KeluhanController extends Controller
 
         // Mengambil data keluhan yang tercatat pada hari ini
         $keluhanHariIni = DB::table('data_keluhan')
+            ->where('status_keluhan','menunggu verifikasi')
             ->whereDate('tgl_keluhan', $today)
             ->get();
 
         return view('dashboard', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
     }
+    // function notifikasi() {
+    //     // Mendapatkan waktu sekarang
+    //     $today = date('d/m/y');
+    //     // Mengambil data keluhan yang tercatat pada hari ini
+    //     $notifikasiKeluhan = DB::table('data_keluhan')
+    //         ->where('status_keluhan','menunggu verifikasi')
+    //         ->whereDate('tgl_keluhan', $today)
+    //         ->get();
+
+    //     return view('partials/navbar', compact('notifikasiKeluhan'));
+    // }
     public function dataPenggunaJasa()
     {
         $data_penggunajasa = DB::table('data_pengguna_jasa')
             ->where('hak_akses', 'pengguna_jasa')
-            ->get();
+            ->paginate(10);
 
         return view('data_penggunajasa', compact('data_penggunajasa'));
     }
@@ -339,6 +351,8 @@ class KeluhanController extends Controller
         }
         $newKodeCS = "CS-$newNumberCS";
         // return $newKodeKeluhan;
+
+        
         $dataPelanggan = [
             'id_pengguna' => $newKodeCS,
             'nama' => $request->input('nama'),
@@ -348,6 +362,7 @@ class KeluhanController extends Controller
             'no_telepon' => $request->input('no_telepon'),
             'jenis_pengguna' => 'Customer Service',
             'hak_akses' => 'customer_service',
+            'foto_profil' => 'default.jpg',
         ];
 
         DB::table('data_pengguna_jasa')->insert($dataPelanggan);

@@ -36,11 +36,7 @@
             </table>
             <nav aria-label="Table Paging" class="mb-0 text-muted">
                 <ul class="pagination justify-content-end mb-0">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                     {{ $data_penggunajasa->links('pagination::bootstrap-4') }}
                 </ul>
             </nav>
         </div>

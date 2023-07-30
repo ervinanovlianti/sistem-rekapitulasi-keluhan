@@ -266,7 +266,6 @@ class NaiveBayesController extends Controller
                 $hasil_perkalian_probabilitas_administrasi *= $data['Administrasi'];
                 $hasil_perkalian_probabilitas_lainnya *= $data['Lainnya'];
             }
-
         }
 
         // Menampilkan setiap kategori
@@ -344,12 +343,16 @@ class NaiveBayesController extends Controller
             'hasil_perkalian_probabilitas_lainnya',
             'kategoriList', 'hasilProbabilitas', 'hasilPerkalianProbabilitas', 'hasilAkhir',
             'kategoriTerbesar',
-
         ));
     }
 
     public function saveDataToDatabase(Request $request)
     {
+        $request->validate([
+            // Validasi untuk input lainnya seperti sebelumnya
+            'uraian_keluhan' => 'required|max:280',
+            
+        ]);
         // Simpan data pelanggan ke dalam database
         $dataPelanggan = [
             'id_pengguna' => $request->input('id_pengguna'),
@@ -359,8 +362,9 @@ class NaiveBayesController extends Controller
             'jenis_pengguna' => $request->input('jenis_pengguna'),
             'hak_akses' => $request->input('hak_akses')
         ];
-
         DB::table('data_pengguna_jasa')->insert($dataPelanggan);
+
+        
 
         // Simpan data keluhan ke dalam database
         $dataKeluhan = [
@@ -371,7 +375,9 @@ class NaiveBayesController extends Controller
             'uraian_keluhan' =>  $request->input('uraian_keluhan'),
             'kategori_id' =>  $request->input('kategori_id'),
             'status_keluhan' =>  $request->input('status_keluhan'),
+            // 'gambar' => $gambarName,
         ];
+
 
         DB::table('data_keluhan')->insert($dataKeluhan);
         return redirect('keluhan');

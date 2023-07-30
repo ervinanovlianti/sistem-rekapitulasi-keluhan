@@ -21,6 +21,7 @@ Route::post('/import-data', [KeluhanController::class, 'importData']);
 Route::get('/laporan', [KeluhanController::class, 'laporan'])->name('laporan');
 Route::get('/laporan', [KeluhanController::class , 'cari'])->name('laporan.cari');
 Route::get('/rekapitulasi', [KeluhanController::class, 'rekapitulasi']);
+Route::get('/notifikasi', [KeluhanController::class, 'notifikasi']);
 
 Route::get('/profil', function () {
     return view('profil');
