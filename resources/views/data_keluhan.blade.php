@@ -44,10 +44,7 @@
                   </button>
                   <div class="dropdown-menu dropdown-menu-right">
 
-                    {{-- <a href="/detail-keluhan/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a> --}}
-                    {{-- <a href="{{ route('detail-keluhan', ['id' => $item->id_keluhan]) }}" class="btn btn-primary">Detail</a> --}}
                     <a href="/detail-keluhan/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a>
-                    {{-- <a class="dropdown-item" href="{{ route('data-keluhan.tangani', ['id' => $item->id_keluhan]) }}">Tangani</a> --}}
                   </div>
                 </td>
               </tr>

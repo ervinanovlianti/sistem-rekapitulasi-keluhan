@@ -4,7 +4,7 @@
   <div class="row justify-content-center">
     <div class="col-12">
       <h3 class="page-title">Detail Keluhan {{ $keluhan->id_keluhan }}</h3>
-       @if (Session::has('success'))
+      @if (Session::has('success'))
             <div class="alert alert-success">
                 {{ Session::get('success') }}
             </div>
@@ -21,7 +21,7 @@
           <div class="card shadow">
             <div class="card-body">
                 <p>Nama Pelapor     : {{ $keluhan->nama }}</p>
-                <p>Costumer         : {{ $keluhan->nama }}</p>
+                <p>Costumer         : {{ $keluhan->jenis_pengguna }}</p>
                 <p>Tanggal Laporan  : {{ $keluhan->tgl_keluhan }}</p>
                 <p>Via Laporan      : {{ $keluhan->via_keluhan }}</p>
                 <p>Gambar           : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p> 
@@ -33,8 +33,8 @@
             <div class="card-body">
               <p>Uraian Keluhan : <strong>{{ $keluhan->uraian_keluhan }}</strong> </p>
               <p>Kategori       : {{ $keluhan->kategori_keluhan }}</p>
-              <p>Status         : {{ $keluhan->status_keluhan }}</p>
-              <p>Aksi           : {{ $keluhan->aksi }}</p>
+              <p>Status Keluhan      : {{ $keluhan->status_keluhan }}</p>
+              {{-- <p>Aksi           : {{ $keluhan->aksi }}</p> --}}
               <a href="/keluhan" class="btn btn-secondary m-auto">Kembali</a>
               {{-- <a href="" class="btn btn-danger m-auto">Tolak</a> --}}
               <button type="button" class="btn btn-success m-auto" data-toggle="modal" data-target="#verifikasiModal" data-whatever="@mdo">Verifikasi</button>
@@ -48,7 +48,7 @@
           <div class="card shadow">
             <div class="card-body">
                 <p>Nama Pelapor     : {{ $keluhan->nama }}</p>
-                <p>Costumer         : {{ $keluhan->nama }}</p>
+                <p>Costumer         : {{ $keluhan->jenis_pengguna }}</p>
                 <p>Tanggal Laporan  : {{ $keluhan->tgl_keluhan }}</p>
                 <p>Via Laporan      : {{ $keluhan->via_keluhan }}</p>
                 <p>Gambar           : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p> 
@@ -61,7 +61,7 @@
               <p>Uraian Keluhan : <strong>{{ $keluhan->uraian_keluhan }}</strong> </p>
               <p>Kategori       : {{ $keluhan->kategori_keluhan }}</p>
               <p>Status         : {{ $keluhan->status_keluhan }}</p>
-              <p>Aksi           : {{ $keluhan->aksi }}</p>
+              {{-- <p>Aksi           : {{ $keluhan->aksi }}</p> --}}
               <a href="" class="btn btn-secondary m-auto">Kembali</a>
               <a href="/terima-keluhan/{{ $keluhan->id_keluhan }}" class="btn btn-success m-auto">Terima</a>
             </div>
@@ -74,7 +74,7 @@
           <div class="card shadow">
             <div class="card-body">
               <p>Nama Pelapor    : {{ $keluhan->nama }}</p>
-              <p>Costumer        : {{ $keluhan->nama }}</p>
+              <p>Costumer        : {{ $keluhan->jenis_pengguna }}</p>
               <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
               <p>Via Laporan     : {{ $keluhan->via_keluhan }}</p>
               <p>Gambar          : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p> 
@@ -84,10 +84,10 @@
         <div class="col-md-6 my-2">
           <div class="card shadow">
             <div class="card-body">
-              <p>Uraian Keluhan :  {{ $keluhan->nama }}</p>
+              <p>Uraian Keluhan :  <strong>{{ $keluhan->uraian_keluhan }}</strong></p>
               <p>Kategori       :  {{ $keluhan->kategori_keluhan }}</p>
               <p>Status         :  {{ $keluhan->status_keluhan }}</p>
-              <p>Aksi           :  {{ $keluhan->aksi }}</p>
+              {{-- <p>Aksi           :  {{ $keluhan->aksi }}</p> --}}
               <a href="" class="btn btn-secondary m-auto">Kembali</a>
               <button type="button" class="btn btn-success m-auto" data-toggle="modal" data-target="#konfirmasiModal" data-whatever="@mdo">Konfirmasi</button>
             </div>
@@ -100,7 +100,7 @@
           <div class="card shadow">
             <div class="card-body">
               <p>Nama Pelapor    : {{ $keluhan->nama }}</p>
-              <p>Costumer        : {{ $keluhan->nama }}</p>
+              <p>Costumer        : {{ $keluhan->jenis_pengguna }}</p>
               <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
               <p>Via Laporan     : {{ $keluhan->via_keluhan }}</p>
               <p>Gambar          : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p> 
@@ -110,7 +110,7 @@
         <div class="col-md-6 my-2">
           <div class="card shadow">
             <div class="card-body">
-              <p>Uraian Keluhan :  {{ $keluhan->nama }}</p>
+              <p>Uraian Keluhan :  {{ $keluhan->uraian_keluhan }}</p>
               <p>Kategori       :  {{ $keluhan->kategori_keluhan }}</p>
               <p>Status         :  {{ $keluhan->status_keluhan }}</p>
               <p>Waktu Penyelesaian         :  {{ $keluhan->waktu_penyelesaian }}</p>

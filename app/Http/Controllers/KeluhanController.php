@@ -360,7 +360,7 @@ class KeluhanController extends Controller
         $keluhan = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
             ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
-            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.*')
             ->where('data_keluhan.id_keluhan', $id)
             ->first();
         $cs= DB::table('data_pengguna_jasa')
