@@ -107,7 +107,7 @@
                         <option value="Visit">Visit</option>
                         <option value="Wa/Hp">Wa/Hp</option>
                         <option value="Web">Web</option>
-                        <option value="Talkie/Walkie">Talkie/Walkie</option>
+                        <option value="Walkie Talkie">Walkie Talkie</option>
                     </select>
                 </div>
                 <div class="form-group mv-3">

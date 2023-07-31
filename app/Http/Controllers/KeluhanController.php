@@ -91,23 +91,23 @@ class KeluhanController extends Controller
 
         $jumlahPembayaran3 = DB::table('data_keluhan')
             ->where('kategori_id', 1)
-            ->where('via_keluhan', 'Talkie Walkie')
+            ->where('via_keluhan', 'Walkie Talkie')
             ->count();
         $jumlahPengiriman3 = DB::table('data_keluhan')
             ->where('kategori_id', 2)
-            ->where('via_keluhan', 'Talkie Walkie')
+            ->where('via_keluhan', 'Walkie Talkie')
             ->count();
         $jumlahPenerimaan3 = DB::table('data_keluhan')
             ->where('kategori_id', 3)
-            ->where('via_keluhan', 'Talkie Walkie')
+            ->where('via_keluhan', 'Walkie Talkie')
             ->count();
         $jumlahAdministrasi3 = DB::table('data_keluhan')
             ->where('kategori_id', 4)
-            ->where('via_keluhan', 'Talkie Walkie')
+            ->where('via_keluhan', 'Walkie Talkie')
             ->count();
         $jumlahLainnya3 = DB::table('data_keluhan')
             ->where('kategori_id', 5)
-            ->where('via_keluhan', 'Talkie Walkie')
+            ->where('via_keluhan', 'Walkie Talkie')
             ->count();
 
         $kategoriId = 1;
@@ -134,7 +134,7 @@ class KeluhanController extends Controller
         // $rekapPembayaranVisit = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Visit');
         // $rekapPembayaranWaHp = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'WA/HP');
         // $rekapPembayaranWeb = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Web');
-        // $rekapPembayaranTW = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Talkie Walkie');
+        // $rekapPembayaranTW = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Walkie Talkie');
 
         // $rekapPengirimanVisit = $this->rekapKeluhanByCategoryAndVia('Pengiriman', 'Visit');
         // $rekapPengirimanWaHp = $this->rekapKeluhanByCategoryAndVia('Pengiriman', 'WA/HP');
@@ -316,6 +316,15 @@ class KeluhanController extends Controller
             ->paginate(10);
 
         return view('data_penggunajasa', compact('data_penggunajasa'));
+    }
+    function detailPenggunaJasa($id) {
+        $pengguna_jasa = DB::table('data_keluhan')
+        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+        ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
+        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.*')
+        ->where('data_pengguna_jasa.id_pengguna', $id)
+        ->first();
+        return view('detail_penggunajasa', compact('pengguna_jasa'));
     }
     public function dataCS()
     {

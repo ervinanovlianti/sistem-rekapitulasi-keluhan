@@ -23,7 +23,7 @@
                 @foreach($data_penggunajasa as $pengguna)
                 <tr>
                     <td>{{ $no++ }}</td>
-                    <td> {{ $pengguna->nama }}</td>
+                    <td><a href="/detail-penggunajasa/{{ $pengguna->id_pengguna }}">{{ $pengguna->nama }}</a> </td>
                     <td> {{ $pengguna->email }}</td>
                     <td> {{ $pengguna->no_telepon }}</td>
                     <td> {{ $pengguna->jenis_pengguna }}</td>

@@ -8,6 +8,7 @@ Route::get('/', [KeluhanController::class, 'dashboard']);
 Route::get('/keluhan', [KeluhanController::class, 'index']);
 
 Route::get('/pengguna-jasa', [KeluhanController::class, 'dataPenggunaJasa']);
+Route::get('/detail-penggunajasa/{id}', [KeluhanController::class, 'detailPenggunaJasa']);
 Route::get('/cs', [KeluhanController::class, 'dataCS']);
 
 Route::get('/input_keluhan', [KeluhanController::class, 'showInputForm']);
