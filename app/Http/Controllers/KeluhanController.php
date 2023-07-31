@@ -111,6 +111,10 @@ class KeluhanController extends Controller
             ->count();
 
         $kategoriId = 1;
+        $kategoriId2 = 2;
+        $kategoriId3 = 3;
+        $kategoriId4 = 4;
+        $kategoriId5 = 5;
         $statusKeluhan = ['menunggu verifikasi', 'dialihkan ke cs', 'ditangani oleh cs'];
 
         $statusKeluhanPembayaran1 = DB::table('data_keluhan')
@@ -128,7 +132,89 @@ class KeluhanController extends Controller
             ->where(function ($query) {
                 $query->where('status_keluhan', 'ditolak')
                     ->orWhere('status_keluhan', 'tidak selesai');
-            })
+            })->count();
+
+        $statusKeluhanPengiriman1 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId2)
+            ->whereIn('status_keluhan', $statusKeluhan)
+            ->count();
+
+        $statusKeluhanPengiriman2 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId2)
+            ->where('status_keluhan', 'selesai')
+            ->count();
+
+        $statusKeluhanPengiriman3 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId2)
+            ->where(function ($query) {
+                $query->where('status_keluhan', 'ditolak')
+                    ->orWhere('status_keluhan', 'tidak selesai');
+            })->count();
+        $statusKeluhanPenerimaan1 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId3)
+            ->whereIn('status_keluhan', $statusKeluhan)
+            ->count();
+
+        $statusKeluhanPenerimaan2 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId3)
+            ->where('status_keluhan', 'selesai')
+            ->count();
+
+        $statusKeluhanPenerimaan3 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId3)
+            ->where(function ($query) {
+                $query->where('status_keluhan', 'ditolak')
+                    ->orWhere('status_keluhan', 'tidak selesai');
+            })->count();
+
+        $statusKeluhanAdministrasi1 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId4)
+            ->whereIn('status_keluhan', $statusKeluhan)
+            ->count();
+
+        $statusKeluhanAdministrasi2 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId4)
+            ->where('status_keluhan', 'selesai')
+            ->count();
+
+        $statusKeluhanAdministrasi3 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId4)
+            ->where(function ($query) {
+                $query->where('status_keluhan', 'ditolak')
+                    ->orWhere('status_keluhan', 'tidak selesai');
+            })->count();
+
+        $statusKeluhanLainnya1 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId5)
+            ->whereIn('status_keluhan', $statusKeluhan)
+            ->count();
+
+        $statusKeluhanLainnya2 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId5)
+            ->where('status_keluhan', 'selesai')
+            ->count();
+
+        $statusKeluhanLainnya3 = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId5)
+            ->where(function ($query) {
+                $query->where('status_keluhan', 'ditolak')
+                    ->orWhere('status_keluhan', 'tidak selesai');
+            })->count();
+
+        $totalKeluhanPembayaran = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId)
+            ->count();
+        $totalKeluhanPengiriman = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId2)
+            ->count();
+        $totalKeluhanPenerimaan = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId3)
+            ->count();
+        $totalKeluhanAdministrasi = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId4)
+            ->count();
+        $totalKeluhanLainnya = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId5)
             ->count();
 
         // $rekapPembayaranVisit = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Visit');
@@ -161,9 +247,32 @@ class KeluhanController extends Controller
             // 'rekapAdministrasiWaHp',
             // 'rekapLainnyaVisit',
             // 'rekapLainnyaWaHp',
+            'totalKeluhanPembayaran',
+            'totalKeluhanPengiriman',
+            'totalKeluhanPenerimaan',
+            'totalKeluhanAdministrasi',
+            'totalKeluhanLainnya',
+
             'statusKeluhanPembayaran1',
             'statusKeluhanPembayaran2',
             'statusKeluhanPembayaran3',
+
+            'statusKeluhanPengiriman1',
+            'statusKeluhanPengiriman2',
+            'statusKeluhanPengiriman3',
+
+            'statusKeluhanPenerimaan1',
+            'statusKeluhanPenerimaan2',
+            'statusKeluhanPenerimaan3',
+
+            'statusKeluhanAdministrasi1',
+            'statusKeluhanAdministrasi2',
+            'statusKeluhanAdministrasi3',
+
+            'statusKeluhanLainnya1',
+            'statusKeluhanLainnya2',
+            'statusKeluhanLainnya3',
+
             'jumlahPembayaran',
             'jumlahPengiriman',
             'jumlahPenerimaan',
@@ -200,11 +309,11 @@ class KeluhanController extends Controller
     public function laporan()
     {
         $keluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
-        ->orderBy('tgl_keluhan', 'desc')
-        ->paginate(10);
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
+            ->orderBy('tgl_keluhan', 'desc')
+            ->paginate(10);
 
         return view('laporan', compact('keluhan'));
     }
@@ -216,36 +325,36 @@ class KeluhanController extends Controller
         $kategori = $request->input('kategori');
 
         $keluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
-        ->where(function ($query) use ($keyword, $bulan, $kategori) {
-            if (!empty($keyword)) {
-                $query->where('uraian_keluhan', 'LIKE', "%$keyword%")
-                    ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('data_pengguna_jasa.nama', 'LIKE', '%' . $keyword . '%'); // Menambahkan pencarian berdasarkan nama pengguna jasa
-                //     ->orWhere('tgl_keluhan', 'LIKE', '%' . $keyword . '%')
-                //     ->orWhere('waktu_penyelesaian', 'LIKE', '%' . $keyword . '%')
-                //     ->orWhere('kategori_keluhan', 'LIKE', '%' . $keyword . '%')
-                //     ->orWhere('aksi', 'LIKE', '%' . $keyword . '%');
-            }
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.nama')
+            ->where(function ($query) use ($keyword, $bulan, $kategori) {
+                if (!empty($keyword)) {
+                    $query->where('uraian_keluhan', 'LIKE', "%$keyword%")
+                        ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
+                        ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
+                        ->orWhere('data_pengguna_jasa.nama', 'LIKE', '%' . $keyword . '%'); // Menambahkan pencarian berdasarkan nama pengguna jasa
+                    //     ->orWhere('tgl_keluhan', 'LIKE', '%' . $keyword . '%')
+                    //     ->orWhere('waktu_penyelesaian', 'LIKE', '%' . $keyword . '%')
+                    //     ->orWhere('kategori_keluhan', 'LIKE', '%' . $keyword . '%')
+                    //     ->orWhere('aksi', 'LIKE', '%' . $keyword . '%');
+                }
 
-            if (!empty($bulan)) {
-                $query->whereRaw("DATE_FORMAT(tgl_keluhan, '%Y-%m') = ?", [$bulan]);
-            }
+                if (!empty($bulan)) {
+                    $query->whereRaw("DATE_FORMAT(tgl_keluhan, '%Y-%m') = ?", [$bulan]);
+                }
 
-            if (!empty($kategori)) {
-                $query->where('kategori_keluhan', $kategori);
-            }
+                if (!empty($kategori)) {
+                    $query->where('kategori_keluhan', $kategori);
+                }
 
-            // if (!empty($id_kategori)) {
-            //     $query->where('id_kategori', $id_kategori);
-            // }
-        })
+                // if (!empty($id_kategori)) {
+                //     $query->where('id_kategori', $id_kategori);
+                // }
+            })
             ->orderBy('tgl_keluhan', 'desc')
             ->paginate(10);
-        
+
         // $query = DB::table('data_keluhan')
         // ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
         // ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
@@ -277,6 +386,7 @@ class KeluhanController extends Controller
         $totalKeluhan = KeluhanModel::count();
         $keluhanBaru = DB::table('data_keluhan')
             ->where('status_keluhan', 'menunggu verifikasi')
+
             ->count();
         $keluhanDiproses = DB::table('data_keluhan')
             ->where('status_keluhan', 'ditangani oleh cs')
@@ -292,7 +402,7 @@ class KeluhanController extends Controller
 
         // Mengambil data keluhan yang tercatat pada hari ini
         $keluhanHariIni = DB::table('data_keluhan')
-            ->where('status_keluhan','menunggu verifikasi')
+            ->where('status_keluhan', 'menunggu verifikasi')
             ->whereDate('tgl_keluhan', $today)
             ->get();
 
@@ -317,13 +427,14 @@ class KeluhanController extends Controller
 
         return view('data_penggunajasa', compact('data_penggunajasa'));
     }
-    function detailPenggunaJasa($id) {
+    function detailPenggunaJasa($id)
+    {
         $pengguna_jasa = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.*')
-        ->where('data_pengguna_jasa.id_pengguna', $id)
-        ->first();
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->join('data_pengguna_jasa', 'data_keluhan.id_pengguna', '=', 'data_pengguna_jasa.id_pengguna')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.*')
+            ->where('data_pengguna_jasa.id_pengguna', $id)
+            ->first();
         return view('detail_penggunajasa', compact('pengguna_jasa'));
     }
     public function dataCS()
@@ -361,7 +472,7 @@ class KeluhanController extends Controller
         $newKodeCS = "CS-$newNumberCS";
         // return $newKodeKeluhan;
 
-        
+
         $dataPelanggan = [
             'id_pengguna' => $newKodeCS,
             'nama' => $request->input('nama'),
@@ -387,7 +498,7 @@ class KeluhanController extends Controller
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'data_pengguna_jasa.*')
             ->where('data_keluhan.id_keluhan', $id)
             ->first();
-        $cs= DB::table('data_pengguna_jasa')
+        $cs = DB::table('data_pengguna_jasa')
             ->where('hak_akses', 'customer_service')
             ->get();
 
@@ -434,13 +545,13 @@ class KeluhanController extends Controller
         if (!$keluhan) {
             return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
-            DB::table('data_keluhan')
-                ->where('id_keluhan', $request->id_keluhan)
-                ->update([
-                    'status_keluhan' => 'selesai',
-                    'waktu_penyelesaian' => Carbon::now(),
-                    'aksi' => $request->aksi,
-                ]);
+        DB::table('data_keluhan')
+            ->where('id_keluhan', $request->id_keluhan)
+            ->update([
+                'status_keluhan' => 'selesai',
+                'waktu_penyelesaian' => Carbon::now(),
+                'aksi' => $request->aksi,
+            ]);
         return redirect()->back()->with('success', 'Keluhan Terselesaikan!!!');
     }
     function formImportData()

@@ -40,6 +40,7 @@
                         <td>{{ $statusKeluhanPembayaran1 }}</td>
                         <td>{{ $statusKeluhanPembayaran2 }}</td>
                         <td>{{ $statusKeluhanPembayaran3 }}</td>
+                        <td>{{ $totalKeluhanPembayaran }}</td>
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
@@ -48,6 +49,10 @@
                         <td>{{ $jumlahPengiriman1 }}</td>
                         <td>{{ $jumlahPengiriman2 }}</td>
                         <td>{{ $jumlahPengiriman3 }}</td>
+                        <td>{{ $statusKeluhanPengiriman1 }}</td>
+                        <td>{{ $statusKeluhanPengiriman2 }}</td>
+                        <td>{{ $statusKeluhanPengiriman3 }}</td>
+                        <td>{{ $totalKeluhanPengiriman }}</td>
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
@@ -56,6 +61,11 @@
                         <td>{{ $jumlahPenerimaan1 }}</td>
                         <td>{{ $jumlahPenerimaan2 }}</td>
                         <td>{{ $jumlahPenerimaan3 }}</td>
+                        <td>{{ $statusKeluhanPenerimaan1 }}</td>
+                        <td>{{ $statusKeluhanPenerimaan2 }}</td>
+                        <td>{{ $statusKeluhanPenerimaan3 }}</td>
+                        <td>{{ $totalKeluhanPenerimaan }}</td>
+
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
@@ -64,6 +74,10 @@
                         <td>{{ $jumlahAdministrasi1 }}</td>
                         <td>{{ $jumlahAdministrasi2 }}</td>
                         <td>{{ $jumlahAdministrasi3 }}</td>
+                        <td>{{ $statusKeluhanAdministrasi1 }}</td>
+                        <td>{{ $statusKeluhanAdministrasi2 }}</td>
+                        <td>{{ $statusKeluhanAdministrasi3 }}</td>
+                        <td>{{ $totalKeluhanAdministrasi }}</td>
                     </tr>
                     <tr>
                         <td>{{ $no++ }}</td>
@@ -72,6 +86,10 @@
                         <td>{{ $jumlahLainnya1 }}</td>
                         <td>{{ $jumlahLainnya2 }}</td>
                         <td>{{ $jumlahLainnya3 }}</td>
+                        <td>{{ $statusKeluhanLainnya1 }}</td>
+                        <td>{{ $statusKeluhanLainnya2 }}</td>
+                        <td>{{ $statusKeluhanLainnya3 }}</td>
+                        <td>{{ $totalKeluhanLainnya }}</td>
                     </tr>
                 </tbody>
             </table> 
