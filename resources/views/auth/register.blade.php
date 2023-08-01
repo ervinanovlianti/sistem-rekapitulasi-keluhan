@@ -27,44 +27,55 @@
     <link rel="stylesheet" href="{{ asset('admin/css/quill.snow.css') }}">
 </head>
 <body class="light ">
-    <div class="wrapper vh-100">
-     <div class="row align-items-center h-100">
-        <form class="col-lg-3 col-md-4 col-10 mx-auto" method="post" action="http://127.0.0.1:8000/register">
-        <div class="mx-auto text-center my-4">
-            <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="./index.html">
-            <svg version="1.1" id="logo" class="navbar-brand-img brand-md" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 120 120" xml:space="preserve">
-                <g>
-                    <polygon class="st0" points="78,105 15,105 24,87 87,87 	" />
-                    <polygon class="st0" points="96,69 33,69 42,51 105,51 	" />
-                    <polygon class="st0" points="78,33 15,33 24,15 87,15 	" />
-                    </g>
-            </svg>
-            </a>
-            <h2 class="my-3">Register</h2>
+        <div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+
+        <div class="card">
+            <div class="card-header">Register</div>
+            <div class="card-body">
+                <form action="{{ route('store') }}" method="post">
+                    @csrf
+                    <div class="mb-3 row">
+                        <label for="name" class="col-md-4 col-form-label text-md-end text-start">Name</label>
+                        <div class="col-md-6">
+                          <input type="text" class="form-control @error('nama') is-invalid @enderror" id="name" name="nama" value="{{ old('nama') }}">
+                            @if ($errors->has('nama'))
+                                <span class="text-danger">{{ $errors->first('nama') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="email" class="col-md-4 col-form-label text-md-end text-start">Email Address</label>
+                        <div class="col-md-6">
+                          <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
+                            @if ($errors->has('email'))
+                                <span class="text-danger">{{ $errors->first('email') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="password" class="col-md-4 col-form-label text-md-end text-start">Password</label>
+                        <div class="col-md-6">
+                          <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
+                            @if ($errors->has('password'))
+                                <span class="text-danger">{{ $errors->first('password') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="password_confirmation" class="col-md-4 col-form-label text-md-end text-start">Confirm Password</label>
+                        <div class="col-md-6">
+                          <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Register">
+                    </div>
+                    
+                </form>
             </div>
-            <input type="hidden" name="_token" value="C3tnROXV3eS9A8ErtomFUMr5SfzM33aiepJkQOCb">            <div class="form-group">
-                <label for="firstname">Nama Customer</label>
-                <input type="text" name="nama" id="firstname" class="form-control">
-            </div>
-                        <div class="form-group">
-                <label for="firstname">No Telepon</label>
-                <input type="text" name="no_telepon" id="firstname" class="form-control">
-            </div>
-            
-                    <div class="form-group">
-                <label for="inputEmail4">Email</label>
-                <input type="email" name="email" class="form-control" id="inputEmail4">
-            </div>
-            
-            <div class="form-group">
-            <label for="inputPassword5">New Password</label>
-            <input type="password" name="password" class="form-control" id="inputPassword5">
-            </div>
-                        
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-            <p class="mt-5 mb-3 text-muted text-center">2023</p>
-        </form>
-      </div>
+        </div>
+    </div>    
     </div>
     <script src="{{ asset('admin//js/jquery.min.js')}}"></script>
     <script src="{{ asset('admin//js/popper.min.js')}}"></script>

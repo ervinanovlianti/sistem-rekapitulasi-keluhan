@@ -5,12 +5,18 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NaiveBayesController;
 
-Route::get('/login', [AuthController::class,'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
-
-Route::get('/', [KeluhanController::class, 'dashboard']);
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/register', 'register')->name('register');
+    Route::post('/store', 'store')->name('store');
+    Route::get('/login', 'login')->name('login');
+    Route::post('/authenticate', 'authenticate')->name('authenticate');
+    // Route::get('/dashboard', 'dashboard')->name('dashboard');
+    Route::post('/logout', 'logout')->name('logout');
+});
+Route::get('/dashboard', [KeluhanController::class, 'dashboard']);
 Route::get('/keluhan', [KeluhanController::class, 'index']);
 
 Route::get('/pengguna-jasa', [KeluhanController::class, 'dataPenggunaJasa']);

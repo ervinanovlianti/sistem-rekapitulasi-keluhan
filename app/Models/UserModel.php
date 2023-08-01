@@ -10,7 +10,7 @@ class UserModel extends  Authenticatable
 
 {
     use HasFactory;
-    protected $table = 'data_pengguna_jasa';
+    protected $table = 'users';
     protected $fillable = ['nama', 'email', 'password', 'no_telepon', 'hak_akses'];
 
 }

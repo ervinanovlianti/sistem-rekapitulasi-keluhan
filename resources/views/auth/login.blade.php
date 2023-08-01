@@ -27,42 +27,42 @@
     <link rel="stylesheet" href="{{ asset('admin/css/quill.snow.css') }}">
 </head>
     <body class="light ">
-        <div class="wrapper vh-100">
-        <div class="row align-items-center h-100">
-            <form class="col-lg-3 col-md-4 col-10 mx-auto text-center" form method="post" action="/login">
-                <input type="hidden" name="_token" value="C3tnROXV3eS9A8ErtomFUMr5SfzM33aiepJkQOCb">            
-            <h1 class="h6 mb-3">Sign in</h1>
-             @if (Session::has('success'))
-            <div class="alert alert-success">
-                {{ Session::get('success') }}
-            </div>
-        @endif
+        
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
 
-        @if (Session::has('error'))
-            <div class="alert alert-danger">
-                {{ Session::get('error') }}
+        <div class="card">
+            <div class="card-header">Login</div>
+            <div class="card-body">
+                <form action="{{ route('authenticate') }}" method="post">
+                    @csrf
+                    <div class="mb-3 row">
+                        <label for="email" class="col-md-4 col-form-label text-md-end text-start">Email Address</label>
+                        <div class="col-md-6">
+                          <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
+                            @if ($errors->has('email'))
+                                <span class="text-danger">{{ $errors->first('email') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="password" class="col-md-4 col-form-label text-md-end text-start">Password</label>
+                        <div class="col-md-6">
+                          <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
+                            @if ($errors->has('password'))
+                                <span class="text-danger">{{ $errors->first('password') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Login">
+                    </div>
+                    
+                </form>
             </div>
-        @endif
-                    <div class="form-group">
-                <label for="inputEmail" class="sr-only">Email address</label>
-                <input type="email" name="email" id="inputEmail" class="form-control form-control-lg" placeholder="Email address" required="" autofocus="">
-                    @error('email')
-                        <div style="color: red;">{{ $message }}</div>
-                    @enderror
-                </div>
-            <div class="form-group">
-                <label for="inputPassword" class="sr-only">Password</label>
-                <input type="password" name="password" id="inputPassword" class="form-control form-control-lg" placeholder="Password" required="">
-                 @error('password')
-        <div style="color: red;">{{ $message }}</div>
-    @enderror
-            </div>
-            
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-            <p class="mt-3">Belum punya akun? <a href="/register">Sign Up</a></p>
-            <p class="mt-2 mb-3 text-muted"> 2023</p>
-            </form>
         </div>
+    </div>    
+</div>
         </div>
     <script src="{{ asset('admin/js/jquery.min.js')}}"></script>
     <script src="{{ asset('admin/js/popper.min.js')}}"></script>

@@ -1,15 +1,13 @@
-@extends('template')
-@section('content')
-    <p>Pembayaran Sudah Lunas tapi pada saat e-tiket muncul pesan error “failed to confirm payment”</p>
-    {{-- Upload Gambar --}}
-
-    {{-- Proses upload gambar (jika ada) hanya dilakukan untuk pelanggan karena upload gambar tidak support jika data tidak langsung di upload kedalam database
-    if ($request->hasFile('gambar')) {
-    'gambar' => 'mimes:jpeg,png,jpg,gif|max:2048', // Hanya menerima file gambar dengan maksimal 2MB
-        $gambarKeluhan = $request->file('gambar');
-        $gambarName = time() . '_' . $gambarKeluhan->getClientOriginalName();
-        $gambarKeluhan->move(public_path('gambar_keluhan'), $gambarName);
-    } else {
-        $gambarName = null; // Jika tidak ada gambar di-upload, set nilai gambarName menjadi null
-    } --}}
-@endsection
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <p><a href="/login">Login</a> </p>
+    <p><a href="/register">Register</a> </p>
+</body>
+</html>
