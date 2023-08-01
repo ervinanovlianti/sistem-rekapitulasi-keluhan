@@ -62,15 +62,15 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\UserModel::class,
         ],
-
         // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
-    ],
-
+            //     'driver' => 'database',
+            //     'table' => 'users',
+            // ],
+        ],
+        
+        'table' => 'data_pengguna_jasa',
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
