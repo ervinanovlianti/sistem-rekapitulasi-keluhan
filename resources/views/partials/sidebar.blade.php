@@ -17,15 +17,34 @@
     </div>
     {{-- Menu --}}
     <ul class="navbar-nav flex-fill w-100 mb-2">
+        @if(Auth::user()->hak_akses === 'admin')
         <li class="nav-item">
         <a href="/dashboard" aria-expanded="false" class="nav-link">
             <i class="fe fe-home fe-16"></i>
             <span class="ml-3 item-text">Dashboard</span>
         </a>
         </li>
+        @endif
+        @if(Auth::user()->hak_akses === 'cs')
+        <li class="nav-item">
+        <a href="/dashboard-cs" aria-expanded="false" class="nav-link">
+            <i class="fe fe-home fe-16"></i>
+            <span class="ml-3 item-text">Dashboard</span>
+        </a>
+        </li>
+        @endif
+        @if(Auth::user()->hak_akses === 'pengguna_jasa')
+        <li class="nav-item">
+        <a href="/dashboard" aria-expanded="false" class="nav-link">
+            <i class="fe fe-home fe-16"></i>
+            <span class="ml-3 item-text">Dashboard</span>
+        </a>
+        </li>
+        @endif
         <p class="text-muted nav-heading mt-1 mb-1">
             <span>Menu</span>
         </p>
+        @if(Auth::user()->hak_akses === 'admin')
         <li class="nav-item">
         <a href="/keluhan" aria-expanded="false" class="nav-link">
             <i class="fe fe-file fe-16"></i>
@@ -44,6 +63,27 @@
             <span class="ml-3 item-text">Costumer Service</span>
         </a>
         </li>
+        @endif
+
+        @if(Auth::user()->hak_akses === 'pengguna_jasa')
+        <li class="nav-item">
+        <a href="/keluhan" aria-expanded="false" class="nav-link">
+            <i class="fe fe-file fe-16"></i>
+            <span class="ml-3 item-text">Keluhan</span>
+        </a>
+        </li>
+        @endif
+        @if(Auth::user()->hak_akses === 'cs')
+        <li class="nav-item">
+        <a href="/keluhan" aria-expanded="false" class="nav-link">
+            <i class="fe fe-file fe-16"></i>
+            <span class="ml-3 item-text">Keluhan</span>
+        </a>
+        </li>
+        @endif
+
+
+        @if(Auth::user()->hak_akses === 'admin')
         <p class="text-muted nav-heading mt-1 mb-1">
             <span>Laporan</span>
         </p>
@@ -53,21 +93,42 @@
             <span class="ml-3 item-text">Laporan</span>
         </a>
         </li>
+        
         <li class="nav-item">
         <a href="/rekapitulasi" aria-expanded="false" class="nav-link">
             <i class="fe fe-file-text fe-16"></i>
             <span class="ml-3 item-text">Rekapitulasi</span>
         </a>
         </li>
+        @endif
+
         <p class="text-muted nav-heading mt-1 mb-1">
             <span>User</span>
         </p>
+        @if(Auth::user()->hak_akses === 'admin')
         <li class="nav-item">
         <a href="/profil" aria-expanded="false" class="nav-link">
             <i class="fe fe-user fe-16"></i>
             <span class="ml-3 item-text">Profil</span>
         </a>
         </li>
+        @endif
+        @if(Auth::user()->hak_akses === 'pengguna_jasa')
+        <li class="nav-item">
+        <a href="/profil" aria-expanded="false" class="nav-link">
+            <i class="fe fe-user fe-16"></i>
+            <span class="ml-3 item-text">Profil</span>
+        </a>
+        </li>
+        @endif
+        @if(Auth::user()->hak_akses === 'cs')
+        <li class="nav-item">
+        <a href="/profil" aria-expanded="false" class="nav-link">
+            <i class="fe fe-user fe-16"></i>
+            <span class="ml-3 item-text">Profil</span>
+        </a>
+        </li>
+        @endif
     </ul>
     {{-- Akhir Menu --}}
     </nav>

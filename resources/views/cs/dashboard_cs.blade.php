@@ -1,5 +1,5 @@
-@extends('cs.layout.main')
-@section('content-cs')
+@extends('layouts.main')
+@section('content')
 <div class="row justify-content-center">
     <div class="col-12">
     <div class="row align-items-center mb-2">
