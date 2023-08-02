@@ -71,7 +71,9 @@
                     <div class="mb-3 row">
                         <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Register">
                     </div>
-                    
+                    <div class="mb-3 row">
+                        <p class="text-center">Punya akun? <a href="/">Login</a></p>
+                    </div>
                 </form>
             </div>
         </div>

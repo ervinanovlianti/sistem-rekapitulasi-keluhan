@@ -18,7 +18,7 @@
     {{-- Menu --}}
     <ul class="navbar-nav flex-fill w-100 mb-2">
         <li class="nav-item">
-        <a href="/" aria-expanded="false" class="nav-link">
+        <a href="/dashboard" aria-expanded="false" class="nav-link">
             <i class="fe fe-home fe-16"></i>
             <span class="ml-3 item-text">Dashboard</span>
         </a>

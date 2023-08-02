@@ -55,7 +55,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
         $request->session()->regenerate();
-        return redirect()->route('dashboard')
+        return redirect('dashboard')
         ->withSuccess('You have successfully registered & logged in!');
     }
 
@@ -98,17 +98,17 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function dashboard()
-    // {
-    //     if (Auth::check()) {
-    //         return view('auth.dashboard');
-    //     }
+    public function dashboard()
+    {
+        if (Auth::check()) {
+            return view('dashboard');
+        }
 
-    //     return redirect()->route('login')
-    //     ->withErrors([
-    //         'email' => 'Please login to access the dashboard.',
-    //     ])->onlyInput('email');
-    // }
+        return redirect()->route('login')
+        ->withErrors([
+            'email' => 'Please login to access the dashboard.',
+        ])->onlyInput('email');
+    }
 
     /**
      * Log out the user from application.

@@ -20,6 +20,13 @@
                 <a class="dropdown-item" href="#">Profile</a>
                 <a class="dropdown-item" href="/dashboard-cs">CS</a>
                 <a class="dropdown-item" href="/dashboard-pj">Pengguna Jasa</a>
+                <a class="dropdown-item">
+                <form action="/logout" method="POST">
+                    @csrf
+                    <button>Logout</button>
+                </form>
+                </a>
+                
             </div>
         </li>
     </ul>
