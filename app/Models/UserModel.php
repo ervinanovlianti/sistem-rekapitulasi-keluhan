@@ -12,5 +12,9 @@ class UserModel extends  Authenticatable
     use HasFactory;
     protected $table = 'users';
     protected $fillable = ['nama', 'email', 'password', 'no_telepon', 'hak_akses'];
-
+    
+    public function dataKeluhan()
+    {
+        return $this->hasMany(DataKeluhan::class, 'id_pengguna');
+    }
 }

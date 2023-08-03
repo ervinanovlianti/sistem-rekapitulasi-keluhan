@@ -35,7 +35,7 @@
         @endif
         @if(Auth::user()->hak_akses === 'pengguna_jasa')
         <li class="nav-item">
-        <a href="/dashboard" aria-expanded="false" class="nav-link">
+        <a href="/dashboard-pj" aria-expanded="false" class="nav-link">
             <i class="fe fe-home fe-16"></i>
             <span class="ml-3 item-text">Dashboard</span>
         </a>
@@ -67,7 +67,7 @@
 
         @if(Auth::user()->hak_akses === 'pengguna_jasa')
         <li class="nav-item">
-        <a href="/keluhan" aria-expanded="false" class="nav-link">
+        <a href="/data-keluhan" aria-expanded="false" class="nav-link">
             <i class="fe fe-file fe-16"></i>
             <span class="ml-3 item-text">Keluhan</span>
         </a>
@@ -75,7 +75,7 @@
         @endif
         @if(Auth::user()->hak_akses === 'cs')
         <li class="nav-item">
-        <a href="/keluhan" aria-expanded="false" class="nav-link">
+        <a href="/" aria-expanded="false" class="nav-link">
             <i class="fe fe-file fe-16"></i>
             <span class="ml-3 item-text">Keluhan</span>
         </a>

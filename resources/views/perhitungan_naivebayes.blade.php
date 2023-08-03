@@ -121,74 +121,6 @@
         {{-- </div> --}}
     </div> <!-- / .card -->
 </div>
-    {{-- <div class="card shadow mb-5">
-        <div class="card-body">
-            <form method="post" action="/perhitungan-naive-bayes" id="dataForm" enctype="multipart/form-data">
-                @csrf
-                <div class="mb-3">
-                    <input type="hidden" class="form-control" name="tgl_keluhan" id="exampleInputEmail1" aria-describedby="" value="{{ date("Y-m-d h:i:sa") }}">
-                </div> --}}
-                {{-- Identitas Pengguna Jasa --}}
-                {{-- <div class="mb-3">
-                    <label for="" class="form-label">Nama Pelapor</label>
-                    <input type="text" class="form-control" id="" name="nama">
-                </div>
-                <div class="mb-3">
-                    <label for="" class="form-label">No. Telepon</label>
-                    <input type="text" class="form-control" name="no_telepon" id="">
-                </div> --}}
-                {{-- <div class="form-group mb-3">
-                    <label for="example-select">Jenis Customer</label>
-                    <select class="form-control" id="example-select" name="jenis_pengguna">
-                        <option>--Pilih--</option>
-                        <option value="Perusahaan">Perusahaan</option>
-                        <option value="Perseorangan">Perseorangan</option>
-                    </select>
-                </div> --}}
-                {{-- jika form select diisi dengan perusahaan muncul form tambahan --}}
-                {{-- <div class="mb-3">
-                    <label for="" class="form-label">Nama Perusahaan</label>
-                    <input type="text" class="form-control" id="exampleInputPassword1">
-                </div> --}}
-                {{-- Akhir --}}
-
-                {{-- Via Keluhan --}}
-                {{-- Jika admin terdapat via keluhan --}}
-                {{-- <div class="form-group mb-3">
-                    <label for="example-select">Via Keluhan</label>
-                    <select class="form-control" id="example-select" name="via_keluhan">
-                        <option selected>--Pilih--</option>
-                        <option value="Visit">Visit</option>
-                        <option value="Wa/Hp">Wa/Hp</option>
-                        <option value="Web">Web</option>
-                        <option value="Talkie/Walkie">Talkie/Walkie</option>
-                    </select>
-                </div> --}}
-                {{-- Akhir via keluhan --}}
-                {{-- Pelanggan (add properti hidden)--}}
-                {{-- <div class="mb-3">
-                    <label for="" class="form-label">Alamat Email</label>
-                    <input type="text" class="form-control" id="" name="email" placeholder="">
-                </div>
-                <div class="mb-3">
-                    <label for="uraian_keluhan">Uraian Keluhan Data Uji</label>
-                    <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="2" cols="50" maxlength="300"></textarea>
-                </div> --}}
-                {{-- Gambar hanya untuk role pelanggan jika ingin menambahkan screenshot dari error pada aplikasi --}}
-                {{-- <div class="mb-3">
-                    <label for="" class="form-label">Gambar (optional)</label>
-                    <input type="file" class="form-control" name="gambar">
-                    @error('gambar')
-                        <div style="color: red;">{{ $message }}</div>
-                    @enderror
-                </div> --}}
-                {{-- <button type="submit" class="btn btn-primary" >Proses</button>
-            </form>
-        </div>
-    </div> --}}
-    {{-- @if ()
-        
-    @endif --}}
     <h2 class="h4 mb-1">Preview Data Keluhan</h2>
     <div class="card shadow mb-5" id="previewKeluhan">
         <div class="card-body">
@@ -206,6 +138,7 @@
             <p>Via Keluhan: {{ $viaKeluhan }}</p>
             <p>Uraian Keluhan: {{ $dataUji }}</p>
             <p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
+            {{-- <p>Nilai Terbesar: {{ $nilaiTerbesar }}</p> --}}
             <p>Status Keluhan: {{ $statusKeluhan }}</p>
 
             <!-- Add a button to save the data -->

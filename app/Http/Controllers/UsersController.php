@@ -5,19 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\KeluhanModel;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\Stemmer\StemmerFactory;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
-class NaiveBayesController extends Controller
+use Illuminate\Http\Request;
+
+class UsersController extends Controller
 {
-    public function index()
-    {
-        
+    public function index() {
+        // Ambil ID pengguna yang sedang login
+        $idPengguna = Auth::id();
+        // Ambil data keluhan berdasarkan ID pengguna yang login
+        $dataKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->orderBy('tgl_keluhan', 'desc')->paginate(10);
+        // Kirim data ke view untuk ditampilkan
+        return view('pengguna_jasa/keluhan', compact('dataKeluhan'));
     }
-    public function preprocessing(Request $request)
+
+
+    public function saveDataToDatabase(Request $request)
     {
         $textkeluhan = DB::table('data_keluhan')
         ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -28,10 +34,9 @@ class NaiveBayesController extends Controller
         $processedKeluhan = [];
         foreach ($textkeluhan as $keluhan) {
             $uraianKeluhan = $keluhan->uraian_keluhan;
-            $complaintText = $uraianKeluhan;
 
             // Case Folding
-            $text = strtolower($complaintText);
+            $text = strtolower($uraianKeluhan);
             $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
             $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
             // Stopword Removal
@@ -110,7 +115,7 @@ class NaiveBayesController extends Controller
                 $index++;
             }
         }
-        // ---------------------PROBABILITAS PRIOR--------------------------
+        // Tahap 1
         // Menghitung jumlah setiap kategori
         $kategoriCount = [];
         $totalKeluhan = count($processedKeluhan);
@@ -132,7 +137,7 @@ class NaiveBayesController extends Controller
             $probabilitas[$kategori] = $count / $totalKeluhan;
         }
 
-        // ---------------------PREPROCESSING DATA UJI----------------------
+        // Tahap PreProcessing Text
         $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
         $lastCode = DB::table('data_keluhan')
         ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
@@ -147,14 +152,13 @@ class NaiveBayesController extends Controller
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumber = '00001';
         }
-        
-        $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
 
+        $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
         // Simpan data pelanggan ke dalam database
         $kodePJ = DB::table('users')
-        ->where('id', 'like', "CUST%")
-        ->orderBy('id', 'desc')
-        ->value('id');
+            ->where('id', 'like', "CUST%")
+            ->orderBy('id', 'desc')
+            ->value('id');
 
         if ($kodePJ) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
@@ -168,18 +172,11 @@ class NaiveBayesController extends Controller
 
         date_default_timezone_set('Asia/Makassar');
         // Mendapatkan waktu sekarang
-        $idKeluhan = $newKodeKeluhan; 
+        $idKeluhan = $newKodeKeluhan;
         $tglKeluhan = date('d/m/y H:i:s');
         $idPengguna = $newKodePJ;
-        $namaPengguna = $request->input('nama');
-        $email = $request->input('email');
-        $noTelepon = $request->input('no_telepon');
-        $jenisPengguna = $request->input('jenis_pengguna');
-        $hakAkses = 'pengguna_jasa';
-        $statusKeluhan = 'menunggu verifikasi admin';
-        $viaKeluhan = $request->input('via_keluhan');
         $dataUji = $request->input('uraian_keluhan');
-        
+
         // Case Folding
         $textUji = strtolower($dataUji);
         // Tokenizing
@@ -294,7 +291,6 @@ class NaiveBayesController extends Controller
             $hasilPerkalianProbabilitas['Lainnya'] *= $data['Lainnya'];
         }
 
-        // Menghitung hasil akhir
         $hasilAkhir = [];
         foreach ($hasilPerkalianProbabilitas as $kategori => $hasil) {
             $hasilAkhir[$kategori] = $hasil * $probabilitas[$kategori];
@@ -308,84 +304,37 @@ class NaiveBayesController extends Controller
                 $nilaiTerbesar = $hasil;
             }
         }
+        if ($kategoriTerbesar == 'Pembayaran') {
+            $idKategori = '1';
+        } elseif ($kategoriTerbesar == 'Pengiriman') {
+            $idKategori = '2';
+        } elseif ($kategoriTerbesar == 'Penerimaan') {
+            $idKategori = '3';
+        } elseif ($kategoriTerbesar == 'Administrasi') {
+            $idKategori = '4';
+        } elseif ($kategoriTerbesar == 'Lainnya') {
+            $idKategori = '5';
+        }
 
-        return view('perhitungan_naivebayes', 
-        compact(
-            'processedKeluhan', 
-            'formattedTotalWordCount',
-            'idKeluhan',
-            'tglKeluhan',
-            'idPengguna',
-            'namaPengguna',
-            'email',
-            'noTelepon',
-            'jenisPengguna',
-            'hakAkses',
-            'viaKeluhan',
-            'statusKeluhan',
-            'dataUji',
-            'textUji',
-            'tokenUji',
-            'cleanedTextUji',
-            'stemmedTextUji',
-            'stemmedTokensUji',
-            'probabilitas',
-            'kategoriCount',
-            'totalKeluhan',
-            'jumlahKataUji',
-            'totalBobotKataKategori',
-            'totalBobotKataDataLatih',
-            'likehoodKategori',
-            'hasil_perkalian_probabilitas_pembayaran',
-            'hasil_perkalian_probabilitas_pengiriman',
-            'hasil_perkalian_probabilitas_penerimaan',
-            'hasil_perkalian_probabilitas_administrasi',
-            'hasil_perkalian_probabilitas_lainnya',
-            'kategoriList', 'hasilProbabilitas', 'hasilPerkalianProbabilitas', 'hasilAkhir',
-            'kategoriTerbesar',
-        ));
-    }
-
-    public function saveDataToDatabase(Request $request)
-    {
         $request->validate([
             // Validasi untuk input lainnya seperti sebelumnya
             'uraian_keluhan' => 'required|max:280',
-            
+
         ]);
-        // Simpan data pelanggan ke dalam database
-        $dataPelanggan = [
-            'id' => $request->input('id'),
-            'nama' => $request->input('nama'),
-            'email' => $request->input('email'),
-            'no_telepon' => $request->input('no_telepon'),
-            'jenis_pengguna' => $request->input('jenis_pengguna'),
-            'hak_akses' => $request->input('hak_akses')
-        ];
-        DB::table('data_pengguna_jasa')->insert($dataPelanggan);
-
+        $idPengguna = Auth::id();
         
-
-        // Simpan data keluhan ke dalam database
         $dataKeluhan = [
-            'id_keluhan' => $request->input('id_keluhan'),
-            'tgl_keluhan' => $request->input('tgl_keluhan'),
-            'id_pengguna' => $request->input('id_pengguna'),
-            'via_keluhan' =>  $request->input('via_keluhan'),
+            'id_keluhan' => $idKeluhan,
+            'tgl_keluhan' => $tglKeluhan,
+            'id_pengguna' => $idPengguna,
+            'via_keluhan' =>  'Web',
             'uraian_keluhan' =>  $request->input('uraian_keluhan'),
-            'kategori_id' =>  $request->input('kategori_id'),
-            'status_keluhan' =>  $request->input('status_keluhan'),
+            'kategori_id' =>  $idKategori,
+            'status_keluhan' =>  'menunggu verifikasi',
             // 'gambar' => $gambarName,
         ];
-
-
         DB::table('data_keluhan')->insert($dataKeluhan);
-        return redirect('keluhan');
+        return redirect('data-keluhan');
     }
 
-    public function showForm()
-    {
-        return view('perhitungan_naivebayes');
-    }
-    
 }
