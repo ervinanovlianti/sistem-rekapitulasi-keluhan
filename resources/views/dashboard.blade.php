@@ -7,7 +7,6 @@
         <h2 class="h5 page-title">Selamat Datang, {{ auth()->user()->nama }}!</h2>
         </div>
     </div>
-    
     <div class="row">
         <div class="col-md-6 col-xl-3 mb-4">
             <div class="card shadow border-0">

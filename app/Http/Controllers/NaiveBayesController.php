@@ -151,10 +151,10 @@ class NaiveBayesController extends Controller
         $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
 
         // Simpan data pelanggan ke dalam database
-        $kodePJ = DB::table('users')
-        ->where('id', 'like', "CUST%")
-        ->orderBy('id', 'desc')
-        ->value('id');
+        $kodePJ = DB::table('data_pengguna_jasa')
+        ->where('id_pengguna', 'like', "CUST%")
+        ->orderBy('id_pengguna', 'desc')
+        ->value('id_pengguna');
 
         if ($kodePJ) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
@@ -355,7 +355,7 @@ class NaiveBayesController extends Controller
         ]);
         // Simpan data pelanggan ke dalam database
         $dataPelanggan = [
-            'id' => $request->input('id'),
+            'id_pengguna' => $request->input('id_pengguna'),
             'nama' => $request->input('nama'),
             'email' => $request->input('email'),
             'no_telepon' => $request->input('no_telepon'),
