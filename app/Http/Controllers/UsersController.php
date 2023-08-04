@@ -21,9 +21,44 @@ class UsersController extends Controller
         // Kirim data ke view untuk ditampilkan
         return view('pengguna_jasa/keluhan', compact('dataKeluhan'));
     }
+    function dashboard()
+    {
+        $idPengguna = Auth::id();
 
+        // Menghitung total keluhan
+        $totalKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->count();
+        $keluhanBaru = DB::table('data_keluhan')
+        ->where('id_pengguna', $idPengguna)
+        ->where('status_keluhan', 'menunggu verifikasi')
+        ->count();
+        $keluhanDiproses = DB::table('data_keluhan')
+        ->where('id_pengguna', $idPengguna)
+        ->where('status_keluhan', 'dialihkan ke cs')
+        ->orWhere('status_keluhan', 'ditangani oleh cs')
+        ->count();
 
-    public function saveDataToDatabase(Request $request)
+        $keluhanSelesai = DB::table('data_keluhan')
+        ->where('id_pengguna', $idPengguna)
+        ->where('status_keluhan', 'selesai')
+        ->count();
+        date_default_timezone_set('Asia/Makassar');
+
+        // Mendapatkan waktu sekarang
+        $today = date('d/m/y');
+
+        // Mengambil data keluhan yang tercatat pada hari ini
+        $keluhanHariIni = DB::table('data_keluhan')
+        ->where('id_pengguna', $idPengguna)
+        ->whereDate('tgl_keluhan', $today)
+            ->get();
+
+        return view('pengguna_jasa/dashboard_pj', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
+    }
+
+    public function formInput(){
+        return view('pengguna_jasa/input_keluhan');
+    }
+    public function inputKeluhan(Request $request)
     {
         $textkeluhan = DB::table('data_keluhan')
         ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')

@@ -35,6 +35,7 @@
                     @else
                     <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
                     @endif
+                    <td>{{ $item->waktu_penyelesaian }}</td>
                     <td>{{ $item->aksi }}</td>
                 </tr>
                 @endforeach

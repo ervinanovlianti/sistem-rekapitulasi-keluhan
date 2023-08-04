@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CSController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NaiveBayesController;
 use App\Http\Controllers\UsersController;
@@ -36,28 +37,27 @@ Route::middleware(['auth', 'hak_akses:admin'])->group(function () {
     Route::post('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
     Route::post('/simpan-ke-database', [NaiveBayesController::class, 'saveDataToDatabase']);
 
+    
+    Route::get('/cs', [AdminController::class, 'dataCS'])->middleware('auth');
+});
+Route::middleware(['auth', 'hak_akses:pengguna_jasa'])->group(function () {
+    Route::get('/dashboard-pj', [UsersController::class, 'dashboard'])->name('dashboard-pj');
+    Route::get('/data-keluhan', [UsersController::class, 'index']);
+    Route::get('/input-keluhan', [UsersController::class, 'formInput']);
+    Route::post('/simpan', [UsersController::class, 'inputKeluhan']);
+});
+Route::middleware(['auth', 'hak_akses:customer_service'])->group(function () {
+    Route::get('/dashboard-cs',[CSController::class, 'dashboard'])->name('dashboard-cs');
+    Route::get('/datakeluhan',[CSController::class, 'index'])->name('datakeluhan');
+});
+// Route::middleware(['auth', 'hak_akses:customer_service, admin'])->group(function () {
+    
     Route::get('/detail-keluhan/{id}', [AdminController::class, 'detailKeluhan']);
     Route::post('/verifikasi-keluhan', [AdminController::class, 'verifikasiKeluhan']);
     Route::get('/terima-keluhan/{id}', [AdminController::class, 'terimaKeluhan']);
     Route::post('/konfirmasi-selesai', [AdminController::class, 'keluhanSelesai']);
-
-    Route::get('/cs', [AdminController::class, 'dataCS'])->middleware('auth');
+    // });
+    
     Route::get('/profil', function () {
         return view('profil');
-    });
-});
-Route::middleware(['auth', 'hak_akses:pengguna_jasa'])->group(function () {
-    Route::get('/dashboard-pj', function () {
-        return view('pengguna_jasa.dashboard_pj');
-    })->name('dashboard-pj');
-    Route::get('/data-keluhan', [UsersController::class, 'index']);
-    
-    Route::get('/input-keluhan', [UsersController::class, 'preprocessing']);
-    Route::post('/input-keluhan', [UsersController::class, 'preprocessing']);
-    Route::post('/simpan', [UsersController::class, 'saveDataToDatabase']);
-});
-Route::middleware(['auth', 'hak_akses:cs'])->group(function () {
-    Route::get('/dashboard-cs', function () {
-        return view('cs.dashboard_cs');
-    })->name('dashboard-cs');
-});
+    })->middleware('auth');
