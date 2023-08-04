@@ -15,41 +15,41 @@ class CSController extends Controller
         $idCS = Auth::id();
         // Ambil data keluhan berdasarkan ID pengguna yang login
         $dataKeluhan = KeluhanModel::where('penanggungjawab', $idCS)
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
-        ->orderBy('tgl_keluhan', 'desc')
-        ->paginate(10);
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
+            ->orderBy('tgl_keluhan', 'desc')
+            ->paginate(10);
         // Kirim data ke view untuk ditampilkan
         return view('cs/keluhan', compact('dataKeluhan'));
     }
     function dashboard()
     {
-        $idCS= Auth::id();
+        $idCS = Auth::id();
 
         // Menghitung total keluhan
         $totalKeluhan = KeluhanModel::where('penanggungjawab', $idCS)->count();
         $keluhanBaru = DB::table('data_keluhan')
-        ->where('id_pengguna', $idCS)
+            ->where('id_pengguna', $idCS)
             ->where('status_keluhan', 'menunggu verifikasi')
             ->count();
         $keluhanDiproses = KeluhanModel::where('id_pengguna', $idCS)
-            ->where('status_keluhan', 'ditangani oleh cs')
-            ->where('status_keluhan', 'dialihkan ke cs')
+            ->orWhere('status_keluhan', 'ditangani oleh cs')
+            ->orWhere('status_keluhan', 'dialihkan ke cs')
             ->count();
 
         $keluhanSelesai = DB::table('data_keluhan')
-        ->where('id_pengguna', $idCS)
+            ->where('id_pengguna', $idCS)
             ->where('status_keluhan', 'selesai')
             ->count();
         date_default_timezone_set('Asia/Makassar');
 
         // Mendapatkan waktu sekarang
-        $today = date('d/m/y');
+        $today = date("Y-m-d H:i:s");
 
         // Mengambil data keluhan yang tercatat pada hari ini
         $keluhanHariIni = DB::table('data_keluhan')
-        ->where('id_pengguna', $idCS)
+            ->where('id_pengguna', $idCS)
             ->where('status_keluhan', 'menunggu verifikasi')
             ->whereDate('tgl_keluhan', $today)
             ->get();
@@ -59,14 +59,14 @@ class CSController extends Controller
     public function detailKeluhan($id)
     {
         $keluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
-        ->where('data_keluhan.id_keluhan', $id)
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
+            ->where('data_keluhan.id_keluhan', $id)
             ->first();
         $cs = DB::table('users')
-        ->where('hak_akses', 'customer_service')
-        ->get();
+            ->where('hak_akses', 'customer_service')
+            ->get();
 
         return view('detail_keluhan', compact('keluhan', 'cs'));
     }
@@ -75,7 +75,7 @@ class CSController extends Controller
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $id)->first();
         if ($keluhan) {
             DB::table('data_keluhan')
-            ->where('id_keluhan', $id)
+                ->where('id_keluhan', $id)
                 ->update([
                     'status_keluhan' => 'ditangani oleh cs',
                     'penanggungjawab' => 'CS 1',
@@ -85,5 +85,4 @@ class CSController extends Controller
             return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
     }
-
 }

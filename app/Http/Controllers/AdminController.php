@@ -6,6 +6,7 @@ use App\Models\KeluhanModel;
 use App\Models\PenggunaJasaModel;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+// use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 // use Maatwebsite\Excel\Concerns\ToModel;
 // use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -397,7 +398,7 @@ class AdminController extends Controller
         date_default_timezone_set('Asia/Makassar');
 
         // Mendapatkan waktu sekarang
-        $today = date('d/m/y');
+        $today = date("Y-m-d");
 
         // Mengambil data keluhan yang tercatat pada hari ini
         $keluhanHariIni = DB::table('data_keluhan')
@@ -500,7 +501,7 @@ class AdminController extends Controller
             ->first();
         $namaCS = DB::table('data_keluhan')
             ->join('users', 'data_keluhan.penanggungjawab', '=', 'users.id')
-            // ->select('data_keluhan.*', 'users.nama')
+            ->select('data_keluhan.*', 'users.nama')
             ->where('data_keluhan.id_keluhan', $id)
             ->first();
         $cs = DB::table('users')
@@ -550,11 +551,12 @@ class AdminController extends Controller
         if (!$keluhan) {
             return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
+        date_default_timezone_set("Asia/Makassar");
         DB::table('data_keluhan')
             ->where('id_keluhan', $request->id_keluhan)
             ->update([
                 'status_keluhan' => 'selesai',
-                'waktu_penyelesaian' => Carbon::now(),
+                'waktu_penyelesaian' => date("Y-m-d H:i:s"),
                 'aksi' => $request->aksi,
             ]);
         return redirect()->back()->with('success', 'Keluhan Terselesaikan!!!');

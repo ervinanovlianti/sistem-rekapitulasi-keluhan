@@ -26,7 +26,7 @@
                 <tr>
                     <td>{{  $no++ }}</td>
                     <td>{{ $item->uraian_keluhan }}</a></td>
-                    <td>{{ date('d F Y h:m:s',strtotime( $item->tgl_keluhan )) }} </td>
+                    <td>{{ date('d-m-Y H:i:s',strtotime( $item->tgl_keluhan )) }} </td>
                     <td class="text-center">
                     @if ($item->status_keluhan == 'selesai')
                     <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span></td>

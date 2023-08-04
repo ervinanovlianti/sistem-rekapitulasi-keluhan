@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeluhanModel;
+use Carbon\Carbon;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\Stemmer\StemmerFactory;
 use Illuminate\Support\Facades\Auth;
@@ -27,28 +28,25 @@ class UsersController extends Controller
 
         // Menghitung total keluhan
         $totalKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->count();
-        $keluhanBaru = DB::table('data_keluhan')
-        ->where('id_pengguna', $idPengguna)
+        
+        $keluhanBaru =KeluhanModel::where('id_pengguna', $idPengguna)
         ->where('status_keluhan', 'menunggu verifikasi')
         ->count();
+
         $keluhanDiproses = DB::table('data_keluhan')
         ->where('id_pengguna', $idPengguna)
         ->where('status_keluhan', 'dialihkan ke cs')
-        ->orWhere('status_keluhan', 'ditangani oleh cs')
+        ->where('status_keluhan', 'ditangani oleh cs')
         ->count();
 
-        $keluhanSelesai = DB::table('data_keluhan')
-        ->where('id_pengguna', $idPengguna)
+        $keluhanSelesai =KeluhanModel::where('id_pengguna', $idPengguna)
         ->where('status_keluhan', 'selesai')
         ->count();
-        date_default_timezone_set('Asia/Makassar');
 
-        // Mendapatkan waktu sekarang
-        $today = date('d/m/y');
+        date_default_timezone_set("Asia/Makassar");
+        $today = date("Y-d-m H:i:s");;
 
-        // Mengambil data keluhan yang tercatat pada hari ini
-        $keluhanHariIni = DB::table('data_keluhan')
-        ->where('id_pengguna', $idPengguna)
+        $keluhanHariIni =KeluhanModel::where('id_pengguna', $idPengguna)
         ->whereDate('tgl_keluhan', $today)
             ->get();
 
@@ -204,11 +202,9 @@ class UsersController extends Controller
             $newNumberPJ = '0001';
         }
         $newKodePJ = "CUST-$newNumberPJ";
-
-        date_default_timezone_set('Asia/Makassar');
+        
         // Mendapatkan waktu sekarang
         $idKeluhan = $newKodeKeluhan;
-        $tglKeluhan = date('d/m/y H:i:s');
         $idPengguna = $newKodePJ;
         $dataUji = $request->input('uraian_keluhan');
 
@@ -356,11 +352,11 @@ class UsersController extends Controller
             'uraian_keluhan' => 'required|max:280',
 
         ]);
+        date_default_timezone_set("Asia/Makassar");
         $idPengguna = Auth::id();
-        
         $dataKeluhan = [
             'id_keluhan' => $idKeluhan,
-            'tgl_keluhan' => $tglKeluhan,
+            'tgl_keluhan' => date("Y-m-d H:i:s"),
             'id_pengguna' => $idPengguna,
             'via_keluhan' =>  'Web',
             'uraian_keluhan' =>  $request->input('uraian_keluhan'),
