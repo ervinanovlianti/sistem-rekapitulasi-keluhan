@@ -15,7 +15,7 @@
                 {{ Session::get('error') }}
             </div>
         @endif
-      @if ( $keluhan->status_keluhan == 'menunggu verifikasi')
+      @if ( Auth::user()->hak_akses == 'admin' && $keluhan->status_keluhan == 'menunggu verifikasi')
         <div class="row">
         <div class="col-6 my-2">
           <div class="card shadow">
@@ -44,7 +44,7 @@
           </div>
         </div>
       </div>
-      @elseif ( $keluhan->status_keluhan == 'dialihkan ke cs')
+      @elseif ( Auth::user()->hak_akses == 'customer_service' && $keluhan->status_keluhan == 'dialihkan ke cs')
           <div class="row">
         <div class="col-md-6 my-2">
           <div class="card shadow">
@@ -72,7 +72,7 @@
           </div>
         </div>
       </div>
-      @elseif ( $keluhan->status_keluhan == 'ditangani oleh cs')
+      @elseif ( Auth::user()->hak_akses == 'customer_service' && $keluhan->status_keluhan == 'ditangani oleh cs')
       <div class="row">
         <div class="col-md-6 my-2">
           <div class="card shadow">
@@ -93,6 +93,7 @@
             <div class="card-body">
               <p>Uraian Keluhan :  <strong>{{ $keluhan->uraian_keluhan }}</strong></p>
               <p>Kategori       :  {{ $keluhan->kategori_keluhan }}</p>
+              <p>Penangungjawab         :  {{ $keluhan->penanggungjawab }}</p>
               <p>Status         :  {{ $keluhan->status_keluhan }}</p>
               {{-- <p>Aksi           :  {{ $keluhan->aksi }}</p> --}}
               <a href="" class="btn btn-secondary m-auto">Kembali</a>
@@ -101,7 +102,7 @@
           </div>
         </div>
       </div>
-      @else
+      @elseif(Auth::user()->hak_akses == 'admin' && $keluhan->status_keluhan == 'ditangani oleh cs' || 'dialihkan ke cs' || 'selesai')
       <div class="row">
         <div class="col-md-6 my-2">
           <div class="card shadow">
@@ -119,11 +120,12 @@
         <div class="col-md-6 my-2">
           <div class="card shadow">
             <div class="card-body">
-              <p>Uraian Keluhan :  {{ $keluhan->uraian_keluhan }}</p>
+              <p>Uraian Keluhan : <strong> {{ $keluhan->uraian_keluhan }}</strong></p>
               <p>Kategori       :  {{ $keluhan->kategori_keluhan }}</p>
+              <p>Penangungjawab         :  {{ $namaCS->nama }}</p>
               <p>Status         :  {{ $keluhan->status_keluhan }}</p>
               <p>Waktu Penyelesaian         :  {{ $keluhan->waktu_penyelesaian }}</p>
-              <p>Aksi           :  {{ $keluhan->aksi }}</p>
+              <p>Aksi           :  <strong>{{ $keluhan->aksi }}</strong></p>
             </div>
           </div>
         </div>
@@ -150,7 +152,7 @@
                     <select class="form-control" id="example-select" name="penanggungjawab">
                         <option selected>--Pilih--</option>
                         @foreach ($cs as $item)
-                        <option value="{{ $item->nama }}">{{ $item->nama }}</option>
+                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
                         @endforeach
                     </select>
                     </div>

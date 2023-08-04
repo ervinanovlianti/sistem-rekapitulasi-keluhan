@@ -55,8 +55,16 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
         $request->session()->regenerate();
-        return redirect('dashboard')
-        ->withSuccess('You have successfully registered & logged in!');
+        if (Auth::user()->hak_akses == 'admin') {
+            return redirect()->route('dashboard')
+            ->withSuccess('You have successfully logged in as admin!');
+        } elseif (Auth::user()->hak_akses == 'pengguna_jasa') {
+            return redirect()->route('dashboard-pj')
+            ->withSuccess('You have successfully logged in as Pengguna Jasa!');
+        } elseif (Auth::user()->hak_akses == 'customer_service') {
+            return redirect()->route('dashboard-cs')
+            ->withSuccess('You have successfully logged in as CS!');
+        }
     }
 
     /**
@@ -90,7 +98,7 @@ class AuthController extends Controller
             } elseif (Auth::user()->hak_akses == 'pengguna_jasa') {
                 return redirect()->route('dashboard-pj')
                     ->withSuccess('You have successfully logged in as Pengguna Jasa!');
-            }elseif (Auth::user()->hak_akses == 'cs') {
+            }elseif (Auth::user()->hak_akses == 'customer_service') {
                 return redirect()->route('dashboard-cs')
                     ->withSuccess('You have successfully logged in as CS!');
             }

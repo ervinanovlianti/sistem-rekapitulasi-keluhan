@@ -494,14 +494,20 @@ class AdminController extends Controller
         $keluhan = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
             ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
+            // ->join('users', 'data_keluhan.penanggungjawab', '=', 'users.id')
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
+            ->where('data_keluhan.id_keluhan', $id)
+            ->first();
+        $namaCS = DB::table('data_keluhan')
+            ->join('users', 'data_keluhan.penanggungjawab', '=', 'users.id')
+            // ->select('data_keluhan.*', 'users.nama')
             ->where('data_keluhan.id_keluhan', $id)
             ->first();
         $cs = DB::table('users')
             ->where('hak_akses', 'customer_service')
             ->get();
 
-        return view('detail_keluhan', compact('keluhan', 'cs'));
+        return view('detail_keluhan', compact('keluhan', 'cs','namaCS'));
     }
     public function verifikasiKeluhan(Request $request)
     {
@@ -530,7 +536,7 @@ class AdminController extends Controller
                 ->where('id_keluhan', $id)
                 ->update([
                     'status_keluhan' => 'ditangani oleh cs',
-                    'penanggungjawab' => 'CS 1',
+                    // 'penanggungjawab' => 'CS 1',
                 ]);
             return redirect()->back()->with('success', 'Keluhan sedang ditangan CS.');
         } else {

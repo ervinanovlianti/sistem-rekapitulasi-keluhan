@@ -4,15 +4,9 @@
     </a> --}}
     <nav class="vertnav navbar navbar-light">
     <!-- nav bar -->
-    <div class="w-100 mb-4 d-flex">
-        <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="./index.html">
-        <svg version="1.1" id="logo" class="navbar-brand-img brand-sm" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 120 120" xml:space="preserve">
-            <g>
-            <polygon class="st0" points="78,105 15,105 24,87 87,87 	" />
-            <polygon class="st0" points="96,69 33,69 42,51 105,51 	" />
-            <polygon class="st0" points="78,33 15,33 24,15 87,15 	" />
-            </g>
-        </svg>
+    <div class="w-100 mb-2 d-flex">
+        <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="/">
+            <img src="{{ asset('foto_profil/ptkm-pelindo.png') }}" alt="" width="200" height="50">
         </a>
     </div>
     {{-- Menu --}}
@@ -25,7 +19,7 @@
         </a>
         </li>
         @endif
-        @if(Auth::user()->hak_akses === 'cs')
+        @if(Auth::user()->hak_akses === 'customer_service')
         <li class="nav-item">
         <a href="/dashboard-cs" aria-expanded="false" class="nav-link">
             <i class="fe fe-home fe-16"></i>
@@ -73,9 +67,9 @@
         </a>
         </li>
         @endif
-        @if(Auth::user()->hak_akses === 'cs')
+        @if(Auth::user()->hak_akses === 'customer_service')
         <li class="nav-item">
-        <a href="/keluhan" aria-expanded="false" class="nav-link">
+        <a href="/" aria-expanded="false" class="nav-link">
             <i class="fe fe-file fe-16"></i>
             <span class="ml-3 item-text">Keluhan</span>
         </a>
@@ -105,7 +99,15 @@
         <p class="text-muted nav-heading mt-1 mb-1">
             <span>User</span>
         </p>
-        @if(Auth::user()->hak_akses === 'admin')
+        {{-- @if(Auth::user()->hak_akses === 'admin') --}}
+        <li class="nav-item">
+        <a href="/profil" aria-expanded="false" class="nav-link">
+            <i class="fe fe-user fe-16"></i>
+            <span class="ml-3 item-text">Profil</span>
+        </a>
+        </li>
+        {{-- @endif --}}
+        {{-- @if(Auth::user()->hak_akses === 'pengguna_jasa')
         <li class="nav-item">
         <a href="/profil" aria-expanded="false" class="nav-link">
             <i class="fe fe-user fe-16"></i>
@@ -113,22 +115,14 @@
         </a>
         </li>
         @endif
-        @if(Auth::user()->hak_akses === 'pengguna_jasa')
+        @if(Auth::user()->hak_akses === 'customer_service')
         <li class="nav-item">
         <a href="/profil" aria-expanded="false" class="nav-link">
             <i class="fe fe-user fe-16"></i>
             <span class="ml-3 item-text">Profil</span>
         </a>
         </li>
-        @endif
-        @if(Auth::user()->hak_akses === 'cs')
-        <li class="nav-item">
-        <a href="/profil" aria-expanded="false" class="nav-link">
-            <i class="fe fe-user fe-16"></i>
-            <span class="ml-3 item-text">Profil</span>
-        </a>
-        </li>
-        @endif
+        @endif --}}
     </ul>
     {{-- Akhir Menu --}}
     </nav>

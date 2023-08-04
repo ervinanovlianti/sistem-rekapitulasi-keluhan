@@ -7,7 +7,7 @@
         <div class="row mt-5 align-items-center">
         <div class="col-md-3 text-center mb-5">
             <div class="avatar avatar-xl">
-            <img src="{{ asset('admin/./assets/avatars/face-1.jpg') }}" alt="..." class="avatar-img rounded-circle">
+            <img src="{{ asset('foto_profil/profil-default.png') }}" alt="..." class="avatar-img rounded-circle">
             </div>
         </div>
         <div class="col">
