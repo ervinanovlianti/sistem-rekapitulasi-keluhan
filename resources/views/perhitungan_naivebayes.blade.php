@@ -2,6 +2,8 @@
 @section('content')
 <div class="row">
 <div class="col-md-12">
+    @if (!empty($dataUji))
+
     <p>
         <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
             Tampilkan Data Latih
@@ -73,7 +75,8 @@
         </div>
     </div>
     </div>
-<h2 class="h4 mb-1">Masukkan Data Uji</h2>
+    @elseif(empty($dataUji))
+        <h2 class="h4 mb-1">Masukkan Data Uji</h2>
 {{-- <div class="col-md-6"> --}}
     <div class="card shadow mb-4 ">
         <div class="card-body">
@@ -106,7 +109,7 @@
                         <option selected>--Pilih--</option>
                         <option value="Visit">Visit</option>
                         <option value="Wa/Hp">Wa/Hp</option>
-                        <option value="Web">Web</option>
+                        {{-- <option value="Web">Web</option> --}}
                         <option value="Walkie Talkie">Walkie Talkie</option>
                     </select>
                 </div>
@@ -120,7 +123,10 @@
             </form>
         {{-- </div> --}}
     </div> <!-- / .card -->
-</div>
+    @endif
+
+
+{{-- </div> --}}
     {{-- <div class="card shadow mb-5">
         <div class="card-body">
             <form method="post" action="/perhitungan-naive-bayes" id="dataForm" enctype="multipart/form-data">
@@ -189,6 +195,8 @@
     {{-- @if ()
         
     @endif --}}
+    @if (!empty($dataUji))
+        
     <h2 class="h4 mb-1">Preview Data Keluhan</h2>
     <div class="card shadow mb-5" id="previewKeluhan">
         <div class="card-body">
@@ -211,14 +219,14 @@
             <!-- Add a button to save the data -->
             <form action="/simpan-ke-database" method="post">
                 @csrf
-                <input type="hidden" name="id_pengguna" value="{{ $idPengguna }}">
+                <input type="hidden" name="id" value="{{ $idPengguna }}">
                 <input type="hidden" name="nama" value="{{ $namaPengguna }}">
                 <input type="hidden" name="email" value="{{ $email }}">
                 <input type="hidden" name="no_telepon" value="{{ $noTelepon }}">
                 <input type="hidden" name="jenis_pengguna" value="{{ $jenisPengguna }}">
                 <input type="hidden" name="hak_akses" value="pengguna_jasa">
                 <input type="hidden" name="id_keluhan" value="{{ $idKeluhan }}">
-                <input type="hidden" name="tgl_keluhan" value="{{ $tglKeluhan }}">
+                {{-- <input type="hidden" name="tgl_keluhan" value="{{ $tglKeluhan }}"> --}}
                 <input type="hidden" name="via_keluhan" value="{{ $viaKeluhan }}">
                 <input type="hidden" name="uraian_keluhan" value="{{ $dataUji }}">
                 <input type="hidden" name="status_keluhan" value="menunggu verifikasi">
@@ -466,6 +474,7 @@
             <p>Jadi Keluhan <strong>"{{ $dataUji }}" </strong>  termasuk kategori <strong>{{ $kategoriTerbesar }}</strong></p>
         </div>
     </div>
+    @endif
 
 </div>
 </div> 

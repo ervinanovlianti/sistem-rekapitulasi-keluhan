@@ -151,10 +151,10 @@ class NaiveBayesController extends Controller
         $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
 
         // Simpan data pelanggan ke dalam database
-        $kodePJ = DB::table('data_pengguna_jasa')
-        ->where('id_pengguna', 'like', "CUST%")
-        ->orderBy('id_pengguna', 'desc')
-        ->value('id_pengguna');
+        $kodePJ = DB::table('users')
+        ->where('id', 'like', "2%")
+        ->orderBy('id', 'desc')
+        ->value('id');
 
         if ($kodePJ) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
@@ -164,7 +164,7 @@ class NaiveBayesController extends Controller
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumberPJ = '0001';
         }
-        $newKodePJ = "CUST-$newNumberPJ";
+        $newKodePJ = "2$newNumberPJ";
 
         date_default_timezone_set('Asia/Makassar');
         // Mendapatkan waktu sekarang
@@ -355,22 +355,25 @@ class NaiveBayesController extends Controller
         ]);
         // Simpan data pelanggan ke dalam database
         $dataPelanggan = [
-            'id_pengguna' => $request->input('id_pengguna'),
+            'id' => $request->input('id'),
             'nama' => $request->input('nama'),
             'email' => $request->input('email'),
+            'password' => $request->input('nama'),
             'no_telepon' => $request->input('no_telepon'),
             'jenis_pengguna' => $request->input('jenis_pengguna'),
             'hak_akses' => $request->input('hak_akses')
         ];
-        DB::table('data_pengguna_jasa')->insert($dataPelanggan);
+        DB::table('users')->insert($dataPelanggan);
 
-        
 
+        date_default_timezone_set('Asia/Makassar');
+        // Mendapatkan waktu sekarang
+        $tglKeluhan = date('Y-m-d H:i:s');
         // Simpan data keluhan ke dalam database
         $dataKeluhan = [
             'id_keluhan' => $request->input('id_keluhan'),
-            'tgl_keluhan' => $request->input('tgl_keluhan'),
-            'id_pengguna' => $request->input('id_pengguna'),
+            'tgl_keluhan' => $tglKeluhan,
+            'id_pengguna' => $request->input('id'),
             'via_keluhan' =>  $request->input('via_keluhan'),
             'uraian_keluhan' =>  $request->input('uraian_keluhan'),
             'kategori_id' =>  $request->input('kategori_id'),
