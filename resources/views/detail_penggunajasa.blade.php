@@ -2,7 +2,7 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
-      <h2 class="h4 mb-1 text-center">Data Keluhan {{  $pengguna_jasa->nama  }}</h2>
+      <h2 class="h4 mb-1 text-center">Data Keluhan {{  $penggunajasa->nama  }}</h2>
       <div class="card shadow">
         <div class="card-body">
           <!-- table -->
@@ -18,22 +18,24 @@
             </thead>
             <tbody>
                 <?php $no = 1; ?>
+                @foreach ($pengguna_jasa as $item)
+                    
                 <tr>
                   <td>{{  $no++ }}</td>
-                  <td>{{ $pengguna_jasa->uraian_keluhan }}</a></td>
-                  <td>{{ $pengguna_jasa->tgl_keluhan }}</td>
+                  <td>{{ $item->uraian_keluhan }}</a></td>
+                  <td>{{ $item->tgl_keluhan }}</td>
                   <td class="text-center">
-                    @if ($pengguna_jasa->status_keluhan == 'selesai')
-                    <span class="badge badge-pill badge-success mr-2">{{ $pengguna_jasa->status_keluhan }}</span></td>
-                    @elseif ($pengguna_jasa->status_keluhan == 'menunggu verifikasi')
-                    <span class="badge badge-pill badge-warning mr-2">{{ $pengguna_jasa->status_keluhan }}</span></td>
+                    @if ($item->status_keluhan == 'selesai')
+                    <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span></td>
+                    @elseif ($item->status_keluhan == 'menunggu verifikasi')
+                    <span class="badge badge-pill badge-warning mr-2">{{ $item->status_keluhan }}</span></td>
                     @else
-                    <span class="badge badge-pill badge-info mr-2">{{ $pengguna_jasa->status_keluhan }}</span></td>
+                    <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
                     @endif
-                  <td>{{ $pengguna_jasa->kategori_keluhan }}</td>
-                  
-                </tr>
-            </tbody>
+                    <td>{{ $item->kategori_keluhan }}</td>
+                  </tr>
+                  @endforeach
+                </tbody>
           </table>
           <nav aria-label="Table Paging" class="mb-0 text-muted">
               <ul class="pagination justify-content-end mb-0">

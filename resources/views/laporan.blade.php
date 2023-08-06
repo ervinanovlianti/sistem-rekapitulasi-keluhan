@@ -5,6 +5,11 @@
     <div class="col-md-12">
         <h2 class="h4 mb-1 text-center">Laporan Keluhan Pengguna Jasa Petikemas Kategori {{ request ('kategori') }} Per {{ request ('bulan') }} </h2>
         <h2 class="h4 mb-1 text-center">PT. Pelindo (Persero) Terminal Petikemas New Makassar</h2>
+         @if (Session::has('success'))
+            <div class="alert alert-success">
+                {{ Session::get('success') }}
+            </div>
+        @endif
         <div class="card shadow">
         <div class="card-body">
             <div class="toolbar row mb-3">
@@ -43,13 +48,14 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Search</button>
+                    {{-- <a href="{{ route('export', ['export' => 1]) }}" class="btn btn-success">Export</a> --}}
                 </form>
             </div>
             <div class="col-md-3 ml-1">
                 <div class="dropdown float-right">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="actionMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Export </button>
                     <div class="dropdown-menu" aria-labelledby="actionMenuButton">
-                        <a class="dropdown-item" href="#">PDF</a>
+                        <a class="dropdown-item" href="{{ url('/export-to-pdf/') }}">PDF</a>
                         <a class="dropdown-item" href="{{ url('/export') }}">EXCEL</a>
                     </div>
                 </div>

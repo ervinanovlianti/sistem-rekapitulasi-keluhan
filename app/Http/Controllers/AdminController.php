@@ -7,11 +7,11 @@ use App\Models\PenggunaJasaModel;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+// use PDF;
 use App\Exports\ExportKeluhan;
 use App\Imports\ImportKeluhan;
+use PDF;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 use Illuminate\Http\Request;
 
@@ -317,7 +317,6 @@ class AdminController extends Controller
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.nama')
             ->orderBy('tgl_keluhan', 'desc')
             ->paginate(10);
-
         return view('laporan', compact('keluhan'));
     }
 
@@ -336,49 +335,17 @@ class AdminController extends Controller
                     $query->where('uraian_keluhan', 'LIKE', "%$keyword%")
                         ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
                         ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
-                        ->orWhere('users.nama', 'LIKE', '%' . $keyword . '%'); // Menambahkan pencarian berdasarkan nama pengguna jasa
-                    //     ->orWhere('tgl_keluhan', 'LIKE', '%' . $keyword . '%')
-                    //     ->orWhere('waktu_penyelesaian', 'LIKE', '%' . $keyword . '%')
-                    //     ->orWhere('kategori_keluhan', 'LIKE', '%' . $keyword . '%')
-                    //     ->orWhere('aksi', 'LIKE', '%' . $keyword . '%');
+                        ->orWhere('users.nama', 'LIKE', '%' . $keyword . '%'); 
                 }
-
                 if (!empty($bulan)) {
                     $query->whereRaw("DATE_FORMAT(tgl_keluhan, '%Y-%m') = ?", [$bulan]);
                 }
-
                 if (!empty($kategori)) {
                     $query->where('kategori_keluhan', $kategori);
                 }
-
-                // if (!empty($id_kategori)) {
-                //     $query->where('id_kategori', $id_kategori);
-                // }
             })
             ->orderBy('tgl_keluhan', 'desc')
             ->paginate(10);
-
-        // $query = DB::table('data_keluhan')
-        // ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        // ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
-        // ->where('uraian_keluhan', 'LIKE', '%' . $keyword . '%')
-        //     ->orWhere('tgl_keluhan', 'LIKE', '%' . $keyword . '%')
-        //     ->orWhere('users.nama', 'LIKE', '%' . $keyword . '%') // Menambahkan pencarian berdasarkan nama pengguna jasa
-        //     ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
-        //     ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
-        //     ->orWhere('waktu_penyelesaian', 'LIKE', '%' . $keyword . '%')
-        //     ->orWhere('kategori_keluhan', 'LIKE', '%' . $keyword . '%')
-        //     ->orWhere('aksi', 'LIKE', '%' . $keyword . '%');
-
-        // if (!empty($bulan)) {
-        //     $query->whereRaw("DATE_FORMAT(tgl_keluhan, '%Y-%m') = ?", [$bulan]);
-        // }
-
-        // if (!empty($kategori)) {
-        //     $query->where('kategori_keluhan', $kategori);
-        // }
-
-        // $keluhan = $query->paginate(10);
 
         return view('laporan', compact('keluhan', 'keyword', 'bulan', 'kategori'));
     }
@@ -436,8 +403,14 @@ class AdminController extends Controller
             ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
             ->where('users.id', $id)
+            ->get();
+        $penggunajasa = DB::table('data_keluhan')
+            ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
+            ->select('data_keluhan.*', 'users.nama')
+            ->where('users.id', $id)
             ->first();
-        return view('detail_penggunajasa', compact('pengguna_jasa'));
+            
+        return view('detail_penggunajasa', compact('pengguna_jasa', 'penggunajasa'));
     }
     public function dataCS()
     {
@@ -564,13 +537,6 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Keluhan Terselesaikan!!!');
     }
 
-    
-
-    // public function export()
-    // {
-    //     return Excel::download(new KeluhanExport, 'data_keluhan.xlsx');
-    // }
-
     function formImportData()
     {
         return view('import');
@@ -578,6 +544,10 @@ class AdminController extends Controller
 
     public function importKeluhan(Request $request)
     {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+        
         try {
             Excel::import(new ImportKeluhan, $request->file('file')->store('files'));
             return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
@@ -589,164 +559,39 @@ class AdminController extends Controller
 
     public function exportKeluhan(Request $request)
     {
-        return Excel::download(new ExportKeluhan, 'keluhan.xlsx');
+        // $search = $request->get('cari');
+        // $filename = 'laporan_keluhan.xlsx'; // Nama file default jika tidak ada kata kunci pencarian
+
+        // if ($search) {
+        //     // Jika terdapat kata kunci pencarian, maka kostumisasi nama file dengan kata kunci pencarian
+        //     $filename = 'laporan_keluhan_' . $search . '.xlsx';
+        // }
+
+        // return Excel::download(new ExportKeluhan($search), $filename);
+
+        return Excel::download(new ExportKeluhan(), 'laporan_keluhan.xlsx');
+        return redirect()->back()->with('success', 'Data keluhan berhasil diexport.');
+        // if ($request->input('export')) {
+        //     return Excel::download(new ExportKeluhan($request), 'laporan_keluhan.xlsx');
+        // }
+
     }
-    // public function importData(Request $request)
-    // {
-    //     $request->validate([
-    //         'file' => 'required|mimes:xls,xlsx'
-    //     ]);
-
-    //     try {
-    //         $file = $request->file('file');
-
-    //         Excel::import(new KeluhanImport, $file);
-
-    //         return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
-    //     } catch (\Exception $e) {
-    //         $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
-    //         return redirect()->back()->with('error', $errorMessage);
-    //     }
-    // }
-    // public function importData(Request $request)
-    // {
-    //     $request->validate([
-    //         'file' => 'required|mimes:xls,xlsx'
-    //     ]);
-
-    //     $file = $request->file('file');
-
-    //     try {
-    //         Excel::import(new KeluhanImport, $file);
-
-    //         return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
-    //     } catch (\Exception $e) {
-    //         $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan.';
-    //         return redirect()->back()->with('error', $errorMessage);
-    //     }
-    // }
-    public function importDataUtama(Request $request)
+    public function exportToPDF()
     {
-        $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
-        ]);
+        // Query untuk mendapatkan data keluhan dari tiga tabel yang di-join
+        $dataKeluhan = DB::table('data_keluhan')
+        ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
+        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+        ->select('data_keluhan.*', 'users.nama', 'data_kategori.kategori_keluhan')
+        ->get();
 
-        $file = $request->file('file');
+        $pdf = PDF::loadView('export_pdf', ['dataKeluhan' => $dataKeluhan]);
 
-        try {
-            Excel::import(new ImportKeluhan, $file);
+        return $pdf->download('data_keluhan.pdf');
+        // $dataKeluhan = KeluhanModel::all();
 
-            return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
-        } catch (\Exception $e) {
-            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan.';
-            return redirect()->back()->with('error', $errorMessage);
-        }
-    }
-    public function importData2(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
-        ]);
+        // $pdf = PDF::loadView('export_pdf', ['dataKeluhan' => $dataKeluhan]);
 
-        try {
-            $file = $request->file('file');
-
-            // Mengabaikan row pertama (heading) dari file Excel
-            $data = Excel::toArray([], $file);
-            $data = array_slice($data[0], 1);
-
-            // Menentukan id_keluhan sesuai dengan format khusus
-            $bulanTahun = date('my');
-            $lastNumber = KeluhanModel::where('id_keluhan', 'like', "KEL-$bulanTahun%")->max('id_keluhan');
-            $lastNumber = ($lastNumber) ? (int) substr($lastNumber, -5) : 0;
-            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
-            $idKeluhan = "KEL-$bulanTahun-$newNumber";
-
-            foreach ($data as $row) {
-                $keluhan = [
-                    'id_keluhan'        => $idKeluhan,
-                    'tgl_keluhan'       => $row[0],
-                    'id_pengguna'       => $row[1],
-                    'via_keluhan'       => $row[2],
-                    'uraian_keluhan'    => $row[3],
-                    'kategori_id'       => $row[4],
-                    'penanggungjawab'   => $row[5],
-                    'waktu_penyelesaian' => $row[6],
-                    'aksi'              => $row[7],
-                    'status_keluhan'    => $row[8],
-                    // Sesuaikan dengan kolom-kolom pada model KeluhanModel
-                ];
-
-                // Simpan data ke dalam database
-                KeluhanModel::create($keluhan);
-            }
-
-            return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
-        } catch (\Exception $e) {
-            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
-            return redirect()->back()->with('error', $errorMessage);
-        }
-    }
-    function importData1(Request $request)
-    {
-
-        $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
-        ]);
-
-        $file = $request->file('file');
-
-        try {
-            $data = Excel::toArray([], $file);
-
-            // Mengabaikan row pertama (heading) dari file Excel
-            $data = array_slice($data[0], 1);
-
-            // Menentukan id_keluhan sesuai dengan format khusus
-            $bulanTahun = date('my');
-            $lastNumber = KeluhanModel::where('id_keluhan', 'like', "KEL-$bulanTahun%")->max('id_keluhan');
-            $lastNumber = ($lastNumber) ? (int) substr($lastNumber, -5) : 0;
-            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
-            $idKeluhan = "KEL-$bulanTahun-$newNumber";
-
-            // $lastNumberPJ = KeluhanModel::where('id_pengguna', 'like', "CUST%")->max('id_pengguna');
-            // $lastNumberPJ = ($lastNumberPJ) ? (int) substr($lastNumberPJ, -4) : 0;
-            // $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
-            // $idPengguna = "CUST-$newNumberPJ";
-
-            foreach ($data as $row) {
-                $keluhan = new KeluhanModel([
-                    'id_keluhan'        => $idKeluhan,
-                    'tgl_keluhan'       => $row['tgl_keluhan'],
-                    'id_pengguna'       => $row['id_pengguna'],
-                    'via_keluhan'       => $row['via_keluhan'],
-                    'uraian_keluhan'    => $row['uraian_keluhan'],
-                    'kategori_id'       => $row['kategori_id'],
-                    'penanggungjawab'   => $row['penanggungjawab'],
-                    'waktu_penyelesaian' => $row['waktu_penyelesaian'],
-                    'aksi'              => $row['aksi'],
-                    'status_keluhan'    => $row['status_keluhan'],
-                    // Sesuaikan dengan kolom-kolom pada model Keluhan
-                ]);
-                // $penggunaJasa = [
-                //     'id_pengguna'       => 1,
-                //     'nama' => $row['nama'],
-                //     'no_telepon' => $row['no_telepon'],
-                //     'jenis_pengguna' => $row['jenis_pengguna'],
-                //     'hak_akses' => 'pengguna_jasa',
-
-                //     // Sesuaikan dengan kolom-kolom pada model PenggunaJasa
-                // ];
-
-                // Simpan data ke dalam database
-                // DB::table('data_keluhan')->insert($keluhan);
-                // DB::table('users')->insert($penggunaJasa);
-                $keluhan->save();
-            }
-
-            return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.');
-        }
+        // return $pdf->download('data_keluhan.pdf');
     }
 }
