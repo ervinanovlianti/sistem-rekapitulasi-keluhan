@@ -50,7 +50,7 @@
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="actionMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Export </button>
                     <div class="dropdown-menu" aria-labelledby="actionMenuButton">
                         <a class="dropdown-item" href="#">PDF</a>
-                        <a class="dropdown-item" href="#">EXCEL</a>
+                        <a class="dropdown-item" href="{{ url('/export') }}">EXCEL</a>
                     </div>
                 </div>
             </div>

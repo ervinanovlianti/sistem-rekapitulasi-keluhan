@@ -67,3 +67,5 @@ Route::middleware(['auth', 'hak_akses:customer_service'])->group(function () {
     Route::get('/profil', function () {
         return view('profil');
     })->middleware('auth');
+
+Route::get('/export', [AdminController::class, 'export']);

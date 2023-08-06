@@ -6,10 +6,13 @@ use App\Models\KeluhanModel;
 use App\Models\PenggunaJasaModel;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-// use Illuminate\Support\Carbon;
+
+use App\Exports\KeluhanExport;
 use Maatwebsite\Excel\Facades\Excel;
-// use Maatwebsite\Excel\Concerns\ToModel;
-// use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+
+
 use App\Imports\ImportKeluhan;
 use Illuminate\Http\Request;
 
@@ -408,17 +411,17 @@ class AdminController extends Controller
 
         return view('dashboard', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
     }
-    // function notifikasi() {
-    //     // Mendapatkan waktu sekarang
-    //     $today = date('d/m/y');
-    //     // Mengambil data keluhan yang tercatat pada hari ini
-    //     $notifikasiKeluhan = DB::table('data_keluhan')
-    //         ->where('status_keluhan','menunggu verifikasi')
-    //         ->whereDate('tgl_keluhan', $today)
-    //         ->get();
+    function notifikasi() {
+        // Mendapatkan waktu sekarang
+        $today = date('d/m/y');
+        // Mengambil data keluhan yang tercatat pada hari ini
+        $notifikasiKeluhan = DB::table('data_keluhan')
+            ->where('status_keluhan','menunggu verifikasi')
+            ->whereDate('tgl_keluhan', $today)
+            ->get();
 
-    //     return view('partials/navbar', compact('notifikasiKeluhan'));
-    // }
+        return view('partials/navbar', compact('notifikasiKeluhan'));
+    }
     public function dataPenggunaJasa()
     {
         $data_penggunajasa = DB::table('users')
@@ -561,6 +564,14 @@ class AdminController extends Controller
             ]);
         return redirect()->back()->with('success', 'Keluhan Terselesaikan!!!');
     }
+
+    
+
+    // public function export()
+    // {
+    //     return Excel::download(new KeluhanExport, 'data_keluhan.xlsx');
+    // }
+
     function formImportData()
     {
         return view('import');
