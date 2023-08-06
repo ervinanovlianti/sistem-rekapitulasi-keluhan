@@ -28,7 +28,7 @@ Route::middleware(['auth', 'hak_akses:admin'])->group(function () {
     Route::get('/input_datacs', [AdminController::class, 'formInputDataCS']);
     Route::post('/input-datacs', [AdminController::class, 'inputDataCS']);
     Route::get('/import-data', [AdminController::class, 'formImportData']);
-    Route::post('/import-data', [AdminController::class, 'importData']);
+    Route::post('/import-data', [AdminController::class, 'importKeluhan']);
     Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
     Route::get('/laporan', [AdminController::class , 'cari'])->name('laporan.cari');
     Route::get('/rekapitulasi', [AdminController::class, 'rekapitulasi']);
@@ -68,4 +68,4 @@ Route::middleware(['auth', 'hak_akses:customer_service'])->group(function () {
         return view('profil');
     })->middleware('auth');
 
-Route::get('/export', [AdminController::class, 'export']);
+Route::get('/export', [AdminController::class, 'exportKeluhan']);

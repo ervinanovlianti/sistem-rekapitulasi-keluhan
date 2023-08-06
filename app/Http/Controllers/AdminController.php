@@ -7,13 +7,12 @@ use App\Models\PenggunaJasaModel;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-use App\Exports\KeluhanExport;
+use App\Exports\ExportKeluhan;
+use App\Imports\ImportKeluhan;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-
-use App\Imports\ImportKeluhan;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -577,6 +576,21 @@ class AdminController extends Controller
         return view('import');
     }
 
+    public function importKeluhan(Request $request)
+    {
+        try {
+            Excel::import(new ImportKeluhan, $request->file('file')->store('files'));
+            return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
+        } catch (\Exception $e) {
+            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
+            return redirect()->back()->with('error', $errorMessage);
+        }
+    }
+
+    public function exportKeluhan(Request $request)
+    {
+        return Excel::download(new ExportKeluhan, 'keluhan.xlsx');
+    }
     // public function importData(Request $request)
     // {
     //     $request->validate([
@@ -594,23 +608,23 @@ class AdminController extends Controller
     //         return redirect()->back()->with('error', $errorMessage);
     //     }
     // }
-    public function importData(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
-        ]);
+    // public function importData(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'required|mimes:xls,xlsx'
+    //     ]);
 
-        $file = $request->file('file');
+    //     $file = $request->file('file');
 
-        try {
-            Excel::import(new ImportKeluhan, $file);
+    //     try {
+    //         Excel::import(new KeluhanImport, $file);
 
-            return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
-        } catch (\Exception $e) {
-            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan.';
-            return redirect()->back()->with('error', $errorMessage);
-        }
-    }
+    //         return redirect('keluhan')->with('success', 'Data keluhan berhasil diimport.');
+    //     } catch (\Exception $e) {
+    //         $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan.';
+    //         return redirect()->back()->with('error', $errorMessage);
+    //     }
+    // }
     public function importDataUtama(Request $request)
     {
         $request->validate([
@@ -702,7 +716,7 @@ class AdminController extends Controller
 
             foreach ($data as $row) {
                 $keluhan = new KeluhanModel([
-                    'id_keluhan'        => $row['id_keluhan'],
+                    'id_keluhan'        => $idKeluhan,
                     'tgl_keluhan'       => $row['tgl_keluhan'],
                     'id_pengguna'       => $row['id_pengguna'],
                     'via_keluhan'       => $row['via_keluhan'],
