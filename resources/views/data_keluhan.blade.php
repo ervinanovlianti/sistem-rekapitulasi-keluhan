@@ -22,39 +22,41 @@
             </tr>
           </thead>
           <tbody>
-              <?php $no = 1; ?>
-              @foreach ($data_keluhan as $item)
-              <tr>
-                <td>{{  $no++ }}</td>
-                <td>{{ $item->nama }}</td>
-                <td>{{ $item->uraian_keluhan }}</a></td>
-                <td>{{ $item->tgl_keluhan }}</td>
-                <td class="text-center">
-                  @if ($item->status_keluhan == 'selesai')
-                  <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span></td>
-                  @elseif ($item->status_keluhan == 'menunggu verifikasi')
-                  <span class="badge badge-pill badge-warning mr-2">{{ $item->status_keluhan }}</span></td>
-                  @else
-                  <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
-                  @endif
-                <td>{{ $item->kategori_keluhan }}</td>
-                <td>
-                  <button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="text-muted sr-only">Action</span>
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right">
+            <?php $no = 1; ?>
+            @foreach ($data_keluhan as $item)
+            <tr>
+              <td>{{ $no++ }}</td>
+              <td>{{ $item->nama }}</td>
+              <td>{{ $item->uraian_keluhan }}</a></td>
+              <td>{{ $item->tgl_keluhan }}</td>
+              <td class="text-center">
+                @if ($item->status_keluhan == 'selesai')
+                <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span>
+              </td>
+              @elseif ($item->status_keluhan == 'menunggu verifikasi')
+              <span class="badge badge-pill badge-warning mr-2">{{ $item->status_keluhan }}</span></td>
+              @else
+              <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
+              @endif
+              <td>{{ $item->kategori_keluhan }}</td>
+              <td>
+                <button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+                  <span class="text-muted sr-only">Action</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
 
-                    <a href="/detail-keluhan/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a>
-                  </div>
-                </td>
-              </tr>
-              @endforeach
+                  <a href="/detail-keluhan/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a>
+                </div>
+              </td>
+            </tr>
+            @endforeach
           </tbody>
         </table>
         <nav aria-label="Table Paging" class="mb-0 text-muted">
-            <ul class="pagination justify-content-end mb-0">
-              {{ $data_keluhan->links('pagination::bootstrap-4') }}
-            </ul>
+          <ul class="pagination justify-content-end mb-0">
+            {{ $data_keluhan->links('pagination::bootstrap-4') }}
+          </ul>
         </nav>
       </div>
     </div>

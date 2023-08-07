@@ -8,9 +8,7 @@ use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NaiveBayesController;
 
-Route::get('/wel', function () {
-    return view('welcome');
-});
+
 Route::controller(AuthController::class)->group(function () {
     Route::get('/register', 'register')->name('register')->middleware('guest');
     Route::post('/store', 'store')->name('store');

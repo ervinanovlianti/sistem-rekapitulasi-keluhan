@@ -1,8 +1,8 @@
 @extends('layouts.main')
 @section('content')
 <h5 class="">Tambah Data Costumer Service</h5>
-    <div class="col-md-6">
-        <div class="card shadow mb-4">
+<div class="col-md-6">
+    <div class="card shadow mb-4">
         <div class="card-body">
             <form method="post" action="/input-datacs" enctype="multipart/form-data">
                 @csrf
@@ -26,7 +26,7 @@
                     <label for="" class="form-label">No. Telepon</label>
                     <input type="text" class="form-control" id="" name="no_telepon">
                 </div>
-                
+
                 <a href="/dashboard" class="btn btn-secondary">Kembali</a>
                 <button type="submit" class="btn btn-primary">Tambah</button>
             </form>

@@ -1,8 +1,8 @@
 @extends('layouts.main')
 @section('content')
 <h5 class="">Input Data Keluhan</h5>
-    <div class="col-md-6">
-        <div class="card shadow mb-4">
+<div class="col-md-6">
+    <div class="card shadow mb-4">
         <div class="card-header">
             <strong class="card-title">Input Keluhan Pengguna Jasa</strong>
         </div>
@@ -10,7 +10,8 @@
             <form>
                 <div class="mb-3">
                     <label for="" class="form-label">Tanggal Keluhan</label>
-                    <input type="text" class="form-control" name="tgl_keluhan" id="exampleInputEmail1" aria-describedby="" value="{{ date("Y-m-d h:i:sa") }}">
+                    <input type="text" class="form-control" name="tgl_keluhan" id="exampleInputEmail1"
+                        aria-describedby="" value="{{ date(" Y-m-d h:i:sa") }}">
                 </div>
                 {{-- Identitas Pengguna Jasa --}}
                 <div class="mb-3">
@@ -49,7 +50,7 @@
                     </select>
                 </div>
                 {{-- Akhir via keluhan --}}
-                 {{-- Pelanggan (add properti hidden)--}}
+                {{-- Pelanggan (add properti hidden)--}}
                 <div class="mb-3">
                     <label for="" class="form-label">Via Keluhan</label>
                     <input type="text" class="form-control" id="" placeholder="Website">
