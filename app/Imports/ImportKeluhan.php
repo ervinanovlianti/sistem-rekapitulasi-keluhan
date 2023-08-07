@@ -27,10 +27,10 @@ class Importkeluhan implements ToModel
             'via_keluhan'       => $row[3],
             'uraian_keluhan'    => $row[4],
             'kategori_id'       => $row[5],
-            'penanggungjawab'       => $row[6],
-            'waktu_penyelesaian'       => $row[7],
-            'aksi'       => $row[8],
-            'status_keluhan'       => $row[9],
+            'penanggungjawab'   => $row[6],
+            'waktu_penyelesaian'=> $row[7],
+            'aksi'              => $row[8],
+            'status_keluhan'    => $row[9],
             
         ]);
     }

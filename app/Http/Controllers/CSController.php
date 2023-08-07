@@ -33,13 +33,13 @@ class CSController extends Controller
             ->where('id_pengguna', $idCS)
             ->where('status_keluhan', 'menunggu verifikasi')
             ->count();
-        $keluhanDiproses = KeluhanModel::where('id_pengguna', $idCS)
-            ->orWhere('status_keluhan', 'ditangani oleh cs')
-            ->orWhere('status_keluhan', 'dialihkan ke cs')
+        $keluhanDiproses = KeluhanModel::where('penanggungjawab', $idCS)
+            ->where('status_keluhan', 'ditangani oleh cs')
+            ->where('status_keluhan', 'dialihkan ke cs')
             ->count();
 
         $keluhanSelesai = DB::table('data_keluhan')
-            ->where('id_pengguna', $idCS)
+            ->where('penanggungjawab', $idCS)
             ->where('status_keluhan', 'selesai')
             ->count();
         date_default_timezone_set('Asia/Makassar');
@@ -49,7 +49,7 @@ class CSController extends Controller
 
         // Mengambil data keluhan yang tercatat pada hari ini
         $keluhanHariIni = DB::table('data_keluhan')
-            ->where('id_pengguna', $idCS)
+            ->where('penanggungjawab', $idCS)
             ->where('status_keluhan', 'menunggu verifikasi')
             ->whereDate('tgl_keluhan', $today)
             ->get();

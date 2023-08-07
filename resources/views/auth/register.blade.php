@@ -30,7 +30,12 @@
      <h4 class="text-center mt-5">
         PT. PELINDO (PERSERO) TERMINAL PETIKEMAS NEW MAKASSAR
     </h4>
-        <div class="row justify-content-center mt-5">
+    <div  class="row justify-content-center">
+        <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="/">
+                <img src="{{ asset('foto_profil/tpkm-pelindo.png') }}" alt="" width="300" height="70">
+        </a>
+    </div>
+<div class="row justify-content-center mt-4">
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">Register</div>

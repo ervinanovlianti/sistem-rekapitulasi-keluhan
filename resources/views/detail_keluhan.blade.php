@@ -93,7 +93,7 @@
             <div class="card-body">
               <p>Uraian Keluhan :  <strong>{{ $keluhan->uraian_keluhan }}</strong></p>
               <p>Kategori       :  {{ $keluhan->kategori_keluhan }}</p>
-              <p>Penangungjawab         :  {{ $keluhan->penanggungjawab }}</p>
+              <p>Penangungjawab         :  {{ $namaCS->nama }}</p>
               <p>Status         :  {{ $keluhan->status_keluhan }}</p>
               {{-- <p>Aksi           :  {{ $keluhan->aksi }}</p> --}}
               <a href="" class="btn btn-secondary m-auto">Kembali</a>

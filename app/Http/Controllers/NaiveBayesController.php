@@ -7,6 +7,8 @@ use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\Stemmer\StemmerFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -358,7 +360,7 @@ class NaiveBayesController extends Controller
             'id' => $request->input('id'),
             'nama' => $request->input('nama'),
             'email' => $request->input('email'),
-            'password' => $request->input('nama'),
+            'password' => Hash::make($request->input('nama')),
             'no_telepon' => $request->input('no_telepon'),
             'jenis_pengguna' => $request->input('jenis_pengguna'),
             'hak_akses' => $request->input('hak_akses')
