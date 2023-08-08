@@ -6,7 +6,7 @@
     <!-- nav bar -->
     <div class="w-100 mb-2 d-flex">
         <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="/">
-            <img src="{{ asset('foto_profil/ptkm-pelindo.png') }}" alt="" width="200" height="50">
+            <img src="{{ asset('foto_profil/tpkm-pelindo.png') }}" alt="" width="200" height="50">
         </a>
     </div>
     {{-- Menu --}}

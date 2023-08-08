@@ -30,12 +30,11 @@ class UsersController extends Controller
         $totalKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->count();
         
         $keluhanBaru =KeluhanModel::where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'menunggu verifikasi')
+        ->where('status_keluhan', 'dialihkan ke cs')
         ->count();
 
         $keluhanDiproses = DB::table('data_keluhan')
         ->where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'dialihkan ke cs')
         ->where('status_keluhan', 'ditangani oleh cs')
         ->count();
 
@@ -148,8 +147,7 @@ class UsersController extends Controller
                 $index++;
             }
         }
-        // Tahap 1
-        // Menghitung jumlah setiap kategori
+        // Tahap 1 Menghitung jumlah setiap kategori
         $kategoriCount = [];
         $totalKeluhan = count($processedKeluhan);
         foreach ($processedKeluhan as $keluhan) {

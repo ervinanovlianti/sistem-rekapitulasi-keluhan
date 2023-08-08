@@ -86,7 +86,7 @@
                         <tr>
                             <td>{{ $no++ }}</td>
                             <td>{{ $item->uraian_keluhan }}</a></td>
-                            <td>{{ date('d-m-Y H:m:s', strtotime($item->tgl_keluhan)) }}</td>
+                            <td>{{ date('j/m/Y H:m:s', strtotime($item->tgl_keluhan)) }}</td>
                             <td>{{ $item->nama }}</td>
                             <td>{{ $item->via_keluhan }}</td>
                             <td>

@@ -28,7 +28,9 @@
               <td>{{ $no++ }}</td>
               <td>{{ $item->nama }}</td>
               <td>{{ $item->uraian_keluhan }}</a></td>
-              <td>{{ $item->tgl_keluhan }}</td>
+              <td>{{ date('j/m/Y H:m:s', strtotime($item->tgl_keluhan)) }}</td>
+
+              {{-- <td>{{ $item->tgl_keluhan }}</td> --}}
               <td class="text-center">
                 @if ($item->status_keluhan == 'selesai')
                 <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span>

@@ -100,7 +100,7 @@
                                                 class="fe fe-inbox fe-16 text-white"></i></span>
                                     </div>
                                     <div class="col">
-                                        <small><strong>{{ $keluhan->tgl_keluhan }}</strong></small>
+                                        <small><strong>{{ date('j F Y H:m', strtotime($keluhan->tgl_keluhan)) }}</strong></small>
                                         <div class="mb-2 text-muted small"><strong>{{ $keluhan->uraian_keluhan
                                                 }}</strong></div>
                                         @if ($keluhan->status_keluhan == 'selesai')

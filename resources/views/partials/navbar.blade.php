@@ -16,14 +16,12 @@
                     <img src="{{ asset('foto_profil/profil-default.png') }}" alt="..." class="avatar-img rounded-circle">
                 </span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Profile</a>
-                <a class="dropdown-item" href="/dashboard-cs">CS</a>
-                <a class="dropdown-item" href="/dashboard-pj">Pengguna Jasa</a>
+            <div class="dropdown-menu dropdown-menu-right m-0" aria-labelledby="navbarDropdownMenuLink">
+                {{-- <a class="dropdown-item" href="#">Profile</a> --}}
                 <a class="dropdown-item">
                 <form action="/logout" method="POST">
                     @csrf
-                    <button>Logout</button>
+                    <button class=" dropdown-item" style="text-decoration: none">Logout</button>
                 </form>
                 </a>
                 

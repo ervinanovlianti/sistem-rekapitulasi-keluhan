@@ -18,7 +18,7 @@
                     </span>
                 </div>
                 <div class="col pr-0">
-                    <p class="small text-muted mb-0">Keluhan Baru</p>
+                    <p class="small text-muted mb-0">Keluhan Masuk</p>
                     <span class="h3 mb-0 ">{{ $keluhanBaru }}</span>
                 </div>
                 </div>
@@ -86,7 +86,7 @@
         <div class="col-md-12 mb-4">
         <div class="card shadow">
             <div class="card-header">
-            <strong class="card-title">Keluhan Yang Perlu Diselesaikan Hari Ini</strong>
+            <strong class="card-title">Keluhan Yang Perlu Diselesaikan Hari </strong>
             <a class="float-right small text-muted" href="#!">View all</a>
             </div>
             <div class="card-body">
@@ -99,7 +99,7 @@
                             <span class="circle circle-sm bg-warning"><i class="fe fe-inbox fe-16 text-white"></i></span>
                         </div>
                         <div class="col">
-                            <small><strong>{{ $keluhan->tgl_keluhan }}</strong></small>
+                            <small><strong>{{ date('j F Y H:m', strtotime($keluhan->tgl_keluhan)); }}</strong></small>
                             <div class="mb-2 text-muted small"><strong>{{ $keluhan->uraian_keluhan }}</strong></div>
                                 @if ($keluhan->status_keluhan == 'selesai')
                                     <span class="badge badge-pill badge-success mr-2">{{ $keluhan->status_keluhan }}</span></td>

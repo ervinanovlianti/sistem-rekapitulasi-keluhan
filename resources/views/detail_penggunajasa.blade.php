@@ -27,12 +27,12 @@
               <td class="text-center">
                 @if ($item->status_keluhan == 'selesai')
                 <span class="badge badge-pill badge-success mr-2">{{ $item->status_keluhan }}</span>
+                @elseif ($item->status_keluhan == 'menunggu verifikasi')
+                <span class="badge badge-pill badge-warning mr-2">{{ $item->status_keluhan }}</span></td>
+                @else
+                <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
+                @endif
               </td>
-              @elseif ($item->status_keluhan == 'menunggu verifikasi')
-              <span class="badge badge-pill badge-warning mr-2">{{ $item->status_keluhan }}</span></td>
-              @else
-              <span class="badge badge-pill badge-info mr-2">{{ $item->status_keluhan }}</span></td>
-              @endif
               <td>{{ $item->kategori_keluhan }}</td>
             </tr>
             @endforeach

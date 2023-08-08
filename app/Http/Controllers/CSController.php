@@ -30,12 +30,11 @@ class CSController extends Controller
         // Menghitung total keluhan
         $totalKeluhan = KeluhanModel::where('penanggungjawab', $idCS)->count();
         $keluhanBaru = DB::table('data_keluhan')
-            ->where('id_pengguna', $idCS)
-            ->where('status_keluhan', 'menunggu verifikasi')
-            ->count();
-        $keluhanDiproses = KeluhanModel::where('penanggungjawab', $idCS)
-            ->where('status_keluhan', 'ditangani oleh cs')
+            ->where('penanggungjawab', $idCS)
             ->where('status_keluhan', 'dialihkan ke cs')
+            ->count();
+            $keluhanDiproses = KeluhanModel::where('penanggungjawab', $idCS)
+            ->where('status_keluhan', 'ditangani oleh cs')
             ->count();
 
         $keluhanSelesai = DB::table('data_keluhan')
@@ -45,13 +44,12 @@ class CSController extends Controller
         date_default_timezone_set('Asia/Makassar');
 
         // Mendapatkan waktu sekarang
-        $today = date("Y-m-d H:i:s");
+        // $today = date("Y-m-d H:i:s");
 
         // Mengambil data keluhan yang tercatat pada hari ini
         $keluhanHariIni = DB::table('data_keluhan')
             ->where('penanggungjawab', $idCS)
-            ->where('status_keluhan', 'menunggu verifikasi')
-            ->whereDate('tgl_keluhan', $today)
+            ->where('status_keluhan', 'dialihkan ke cs')
             ->get();
 
         return view('cs/dashboard_cs', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
@@ -60,7 +58,7 @@ class CSController extends Controller
     {
         $keluhan = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-            ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
+            ->join('users', 'data_keluhan.penanggungjawab', '=', 'users.id')
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
             ->where('data_keluhan.id_keluhan', $id)
             ->first();

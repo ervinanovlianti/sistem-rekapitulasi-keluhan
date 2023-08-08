@@ -9,7 +9,6 @@
         {{ Session::get('success') }}
       </div>
       @endif
-
       @if (Session::has('error'))
       <div class="alert alert-danger">
         {{ Session::get('error') }}
@@ -25,7 +24,7 @@
               <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
               <p>Via Laporan : {{ $keluhan->via_keluhan }}</p>
               @if (!empty($keluhan->gambar))
-              <p>Gambar : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p>
+
               @endif
             </div>
           </div>
@@ -39,8 +38,7 @@
               {{-- <p>Aksi : {{ $keluhan->aksi }}</p> --}}
               <a href="/keluhan" class="btn btn-secondary m-auto">Kembali</a>
               {{-- <a href="" class="btn btn-danger m-auto">Tolak</a> --}}
-              <button type="button" class="btn btn-success m-auto" data-toggle="modal" data-target="#verifikasiModal"
-                data-whatever="@mdo">Verifikasi</button>
+              <button type="button" class="btn btn-success m-auto" data-toggle="modal" data-target="#verifikasiModal" data-whatever="@mdo">Verifikasi</button>
             </div>
           </div>
         </div>
@@ -55,7 +53,7 @@
               <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
               <p>Via Laporan : {{ $keluhan->via_keluhan }}</p>
               @if (!empty($keluhan->gambar))
-              <p>Gambar : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p>
+              <!-- <p>Gambar : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p> -->
               @endif
             </div>
           </div>
@@ -98,8 +96,7 @@
               <p>Status : {{ $keluhan->status_keluhan }}</p>
               {{-- <p>Aksi : {{ $keluhan->aksi }}</p> --}}
               <a href="" class="btn btn-secondary m-auto">Kembali</a>
-              <button type="button" class="btn btn-success m-auto" data-toggle="modal" data-target="#konfirmasiModal"
-                data-whatever="@mdo">Konfirmasi</button>
+              <button type="button" class="btn btn-success m-auto" data-toggle="modal" data-target="#konfirmasiModal" data-whatever="@mdo">Konfirmasi</button>
             </div>
           </div>
         </div>
@@ -127,8 +124,12 @@
               <p>Kategori : {{ $keluhan->kategori_keluhan }}</p>
               <p>Penangungjawab : {{ $namaCS->nama }}</p>
               <p>Status : {{ $keluhan->status_keluhan }}</p>
+              @if (!empty($keluhan->waktu_penyelesaian))
               <p>Waktu Penyelesaian : {{ $keluhan->waktu_penyelesaian }}</p>
-              <p>Aksi : <strong>{{ $keluhan->aksi }}</strong></p>
+              @endif
+              @if (!empty($keluhan->aksi))
+                <p>Waktu Penyelesaian : {{ $keluhan->aksi }}</p>
+              @endif
             </div>
           </div>
         </div>
@@ -137,8 +138,7 @@
     </div>
 
     {{-- Modal Verifkasi --}}
-    <div class="modal fade" id="verifikasiModal" tabindex="-1" role="dialog" aria-labelledby="verifikasiModalLabel"
-      aria-hidden="true">
+    <div class="modal fade" id="verifikasiModal" tabindex="-1" role="dialog" aria-labelledby="verifikasiModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -170,8 +170,7 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="konfirmasiModal" tabindex="-1" role="dialog" aria-labelledby="konfirmasiModalLabel"
-      aria-hidden="true">
+    <div class="modal fade" id="konfirmasiModal" tabindex="-1" role="dialog" aria-labelledby="konfirmasiModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
