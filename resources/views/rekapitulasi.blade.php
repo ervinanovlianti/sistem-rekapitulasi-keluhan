@@ -27,7 +27,7 @@
                         </thead>
                         <tbody>
                             <?php $no = 1; ?>
-                            <tr>
+                            <tr class="text-center">
                                 <td>{{ $no++ }}</td>
                                 <td>Pembayaran</td>
                                 <td>{{ $jumlahPembayaran }}</td>
@@ -39,7 +39,7 @@
                                 <td>{{ $statusKeluhanPembayaran3 }}</td>
                                 <td>{{ $totalKeluhanPembayaran }}</td>
                             </tr>
-                            <tr>
+                            <tr class="text-center">
                                 <td>{{ $no++ }}</td>
                                 <td>Pengiriman</td>
                                 <td>{{ $jumlahPengiriman }}</td>
@@ -51,7 +51,7 @@
                                 <td>{{ $statusKeluhanPengiriman3 }}</td>
                                 <td>{{ $totalKeluhanPengiriman }}</td>
                             </tr>
-                            <tr>
+                            <tr class="text-center">
                                 <td>{{ $no++ }}</td>
                                 <td>Penerimaan</td>
                                 <td>{{ $jumlahPenerimaan }}</td>
@@ -64,7 +64,7 @@
                                 <td>{{ $totalKeluhanPenerimaan }}</td>
 
                             </tr>
-                            <tr>
+                            <tr class="text-center">
                                 <td>{{ $no++ }}</td>
                                 <td>Administrasi</td>
                                 <td>{{ $jumlahAdministrasi }}</td>
@@ -76,7 +76,7 @@
                                 <td>{{ $statusKeluhanAdministrasi3 }}</td>
                                 <td>{{ $totalKeluhanAdministrasi }}</td>
                             </tr>
-                            <tr>
+                            <tr class="text-center">
                                 <td>{{ $no++ }}</td>
                                 <td>Lainnya</td>
                                 <td>{{ $jumlahLainnya }}</td>

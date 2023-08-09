@@ -77,7 +77,7 @@
             </div>
         </div>
         @elseif(empty($dataUji))
-        <h2 class="h4 mb-1">Masukkan Data Uji</h2>
+        <h2 class="h4 mb-1">Masukkan Data Uji (Data Keluhan)</h2>
         {{-- <div class="col-md-6"> --}}
             <div class="card shadow mb-4 ">
                 <div class="card-body">
@@ -86,42 +86,59 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <input type="hidden" class="form-control" name="tgl_keluhan" id=""
-                                        aria-describedby="" value="{{ date(" Y-m-d h:i:sa") }}">
+                                    {{-- <input type="hidden" class="form-control" name="tgl_keluhan" id="" aria-describedby="" value="{{ date(" Y-m-d h:i:sa") }}"> --}}
                                     <label for="" class="form-label">Nama Pelapor</label>
-                                    <input type="text" class="form-control" id="" name="nama" placeholder="John">
+                                    <input type="text" class="form-control" id="" name="nama" placeholder="Nama Anda" required>
+                                    @error('nama')
+                                        <div style="color: red;">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group mb-3">
                                     <label for="" class="form-label">No. Telepon</label>
-                                    <input type="text" class="form-control" name="no_telepon" id="" placeholder="">
+                                    <input type="text" class="form-control" name="no_telepon" id="" placeholder="081---" required>
+                                     @error('no_telepon')
+                                        <div style="color: red;">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group mb-3">
                                     <label for="" class="form-label">Alamat Email</label>
-                                    <input type="text" class="form-control" id="" name="email"
-                                        placeholder="nama@gmail.com">
+                                    <input type="text" class="form-control" id="" name="email" placeholder="namaanda@gmail.com" required>
+                                     @error('email')
+                                        <div style="color: red;">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group mv-3">
                                     <label for="nama_perusahaan">Nama Perusahaan</label>
-                                    <input type="text" class="form-control" name="jenis_pengguna">
+                                    <input type="text" class="form-control" name="jenis_pengguna" placeholder="PT ..." required>
+                                    @error('jenis_pengguna')
+                                        <div style="color: red;">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div> <!-- /.col -->
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="example-select">Via Keluhan</label>
-                                    <select class="form-control" id="example-select" name="via_keluhan">
+                                    <select class="form-control" name="via_keluhan" required>
                                         <option selected>--Pilih--</option>
                                         <option value="Visit">Visit</option>
                                         <option value="Wa/Hp">Wa/Hp</option>
                                         {{-- <option value="Web">Web</option> --}}
                                         <option value="Walkie Talkie">Walkie Talkie</option>
                                     </select>
+                                    @error('via_keluhan')
+                                        <div style="color: red;">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group mv-3">
-                                    <label for="uraian_keluhan">Uraian Keluhan Data Uji</label>
+                                    <label for="uraian_keluhan">Uraian Keluhan</label>
                                     <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4"
-                                        rows="6" cols="50" maxlength="300"></textarea>
+                                        rows="6" cols="50" maxlength="300" placeholder="Uraikan keluhan anda dengan bahasa yang mudah dipahami" required></textarea>
+                                    @error('uraian_keluhan')
+                                        <div style="color: red;">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <button type="submit" class="btn btn-primary">Proses</button>
+                                <button type="close" class="btn btn-secondary">Close</button>
                             </div>
                         </div>
                     </form>
@@ -130,136 +147,7 @@
             </div> <!-- / .card -->
             @endif
 
-
-            {{--
-        </div> --}}
-        {{-- <div class="card shadow mb-5">
-            <div class="card-body">
-                <form method="post" action="/perhitungan-naive-bayes" id="dataForm" enctype="multipart/form-data">
-                    @csrf
-                    <div class="mb-3">
-                        <input type="hidden" class="form-control" name="tgl_keluhan" id="exampleInputEmail1"
-                            aria-describedby="" value="{{ date(" Y-m-d h:i:sa") }}">
-                    </div> --}}
-                    {{-- Identitas Pengguna Jasa --}}
-                    {{-- <div class="mb-3">
-                        <label for="" class="form-label">Nama Pelapor</label>
-                        <input type="text" class="form-control" id="" name="nama">
-                    </div>
-                    <div class="mb-3">
-                        <label for="" class="form-label">No. Telepon</label>
-                        <input type="text" class="form-control" name="no_telepon" id="">
-                    </div> --}}
-                    {{-- <div class="form-group mb-3">
-                        <label for="example-select">Jenis Customer</label>
-                        <select class="form-control" id="example-select" name="jenis_pengguna">
-                            <option>--Pilih--</option>
-                            <option value="Perusahaan">Perusahaan</option>
-                            <option value="Perseorangan">Perseorangan</option>
-                        </select>
-                    </div> --}}
-                    {{-- jika form select diisi dengan perusahaan muncul form tambahan --}}
-                    {{-- <div class="mb-3">
-                        <label for="" class="form-label">Nama Perusahaan</label>
-                        <input type="text" class="form-control" id="exampleInputPassword1">
-                    </div> --}}
-                    {{-- Akhir --}}
-
-                    {{-- Via Keluhan --}}
-                    {{-- Jika admin terdapat via keluhan --}}
-                    {{-- <div class="form-group mb-3">
-                        <label for="example-select">Via Keluhan</label>
-                        <select class="form-control" id="example-select" name="via_keluhan">
-                            <option selected>--Pilih--</option>
-                            <option value="Visit">Visit</option>
-                            <option value="Wa/Hp">Wa/Hp</option>
-                            <option value="Web">Web</option>
-                            <option value="Talkie/Walkie">Talkie/Walkie</option>
-                        </select>
-                    </div> --}}
-                    {{-- Akhir via keluhan --}}
-                    {{-- Pelanggan (add properti hidden)--}}
-                    {{-- <div class="mb-3">
-                        <label for="" class="form-label">Alamat Email</label>
-                        <input type="text" class="form-control" id="" name="email" placeholder="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="uraian_keluhan">Uraian Keluhan Data Uji</label>
-                        <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="2" cols="50"
-                            maxlength="300"></textarea>
-                    </div> --}}
-                    {{-- Gambar hanya untuk role pelanggan jika ingin menambahkan screenshot dari error pada aplikasi
-                    --}}
-                    {{-- <div class="mb-3">
-                        <label for="" class="form-label">Gambar (optional)</label>
-                        <input type="file" class="form-control" name="gambar">
-                        @error('gambar')
-                        <div style="color: red;">{{ $message }}</div>
-                        @enderror
-                    </div> --}}
-                    {{-- <button type="submit" class="btn btn-primary">Proses</button>
-                </form>
-            </div>
-        </div> --}}
-        {{-- @if ()
-
-        @endif --}}
         @if (!empty($dataUji))
-
-        <h2 class="h4 mb-1">Preview Data Keluhan</h2>
-        <div class="card shadow mb-5" id="previewKeluhan">
-            <div class="card-body">
-                <h5>Identitas Customer</h5>
-                <p>Id Pelanggan: {{ $idPengguna }}</p>
-                <p>Nama Lengkap: {{ $namaPengguna }}</p>
-                <p>Alamat Email: {{ $email }}</p>
-                <p>No Telepon: {{ $noTelepon }}</p>
-                <p>Jenis Customer: {{ $jenisPengguna }}</p>
-
-                <h5>Data Keluhan</h5>
-                <p>Id Keluhan: {{ $idKeluhan }}</p>
-                <p>Tanggal Keluhan: {{ $tglKeluhan }}</p>
-                <p>Id Pelanggan: {{ $idPengguna }}</p>
-                <p>Via Keluhan: {{ $viaKeluhan }}</p>
-                <p>Uraian Keluhan: {{ $dataUji }}</p>
-                <p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
-                <p>Status Keluhan: {{ $statusKeluhan }}</p>
-
-                <!-- Add a button to save the data -->
-                <form action="/simpan-ke-database" method="post">
-                    @csrf
-                    <input type="hidden" name="id" value="{{ $idPengguna }}">
-                    <input type="hidden" name="nama" value="{{ $namaPengguna }}">
-                    <input type="hidden" name="email" value="{{ $email }}">
-                    <input type="hidden" name="no_telepon" value="{{ $noTelepon }}">
-                    <input type="hidden" name="jenis_pengguna" value="{{ $jenisPengguna }}">
-                    <input type="hidden" name="hak_akses" value="pengguna_jasa">
-                    <input type="hidden" name="id_keluhan" value="{{ $idKeluhan }}">
-                    {{-- <input type="hidden" name="tgl_keluhan" value="{{ $tglKeluhan }}"> --}}
-                    <input type="hidden" name="via_keluhan" value="{{ $viaKeluhan }}">
-                    <input type="hidden" name="uraian_keluhan" value="{{ $dataUji }}">
-                    <input type="hidden" name="status_keluhan" value="menunggu verifikasi">
-                    <?php 
-                    if ($kategoriTerbesar == "Pembayaran") {
-                        $kategori_id = 1;
-                    } else if ($kategoriTerbesar == "Pengiriman") {
-                        $kategori_id = 2;
-                    } else if ($kategoriTerbesar == "Penerimaan") {
-                        $kategori_id = 3;
-                    } else if ($kategoriTerbesar == "Administrasi") {
-                        $kategori_id = 4;
-                    } else {
-                        $kategori_id = 5;
-                    }
-                    
-                ?>
-                    <input type="hidden" name="" value="{{ $kategoriTerbesar }}">
-                    <input type="hidden" name="kategori_id" value="{{ $kategori_id }}">
-                    <button type="submit" class="btn btn-primary" onclick="onClick()">Save</button>
-                </form>
-            </div>
-        </div>
-
         {{-- <h2 class="h4 mb-1">Preprocessing Text Data Uji</h2> --}}
         <div class="card shadow mb-5">
             <div class="card-body">
@@ -482,6 +370,61 @@
                 <p>Kategori dengan nilai terbesar adalah: {{ $kategoriTerbesar }}</p>
                 <p>Jadi Keluhan <strong>"{{ $dataUji }}" </strong> termasuk kategori <strong>{{ $kategoriTerbesar
                         }}</strong></p>
+            </div>
+        </div>
+
+        
+        <h2 class="h4 mb-1">Preview Data Keluhan</h2>
+        <div class="card shadow mb-5" id="previewKeluhan">
+            <div class="card-body">
+                <h5>Identitas Customer</h5>
+                <p>Id Pelanggan: {{ $idPengguna }}</p>
+                <p>Nama Lengkap: {{ $namaPengguna }}</p>
+                <p>Alamat Email: {{ $email }}</p>
+                <p>No Telepon: {{ $noTelepon }}</p>
+                <p>Jenis Customer: {{ $jenisPengguna }}</p>
+
+                <h5>Data Keluhan</h5>
+                <p>Id Keluhan: {{ $idKeluhan }}</p>
+                <p>Tanggal Keluhan: {{ $tglKeluhan }}</p>
+                <p>Id Pelanggan: {{ $idPengguna }}</p>
+                <p>Via Keluhan: {{ $viaKeluhan }}</p>
+                <p>Uraian Keluhan: {{ $dataUji }}</p>
+                <p>Kategori Keluhan: {{ $kategoriTerbesar }}</p>
+                <p>Status Keluhan: {{ $statusKeluhan }}</p>
+
+                <!-- Add a button to save the data -->
+                <form action="/simpan-ke-database" method="post">
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $idPengguna }}">
+                    <input type="hidden" name="nama" value="{{ $namaPengguna }}">
+                    <input type="hidden" name="email" value="{{ $email }}">
+                    <input type="hidden" name="no_telepon" value="{{ $noTelepon }}">
+                    <input type="hidden" name="jenis_pengguna" value="{{ $jenisPengguna }}">
+                    <input type="hidden" name="hak_akses" value="pengguna_jasa">
+                    <input type="hidden" name="id_keluhan" value="{{ $idKeluhan }}">
+                    {{-- <input type="hidden" name="tgl_keluhan" value="{{ $tglKeluhan }}"> --}}
+                    <input type="hidden" name="via_keluhan" value="{{ $viaKeluhan }}">
+                    <input type="hidden" name="uraian_keluhan" value="{{ $dataUji }}">
+                    <input type="hidden" name="status_keluhan" value="menunggu verifikasi">
+                    <?php 
+                    if ($kategoriTerbesar == "Pembayaran") {
+                        $kategori_id = 1;
+                    } else if ($kategoriTerbesar == "Pengiriman") {
+                        $kategori_id = 2;
+                    } else if ($kategoriTerbesar == "Penerimaan") {
+                        $kategori_id = 3;
+                    } else if ($kategoriTerbesar == "Administrasi") {
+                        $kategori_id = 4;
+                    } else {
+                        $kategori_id = 5;
+                    }
+                    
+                ?>
+                    <input type="hidden" name="" value="{{ $kategoriTerbesar }}">
+                    <input type="hidden" name="kategori_id" value="{{ $kategori_id }}">
+                    <button type="submit" class="btn btn-primary" onclick="onClick()">Save</button>
+                </form>
             </div>
         </div>
         @endif

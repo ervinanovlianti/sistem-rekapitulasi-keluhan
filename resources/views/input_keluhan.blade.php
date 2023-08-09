@@ -11,7 +11,7 @@
                 <div class="mb-3">
                     <label for="" class="form-label">Tanggal Keluhan</label>
                     <input type="text" class="form-control" name="tgl_keluhan" id="exampleInputEmail1"
-                        aria-describedby="" value="{{ date(" Y-m-d h:i:sa") }}">
+                        aria-describedby="" value="{{ date(" Y-m-d h:i:s") }}">
                 </div>
                 {{-- Identitas Pengguna Jasa --}}
                 <div class="mb-3">

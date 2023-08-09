@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeluhanModel;
+use App\Models\UserModel;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\Stemmer\StemmerFactory;
 use Illuminate\Http\Request;
@@ -351,12 +352,15 @@ class NaiveBayesController extends Controller
     public function saveDataToDatabase(Request $request)
     {
         $request->validate([
-            // Validasi untuk input lainnya seperti sebelumnya
+            'nama' => 'required|string',
+            'email' => 'required|unique:users|email',
+            'no_telepon' => 'required',
+            'jenis_pengguna' => 'required|string',
+            'via_keluhan' => 'required',
             'uraian_keluhan' => 'required|max:280',
-            
         ]);
         // Simpan data pelanggan ke dalam database
-        $dataPelanggan = [
+        UserModel::create([
             'id' => $request->input('id'),
             'nama' => $request->input('nama'),
             'email' => $request->input('email'),
@@ -364,15 +368,14 @@ class NaiveBayesController extends Controller
             'no_telepon' => $request->input('no_telepon'),
             'jenis_pengguna' => $request->input('jenis_pengguna'),
             'hak_akses' => $request->input('hak_akses')
-        ];
-        DB::table('users')->insert($dataPelanggan);
-
+        ]);
+        // DB::table('users')->insert($dataPelanggan);
 
         date_default_timezone_set('Asia/Makassar');
         // Mendapatkan waktu sekarang
         $tglKeluhan = date('Y-m-d H:i:s');
         // Simpan data keluhan ke dalam database
-        $dataKeluhan = [
+        KeluhanModel::create([
             'id_keluhan' => $request->input('id_keluhan'),
             'tgl_keluhan' => $tglKeluhan,
             'id_pengguna' => $request->input('id'),
@@ -380,11 +383,9 @@ class NaiveBayesController extends Controller
             'uraian_keluhan' =>  $request->input('uraian_keluhan'),
             'kategori_id' =>  $request->input('kategori_id'),
             'status_keluhan' =>  $request->input('status_keluhan'),
-            // 'gambar' => $gambarName,
-        ];
+        ]);
+        // DB::table('data_keluhan')->insert($dataKeluhan);
 
-
-        DB::table('data_keluhan')->insert($dataKeluhan);
         return redirect('keluhan');
     }
 

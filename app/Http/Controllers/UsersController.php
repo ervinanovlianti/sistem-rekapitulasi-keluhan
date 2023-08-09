@@ -9,7 +9,6 @@ use Sastrawi\Stemmer\StemmerFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -29,12 +28,12 @@ class UsersController extends Controller
         // Menghitung total keluhan
         $totalKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->count();
         
-        $keluhanBaru =KeluhanModel::where('id_pengguna', $idPengguna)
+        $keluhanBaru = KeluhanModel::where('id_pengguna', $idPengguna)
         ->where('status_keluhan', 'dialihkan ke cs')
+        // ->where('status_keluhan', 'menunggu verifikasi')
         ->count();
 
-        $keluhanDiproses = DB::table('data_keluhan')
-        ->where('id_pengguna', $idPengguna)
+        $keluhanDiproses = KeluhanModel::where('id_pengguna', $idPengguna)
         ->where('status_keluhan', 'ditangani oleh cs')
         ->count();
 
@@ -346,10 +345,17 @@ class UsersController extends Controller
         }
 
         $request->validate([
-            // Validasi untuk input lainnya seperti sebelumnya
             'uraian_keluhan' => 'required|max:280',
-
+            'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        // Proses upload gambar (jika ada)
+        if ($request->hasFile('gambar')) {
+            $gambarKeluhan = $request->file('gambar');
+            $gambarName = time() . '_' . $gambarKeluhan->getClientOriginalName();
+            $gambarKeluhan->move(public_path('gambar_keluhan'), $gambarName);
+        } else {
+            $gambarName = null; // Jika tidak ada gambar di-upload, set nilai gambarName menjadi null
+        }
         date_default_timezone_set("Asia/Makassar");
         $idPengguna = Auth::id();
         $dataKeluhan = [
@@ -360,10 +366,9 @@ class UsersController extends Controller
             'uraian_keluhan' =>  $request->input('uraian_keluhan'),
             'kategori_id' =>  $idKategori,
             'status_keluhan' =>  'menunggu verifikasi',
-            // 'gambar' => $gambarName,
+            'gambar' => $gambarName,
         ];
         DB::table('data_keluhan')->insert($dataKeluhan);
         return redirect('data-keluhan');
     }
-
 }

@@ -18,7 +18,7 @@
                     </span>
                 </div>
                 <div class="col pr-0">
-                    <p class="small text-muted mb-0">Keluhan Baru</p>
+                    <p class="small text-muted mb-0">Keluhan Diterima</p>
                     <span class="h3 mb-0 ">{{ $keluhanBaru }}</span>
                 </div>
                 </div>

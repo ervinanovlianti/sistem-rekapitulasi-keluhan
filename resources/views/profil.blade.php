@@ -14,12 +14,12 @@
             <div class="row align-items-center">
             <div class="col-md-7">
                 <h4 class="mb-1">{{ auth()->user()->nama }}</h4>
-                {{-- <p class="small mb-3"><span class="badge badge-dark">New York, USA</span></p> --}}
             </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-7">
-                    <p class="text-muted">{{ auth()->user()->hak_akses }}</p>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                    <p class="small mb-3"><span class="badge badge-dark">{{ auth()->user()->hak_akses  }}</span></p>
+                    <p class="text-muted">{{ auth()->user()->no_telepon }}</p>
                     <p class="text-muted"> {{ auth()->user()->email }}</p>
                 </div>
             </div>

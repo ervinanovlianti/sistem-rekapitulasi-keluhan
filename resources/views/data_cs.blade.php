@@ -16,7 +16,7 @@
                             <th>E-mail</th>
                             <th>No. Telepon</th>
                             <th>Departemen</th>
-                            <th>Action</th>
+                            {{-- <th>Action</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -28,15 +28,14 @@
                             <td>{{ $cs->email }}</td>
                             <td>{{ $cs->no_telepon }}</td>
                             <td>{{ $cs->jenis_pengguna }}</td>
-                            <td class="text-center">
+                            {{-- <td class="text-center">
                                 <a href="" aria-expanded="false" class="btn btn-sm btn-warning">
                                     <i class="fe fe-edit fe-16"></i>
                                 </a>
                                 <a href="" aria-expanded="false" class="btn btn-sm btn-danger">
                                     <i class="fe fe-delete fe-16"></i>
                                 </a>
-
-                            </td>
+                            </td> --}}
                         </tr>
                         @endforeach
                     </tbody>

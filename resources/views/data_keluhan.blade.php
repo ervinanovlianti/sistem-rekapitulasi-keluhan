@@ -28,7 +28,7 @@
               <td>{{ $no++ }}</td>
               <td>{{ $item->nama }}</td>
               <td>{{ $item->uraian_keluhan }}</a></td>
-              <td>{{ date('j/m/Y H:m:s', strtotime($item->tgl_keluhan)) }}</td>
+              <td>{{ date('d/m/Y H:i:s', strtotime($item->tgl_keluhan )) }}</td>
 
               {{-- <td>{{ $item->tgl_keluhan }}</td> --}}
               <td class="text-center">
