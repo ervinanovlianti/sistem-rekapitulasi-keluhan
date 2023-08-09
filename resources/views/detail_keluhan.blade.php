@@ -21,10 +21,11 @@
             <div class="card-body">
               <p>Nama Pelapor : {{ $keluhan->nama }}</p>
               <p>Costumer : {{ $keluhan->jenis_pengguna }}</p>
-              <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
+              <p>Tanggal Laporan : {{ date('d/m/Y H:i:s', strtotime($keluhan->tgl_keluhan)) }}</p>
               <p>Via Laporan : {{ $keluhan->via_keluhan }}</p>
-              @if (!empty($keluhan->gambar))
-
+              @if ($keluhan->gambar)
+              <p>Gambar : <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#gambarModal{{ $keluhan->id }}">Lihat</button>
+              </p>
               @endif
             </div>
           </div>
@@ -52,8 +53,9 @@
               <p>Costumer : {{ $keluhan->jenis_pengguna }}</p>
               <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
               <p>Via Laporan : {{ $keluhan->via_keluhan }}</p>
-              @if (!empty($keluhan->gambar))
-              <!-- <p>Gambar : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p> -->
+              @if ($keluhan->gambar)
+              <p>Gambar : <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#gambarModal{{ $keluhan->id }}">Lihat</button>
+              </p>
               @endif
             </div>
           </div>
@@ -64,8 +66,7 @@
               <p>Uraian Keluhan : <strong>{{ $keluhan->uraian_keluhan }}</strong> </p>
               <p>Kategori : {{ $keluhan->kategori_keluhan }}</p>
               <p>Status : {{ $keluhan->status_keluhan }}</p>
-              {{-- <p>Aksi : {{ $keluhan->aksi }}</p> --}}
-              <a href="" class="btn btn-secondary m-auto">Kembali</a>
+              <a href="/keluhan" class="btn btn-secondary m-auto">Kembali</a>
               <a href="/terima-keluhan/{{ $keluhan->id_keluhan }}" class="btn btn-success m-auto">Terima</a>
             </div>
           </div>
@@ -80,10 +81,10 @@
               <p>Costumer : {{ $keluhan->jenis_pengguna }}</p>
               <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
               <p>Via Laporan : {{ $keluhan->via_keluhan }}</p>
-              @if (!empty($keluhan->gambar))
-              <p>Gambar : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p>
+              @if ($keluhan->gambar)
+              <p>Gambar : <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#gambarModal{{ $keluhan->id }}">Lihat</button>
+              </p>
               @endif
-
             </div>
           </div>
         </div>
@@ -95,7 +96,7 @@
               <p>Penangungjawab : {{ $namaCS->nama }}</p>
               <p>Status : {{ $keluhan->status_keluhan }}</p>
               {{-- <p>Aksi : {{ $keluhan->aksi }}</p> --}}
-              <a href="" class="btn btn-secondary m-auto">Kembali</a>
+              <a href="/keluhan" class="btn btn-secondary m-auto">Kembali</a>
               <button type="button" class="btn btn-success m-auto" data-toggle="modal" data-target="#konfirmasiModal" data-whatever="@mdo">Konfirmasi</button>
             </div>
           </div>
@@ -111,8 +112,9 @@
               <p>Costumer : {{ $keluhan->jenis_pengguna }}</p>
               <p>Tanggal Laporan : {{ $keluhan->tgl_keluhan }}</p>
               <p>Via Laporan : {{ $keluhan->via_keluhan }}</p>
-              @if (!empty($keluhan->gambar))
-              <p>Gambar : <a href="" class="btn btn-sm btn-primary">Lihat Gambar</a></p>
+              @if ($keluhan->gambar)
+              <p>Gambar : <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#gambarModal{{ $keluhan->id }}">Lihat</button>
+              </p>
               @endif
             </div>
           </div>
@@ -128,7 +130,7 @@
               <p>Waktu Penyelesaian : {{ $keluhan->waktu_penyelesaian }}</p>
               @endif
               @if (!empty($keluhan->aksi))
-                <p>Waktu Penyelesaian : {{ $keluhan->aksi }}</p>
+                <p>Aksi : {{ $keluhan->aksi }}</p>
               @endif
             </div>
           </div>
@@ -137,13 +139,31 @@
       @endif
     </div>
 
+    {{-- Modal Lihat Gambar --}}
+    <div class="modal fade" id="gambarModal{{ $keluhan->id }}" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gambarModalLabel">Gambar Keluhan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                @if ($keluhan->gambar)
+                  <img src="{{ asset('gambar_keluhan/' . $keluhan->gambar) }}" alt="Gambar Keluhan" style="max-width: 100%; height: auto;">
+                @endif
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- Modal Verifkasi --}}
     <div class="modal fade" id="verifikasiModal" tabindex="-1" role="dialog" aria-labelledby="verifikasiModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="verifikasiModalLabel">Verifikasi Keluhan</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Kembali">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -163,7 +183,7 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Kembali</button>
               <button type="submit" class="btn mb-2 btn-success">Verifikasi</button>
             </div>
           </form>
@@ -175,7 +195,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="varyModalLabel">New message</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Kembali">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -190,7 +210,7 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Kembali</button>
               <button type="submit" class="btn mb-2 btn-success">Konfirmasi</button>
             </div>
           </form>

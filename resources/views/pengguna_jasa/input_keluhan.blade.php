@@ -11,13 +11,12 @@
             <div class="row">
             <div class="col-md-12">
                 <div class="form-group mb-3">
-                    {{-- <input type="hidden" class="form-control" name="tgl_keluhan" id="" aria-describedby="" value="{{ date("Y-m-d h:i:sa") }}"> --}}
-                    {{-- <label for="" class="form-label">Nama Pelapor</label>
-                    <input type="text" class="form-control" id="" name="nama" placeholder="John" value="{{ auth()->user()->nama }}"> --}}
-                </div>
-                <div class="form-group mv-3">
                     <label for="uraian_keluhan">Uraian Keluhan</label>
-                    <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="6" cols="50" maxlength="300"></textarea>
+                    <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4" rows="3" cols="50" maxlength="300"></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <label>Gambar (Optional):</label>
+                    <input type="file" class="form-control mb-4" name="gambar">
                 </div>
                 <button type="submit" class="btn btn-primary" >Submit</button>
             </div>
