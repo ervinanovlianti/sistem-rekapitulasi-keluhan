@@ -83,9 +83,9 @@
                     @if ( Auth::user()->hak_akses == 'admin' && $keluhan->status_keluhan == 'menunggu verifikasi')
                     <th>Action</th>
                     <td>
-                      <a href="/keluhan" class="btn btn-secondary m-auto">Kembali</a>
+                      <a href="/keluhan" class="btn btn-sm btn-secondary m-auto">Kembali</a>
                       {{-- <a href="" class="btn btn-danger m-auto">Tolak</a> --}}
-                      <button type="button" class="btn btn-success m-auto" data-toggle="modal"
+                      <button type="button" class="btn btn-sm btn-success m-auto" data-toggle="modal"
                         data-target="#verifikasiModal" data-whatever="@mdo">Verifikasi</button>
                     </td>
                     @elseif ( Auth::user()->hak_akses == 'customer_service' && $keluhan->status_keluhan == 'dialihkan ke
@@ -112,7 +112,6 @@
           </div>
         </div>
       </div>
-
     </div>
 
     {{-- Modal Lihat Gambar --}}
@@ -162,8 +161,8 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Kembali</button>
-              <button type="submit" class="btn mb-2 btn-success">Verifikasi</button>
+              <button type="button" class="btn mb-2 btn-sm btn-secondary" data-dismiss="modal">Kembali</button>
+              <button type="submit" class="btn mb-2 btn-sm btn-success">Verifikasi</button>
             </div>
           </form>
         </div>

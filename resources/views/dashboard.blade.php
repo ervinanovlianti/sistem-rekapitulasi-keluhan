@@ -101,8 +101,8 @@
                                     </div>
                                     <div class="col">
                                         <small><strong>{{ date('j F Y H:m', strtotime($keluhan->tgl_keluhan)) }}</strong></small>
-                                        <div class="mb-2 text-muted small"><strong>{{ $keluhan->uraian_keluhan
-                                                }}</strong></div>
+                                        <div class="mb-2 text-muted small"><strong><a style="text-decoration: none; text-decoration-color:black;" href="/detail-keluhan/{{ $keluhan->id_keluhan }}">{{ $keluhan->uraian_keluhan
+                                                }}</a></strong></div>
                                         @if ($keluhan->status_keluhan == 'selesai')
                                         <span class="badge badge-pill badge-success mr-2">{{ $keluhan->status_keluhan
                                             }}</span></td>

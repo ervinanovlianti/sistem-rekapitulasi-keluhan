@@ -78,7 +78,6 @@
         </div>
         @elseif(empty($dataUji))
         <h2 class="h4 mb-1">Masukkan Data Uji (Data Keluhan)</h2>
-        {{-- <div class="col-md-6"> --}}
             <div class="card shadow mb-4 ">
                 <div class="card-body">
                     <form method="post" action="/perhitungan-naive-bayes" id="dataForm" enctype="multipart/form-data">
@@ -89,7 +88,7 @@
                                     {{-- <input type="hidden" class="form-control" name="tgl_keluhan" id=""
                                         aria-describedby="" value="{{ date(" Y-m-d h:i:sa") }}"> --}}
                                     <label for="" class="form-label">Nama Pelapor</label>
-                                    <input type="text" class="form-control" id="" name="nama" placeholder="Nama Anda"
+                                    <input type="text" class="form-control" id="" name="nama" placeholder="Nama Anda" value="{{ old('nama') }}"
                                         required>
                                     @error('nama')
                                     <div style="color: red;">{{ $message }}</div>
@@ -97,7 +96,7 @@
                                 </div>
                                 <div class="form-group mb-3">
                                     <label for="" class="form-label">No. Telepon</label>
-                                    <input type="text" class="form-control" name="no_telepon" id="" placeholder="081---"
+                                    <input type="text" class="form-control" name="no_telepon" id="" placeholder="0810000000" value="{{ old('no_telepon') }}"
                                         required>
                                     @error('no_telepon')
                                     <div style="color: red;">{{ $message }}</div>
@@ -106,14 +105,14 @@
                                 <div class="form-group mb-3">
                                     <label for="" class="form-label">Alamat Email</label>
                                     <input type="text" class="form-control" id="" name="email"
-                                        placeholder="namaanda@gmail.com" required>
+                                        placeholder="namaanda@gmail.com" value="{{ old('email') }}" required>
                                     @error('email')
                                     <div style="color: red;">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="form-group mv-3">
                                     <label for="nama_perusahaan">Nama Perusahaan</label>
-                                    <input type="text" class="form-control" name="jenis_pengguna" placeholder="PT ..."
+                                    <input type="text" class="form-control" name="jenis_pengguna" placeholder="PT ..." value="{{ old('jenis_pengguna') }}"
                                         required>
                                     @error('jenis_pengguna')
                                     <div style="color: red;">{{ $message }}</div>
@@ -123,25 +122,24 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="example-select">Via Keluhan</label>
-                                    <select class="form-control" name="via_keluhan" required>
-                                        <option selected>--Pilih--</option>
+                                    <select class="form-control" name="via_keluhan"  required>
+                                        <option selected value="{{ old('via_keluhan') }}">--Pilih--</option>
                                         <option value="Visit">Visit</option>
                                         <option value="Wa/Hp">Wa/Hp</option>
-                                        {{-- <option value="Web">Web</option> --}}
                                         <option value="Walkie Talkie">Walkie Talkie</option>
                                     </select>
                                     @error('via_keluhan')
-                                    <div style="color: red;">{{ $message }}</div>
+                                        <div style="color: red;">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="form-group mv-3">
                                     <label for="uraian_keluhan">Uraian Keluhan</label>
                                     <textarea id="uraian_keluhan" name="uraian_keluhan" class="form-control mb-4"
                                         rows="6" cols="50" maxlength="300"
-                                        placeholder="Uraikan keluhan anda dengan bahasa yang mudah dipahami"
+                                        placeholder="Uraikan keluhan anda dengan bahasa yang mudah dipahami" value="{{ old('uraian_keluhan') }}"
                                         required></textarea>
                                     @error('uraian_keluhan')
-                                    <div style="color: red;">{{ $message }}</div>
+                                        <div style="color: red;">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <button type="submit" class="btn btn-primary">Proses</button>
@@ -151,7 +149,7 @@
                     </form>
                     {{--
                 </div> --}}
-            </div> <!-- / .card -->
+            </div> 
             @endif
 
             @if (!empty($dataUji))

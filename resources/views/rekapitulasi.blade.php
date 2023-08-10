@@ -6,6 +6,43 @@
             <h2 class="h4 mb-1 text-center">Rekapitulasi Keluhan Pengguna Jasa Berdasarkan Kategori</h2>
             <div class="card shadow">
                 <div class="card-body">
+                    <table class="table table-hover table-borderless border-v">
+        <thead class="thead-dark">
+                            <tr class="text-center">
+                                <th rowspan="2">No</th>
+                                <th rowspan="2">Kategori Keluhan</th>
+                                <th colspan="4">Via Keluhan</th>
+                                <th colspan="3">Status Keluhan</th>
+                                <th rowspan="2">Total Keluhan</th>
+                            </tr>
+                            <tr role="row">
+                                <th>Visit</th>
+                                <th>HP/Wa</th>
+                                <th>Web</th>
+                                <th>TW</th>
+                                <th>Selesai</th>
+                                <th>Belum Selesai</th>
+                                <th>Tidak Selesai</th>
+                            </tr>
+                        </thead>
+        <tbody>
+            <?php $no=1; ?>
+            @foreach ($kategoriIds as $kategoriId)
+            <tr>
+                <td>{{ $no++ }}</td>
+                <td>{{ $kategoriId }}</td>
+                @foreach ($viaOptions as $viaOption)
+                <td>{{ $rekapData[$kategoriId][$viaOption] }}</td>
+                @endforeach
+                @foreach ($statusOptions as $statusOption)
+                <td>{{ $rekapData[$kategoriId]['status'][$statusOption] }}</td>
+                @endforeach
+                <td>{{ $totalRekapData['total'][$kategoriId] }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+        <p>misalnya terdapat kondisi dimana terdapat 4 status keluhan yaitu menunggu verifikasi, dialihkan ke cs, ditangani oleh cs, dan selesai namun saya ingin menampilkan hasil dalam tiga kategori yaitu keluhan belum selesai yaitu keluhan dengan status menunggu verifikasi, keluhan diproses yaitu </p>
+    </table>
                     <table class="table table-hover table-borderless border-v ">
                         <thead class="thead-dark">
                             <tr class="text-center">
@@ -92,6 +129,36 @@
                     </table>
                 </div>
             </div>
+
+    <h1>Rekapitulasi Data Keluhan</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Kategori</th>
+                <th>VIA</th>
+                @foreach ($statusOptions as $statusOption)
+                <th>{{ ucfirst($statusOption) }}</th>
+                @endforeach
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($kategoriIds as $kategoriId)
+            <tr>
+                <td>{{ $kategoriId }}</td>
+                @foreach ($viaOptions as $viaOption)
+                <td>{{ $rekapData[$kategoriId][$viaOption] }}</td>
+                @endforeach
+                @foreach ($statusOptions as $statusOption)
+                <td>{{ $rekapData[$kategoriId]['status'][$statusOption] }}</td>
+                @endforeach
+                <td>{{ $totalRekapData['total'][$kategoriId] }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
         </div>
     </div>
 @endsection

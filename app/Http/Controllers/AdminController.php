@@ -220,6 +220,41 @@ class AdminController extends Controller
             ->where('kategori_id', $kategoriId5)
             ->count();
 
+        $kategoriIds = [1, 2, 3, 4, 5];
+        // $kategoriNames = ['Pembayaran', 'Pengiriman', 'Penerimaan', 'Administrasi', 'Lainnya'];
+        $viaOptions = ['Visit', 'Wa/HP', 'Web', 'Walkie Talkie'];
+
+        $rekapData = [];
+
+        foreach ($kategoriIds as $kategoriId) {
+            foreach ($viaOptions as $viaOption) {
+                $rekapData[$kategoriId][$viaOption] = DB::table('data_keluhan')
+                ->where('kategori_id', $kategoriId)
+                    ->where('via_keluhan', $viaOption)
+                    ->count();
+            }
+        }
+
+        $statusOptions = ['menunggu verifikasi', 'dialihkan ke cs', 'ditangani oleh cs', 'selesai'];
+
+        foreach ($kategoriIds as $kategoriId) {
+            foreach ($statusOptions as $statusOption) {
+                $rekapData[$kategoriId]['status'][$statusOption] = DB::table('data_keluhan')
+                ->where('kategori_id', $kategoriId)
+                    ->whereIn('status_keluhan', [$statusOption])
+                    ->count();
+            }
+        }
+
+        $totalRekapData = [];
+        foreach ($kategoriIds as $kategoriId) {
+            $totalRekapData['total'][$kategoriId] = DB::table('data_keluhan')
+            ->where('kategori_id', $kategoriId)
+                ->count();
+        }
+
+        
+
         // $rekapPembayaranVisit = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Visit');
         // $rekapPembayaranWaHp = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'WA/HP');
         // $rekapPembayaranWeb = $this->rekapKeluhanByCategoryAndVia('Pembayaran', 'Web');
@@ -238,6 +273,10 @@ class AdminController extends Controller
         // $rekapLainnyaWaHp = $this->rekapKeluhanByCategoryAndVia('Lainnya', 'WA/HP');
 
         return view('rekapitulasi', compact(
+            'rekapData', 'totalRekapData',
+            'viaOptions',
+            'statusOptions',
+            'kategoriIds',
             // 'rekapPembayaranVisit',
             // 'rekapPembayaranWaHp',
             // 'rekapPembayaranWeb',
