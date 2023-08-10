@@ -31,6 +31,7 @@
                                         @endif
                                         <option value="2023-06">Juni 2023</option>
                                         <option value="2023-07">Juli 2023</option>
+                                        <option value="2023-08">Agustus 2023</option>
 
                                     </select>
                                 </div>

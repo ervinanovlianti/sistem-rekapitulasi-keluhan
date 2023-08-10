@@ -31,6 +31,7 @@ Route::middleware(['auth', 'hak_akses:admin'])->group(function () {
     Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
     Route::get('/laporan', [AdminController::class , 'cari'])->name('laporan.cari');
     Route::get('/rekapitulasi', [AdminController::class, 'rekapitulasi']);
+    // Route::post('/rekapitulasi', [AdminController::class, 'rekapitulasi']);
     Route::get('/notifikasi', [AdminController::class, 'notifikasi']);
     Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
     Route::post('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
