@@ -88,15 +88,13 @@
                       <button type="button" class="btn btn-sm btn-success m-auto" data-toggle="modal"
                         data-target="#verifikasiModal" data-whatever="@mdo">Verifikasi</button>
                     </td>
-                    @elseif ( Auth::user()->hak_akses == 'customer_service' && $keluhan->status_keluhan == 'dialihkan ke
-                    cs')
+                    @elseif ( Auth::user()->hak_akses == 'customer_service' && $keluhan->status_keluhan == 'dialihkan ke cs')
                     <th>Action</th>
                     <td>
                       <a href="/keluhan" class="btn btn-secondary m-auto">Kembali</a>
                       <a href="/terima-keluhan/{{ $keluhan->id_keluhan }}" class="btn btn-success m-auto">Terima</a>
                     </td>
-                    @elseif ( Auth::user()->hak_akses == 'customer_service' && $keluhan->status_keluhan == 'ditangani
-                    oleh cs')
+                    @elseif ( Auth::user()->hak_akses == 'customer_service' && $keluhan->status_keluhan == 'ditangani oleh cs')
                     <th>Action</th>
                     <td>
                       {{-- <a href="/keluhan" class="btn btn-secondary m-auto">Kembali</a> --}}

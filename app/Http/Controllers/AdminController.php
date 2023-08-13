@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeluhanModel;
+use Illuminate\Support\Facades\Hash;
 use App\Models\PenggunaJasaModel;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -196,7 +197,7 @@ class AdminController extends Controller
         return view('laporan', compact('keluhan', 'keyword', 'bulan', 'kategori'));
     }
 
-    function dashboard()
+    public function dashboard()
     {
         // Menghitung total keluhan
         $totalKeluhan = KeluhanModel::count();
@@ -223,7 +224,7 @@ class AdminController extends Controller
 
         return view('dashboard', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
     }
-    function notifikasi() {
+    public function notifikasi() {
         // Mendapatkan waktu sekarang
         $today = date('d/m/y');
         // Mengambil data keluhan yang tercatat pada hari ini
@@ -242,7 +243,7 @@ class AdminController extends Controller
 
         return view('data_penggunajasa', compact('data_penggunajasa'));
     }
-    function detailPenggunaJasa($id)
+    public function detailPenggunaJasa($id)
     {
         $pengguna_jasa = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -278,9 +279,9 @@ class AdminController extends Controller
     {
         // Simpan data pelanggan ke dalam database
         $lastCS = DB::table('users')
-            ->where('id_pengguna', 'like', "CS%")
-            ->orderBy('id_pengguna', 'desc')
-            ->value('id_pengguna');
+            ->where('id', 'like', "CS%")
+            ->orderBy('id', 'desc')
+            ->value('id');
 
         if ($lastCS) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
@@ -295,11 +296,11 @@ class AdminController extends Controller
 
 
         $dataPelanggan = [
-            'id_pengguna' => $newKodeCS,
+            // 'id' => $newKodeCS,
             'nama' => $request->input('nama'),
             'username' => $request->input('username'),
             'email' => $request->input('email'),
-            'password' => $request->input('password'),
+            'password' => Hash::make($request->input('password')),
             'no_telepon' => $request->input('no_telepon'),
             'jenis_pengguna' => 'Customer Service',
             'hak_akses' => 'customer_service',
