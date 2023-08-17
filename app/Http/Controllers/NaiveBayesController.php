@@ -16,39 +16,37 @@ use Carbon\Carbon;
 
 class NaiveBayesController extends Controller
 {
-    public function index()
-    {
-        
-    }
     public function preprocessing(Request $request)
     {
+        // Mengambil data keluhan dari tabel data_keluhan
         $textkeluhan = DB::table('data_keluhan')
         ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
         ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
         ->get();
 
-        // --------------PREPROCESSING DATA LATIH---------------------------
+        // --------------PREPROCESSING DATA LATIH--------------------
         $processedKeluhan = [];
         foreach ($textkeluhan as $keluhan) {
             $uraianKeluhan = $keluhan->uraian_keluhan;
-            $complaintText = $uraianKeluhan;
 
             // Case Folding
-            $text = strtolower($complaintText);
-            $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
-            $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
-            // Stopword Removal
+            $text = strtolower($uraianKeluhan);
+
+            // Memecah kalimat menjadi array kata (tokenisasi)
+            $kata = explode(' ', $text); 
+
+            // Menghapus karakter khusus, simbol, dan angka (stopword)
             $stopwordRemoverFactory = new StopWordRemoverFactory();
             $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
             $textWithoutStopwords = $stopwordRemover->remove($text);
-            // Menghapus karakter khusus, simbol, dan angka
             $cleanedText = preg_replace('/[^\p{L}\s]/u', '', $textWithoutStopwords);
-            $cleanedText = preg_replace('/\d+/', '', $cleanedText);
+
             // Stemming
             $stemmerFactory = new StemmerFactory();
             $stemmer = $stemmerFactory->createStemmer();
             $stemmedText = $stemmer->stem($cleanedText);
-            // Memperbarui variabel $stemmedTokens menjadi array
+
+            // Menggabungkan kembali uraian keluhan setelah proses 
             $stemmedTokens = explode(' ', $stemmedText);
 
             $processedKeluhan[] = [
@@ -113,7 +111,7 @@ class NaiveBayesController extends Controller
                 $index++;
             }
         }
-        // ---------------------PROBABILITAS PRIOR--------------------------
+        // --------------PROBABILITAS PRIOR--------------------------
         // Menghitung jumlah setiap kategori
         $kategoriCount = [];
         $totalKeluhan = count($processedKeluhan);
@@ -135,7 +133,7 @@ class NaiveBayesController extends Controller
             $probabilitas[$kategori] = $count / $totalKeluhan;
         }
 
-        // ---------------------PREPROCESSING DATA UJI----------------------
+        // -----------------PREPROCESSING DATA UJI------------------
         $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
         $lastCode = DB::table('data_keluhan')
         ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
@@ -150,7 +148,6 @@ class NaiveBayesController extends Controller
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumber = '00001';
         }
-        
         $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
 
         // Simpan data pelanggan ke dalam database
@@ -158,7 +155,6 @@ class NaiveBayesController extends Controller
         ->where('id', 'like', "2%")
         ->orderBy('id', 'desc')
         ->value('id');
-
         if ($kodePJ) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
             $lastNumberPJ = (int) substr($kodePJ, -4);
@@ -182,23 +178,24 @@ class NaiveBayesController extends Controller
         $statusKeluhan = 'menunggu verifikasi admin';
         $viaKeluhan = $request->input('via_keluhan');
         $dataUji = $request->input('uraian_keluhan');
-        
-        // Case Folding
+
+        // --------PREPROCESSING DATA UJI-------------
+        // 1. Case Folding
         $textUji = strtolower($dataUji);
-        // Tokenizing
+        // 2. Tokenizing
         $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
         $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
-        // Stopword Removal
+        // 3. Menghapus Stopword 
         $stopwordRemoverFactory = new StopWordRemoverFactory();
         $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
         $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
         // Menghapus karakter khusus, simbol, dan angka
         $cleanedTextUji = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwordsUji);
-        // Stemming
+        // 4. Stemming
         $stemmerFactory = new StemmerFactory();
         $stemmer = $stemmerFactory->createStemmer();
         $stemmedTextUji = $stemmer->stem($cleanedTextUji);
-        // Memperbarui variabel $stemmedTokens menjadi array
+        // Memperbarui variabel $stemmedTokensUji menjadi array
         $stemmedTokensUji = explode(' ', $stemmedTextUji);
 
         // -----------VEKTORISASI DATA UJI------------
@@ -237,24 +234,24 @@ class NaiveBayesController extends Controller
         // Menghitung total bobot kata pada data latih
         $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
-        // Perhitungan likehood setiap kategori untuk data uji
-        $likehoodKategori = [];
+        // Perhitungan likelihood setiap kategori untuk data uji
+        $likelihoodKategori = [];
 
         foreach ($jumlahKataUji as $data) {
             $kata = $data['kata'];
-            $likehood_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
-            $likehood_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman'] + 1) / ($totalBobotKataKategori['Pengiriman'] + $totalBobotKataDataLatih);
-            $likehood_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan'] + 1) / ($totalBobotKataKategori['Penerimaan'] + $totalBobotKataDataLatih);
-            $likehood_administrasi = ($data['jumlah_kata_kategori']['Administrasi'] + 1) / ($totalBobotKataKategori['Administrasi'] + $totalBobotKataDataLatih);
-            $likehood_lainnya = ($data['jumlah_kata_kategori']['Lainnya'] + 1) / ($totalBobotKataKategori['Lainnya'] + $totalBobotKataDataLatih);
+            $likelihood_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
+            $likelihood_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman'] + 1) / ($totalBobotKataKategori['Pengiriman'] + $totalBobotKataDataLatih);
+            $likelihood_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan'] + 1) / ($totalBobotKataKategori['Penerimaan'] + $totalBobotKataDataLatih);
+            $likelihood_administrasi = ($data['jumlah_kata_kategori']['Administrasi'] + 1) / ($totalBobotKataKategori['Administrasi'] + $totalBobotKataDataLatih);
+            $likelihood_lainnya = ($data['jumlah_kata_kategori']['Lainnya'] + 1) / ($totalBobotKataKategori['Lainnya'] + $totalBobotKataDataLatih);
 
-            $likehoodKategori[] = [
+            $likelihoodKategori[] = [
                 'kata' => $kata,
-                'Pembayaran' => $likehood_pembayaran,
-                'Pengiriman' => $likehood_pengiriman,
-                'Penerimaan' => $likehood_penerimaan,
-                'Administrasi' => $likehood_administrasi,
-                'Lainnya' => $likehood_lainnya,
+                'Pembayaran' => $likelihood_pembayaran,
+                'Pengiriman' => $likelihood_pengiriman,
+                'Penerimaan' => $likelihood_penerimaan,
+                'Administrasi' => $likelihood_administrasi,
+                'Lainnya' => $likelihood_lainnya,
             ];
             // Mengalikan semua nilai probabilitas pada kategori Pembayaran
             $hasil_perkalian_probabilitas_pembayaran = 1;
@@ -262,7 +259,7 @@ class NaiveBayesController extends Controller
             $hasil_perkalian_probabilitas_penerimaan = 1;
             $hasil_perkalian_probabilitas_administrasi = 1;
             $hasil_perkalian_probabilitas_lainnya = 1;
-            foreach ($likehoodKategori as $data) {
+            foreach ($likelihoodKategori as $data) {
                 $hasil_perkalian_probabilitas_pembayaran *= $data['Pembayaran'];
                 $hasil_perkalian_probabilitas_pengiriman *= $data['Pengiriman'];
                 $hasil_perkalian_probabilitas_penerimaan *= $data['Penerimaan'];
@@ -288,7 +285,7 @@ class NaiveBayesController extends Controller
             'Lainnya' => 1,
         ];
 
-        foreach ($likehoodKategori as $data) {
+        foreach ($likelihoodKategori as $data) {
             $kata = $data['kata'];
             $hasilPerkalianProbabilitas['Pembayaran'] *= $data['Pembayaran'];
             $hasilPerkalianProbabilitas['Pengiriman'] *= $data['Pengiriman'];
@@ -338,7 +335,7 @@ class NaiveBayesController extends Controller
             'jumlahKataUji',
             'totalBobotKataKategori',
             'totalBobotKataDataLatih',
-            'likehoodKategori',
+            'likelihoodKategori',
             'hasil_perkalian_probabilitas_pembayaran',
             'hasil_perkalian_probabilitas_pengiriman',
             'hasil_perkalian_probabilitas_penerimaan',

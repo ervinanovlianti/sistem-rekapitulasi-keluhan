@@ -148,7 +148,7 @@
             <div class="modal-body">
               <div class="form-group">
                 <input type="hidden" name="id_keluhan" value="{{ $keluhan->id_keluhan }}">
-                <label for="example-select"></label>
+                <label for="example-select">Pilih Customer Service</label>
                 <select class="form-control" id="example-select" name="penanggungjawab">
                   <option selected>--Pilih--</option>
                   @foreach ($cs as $item)
