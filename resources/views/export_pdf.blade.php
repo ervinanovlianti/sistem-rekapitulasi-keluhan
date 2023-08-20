@@ -7,7 +7,7 @@
 
 <body>
     <h1>Data Keluhan</h1>
-    <table class="table-bordered">
+    <table border="1">
         <tr>
             <th>ID Keluhan</th>
             <th>Tanggal Keluhan</th>
