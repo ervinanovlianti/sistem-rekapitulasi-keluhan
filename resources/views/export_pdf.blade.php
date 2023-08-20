@@ -7,11 +7,15 @@
 
 <body>
     <h1>Data Keluhan</h1>
-    <table border="1">
+    <table class="table-bordered">
         <tr>
             <th>ID Keluhan</th>
             <th>Tanggal Keluhan</th>
+            <th>Nama Pelapor</th>
+            <th>Via Keluhan</th>
             <th>Uraian Keluhan</th>
+            <th>Waktu Penyelesaian</th>
+            <th>Aksi</th>
             <!-- Tambahkan kolom-kolom lain sesuai dengan kebutuhan -->
         </tr>
         <?php $no=1 ?>
