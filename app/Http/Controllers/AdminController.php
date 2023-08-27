@@ -392,7 +392,7 @@ class AdminController extends Controller
     public function importKeluhan(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
+            'file' => 'required|mimes:xls,xlsx,csv'
         ]);
         
         try {
@@ -435,10 +435,5 @@ class AdminController extends Controller
         $pdf = PDF::loadView('export_pdf', ['dataKeluhan' => $dataKeluhan]);
 
         return $pdf->download('data_keluhan.pdf');
-        // $dataKeluhan = KeluhanModel::all();
-
-        // $pdf = PDF::loadView('export_pdf', ['dataKeluhan' => $dataKeluhan]);
-
-        // return $pdf->download('data_keluhan.pdf');
     }
 }
