@@ -30,64 +30,6 @@ class AdminController extends Controller
     }
     public function rekapitulasi(Request $request)
     {
-        // >whereDate('tgl_keluhan', '>=', $tanggalAwal)
-        //         ->whereDate('tgl_keluhan', '<=', $tanggalAkhir)
-        // ->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir])
-        // ->when($tanggalAwal, function ($query) use ($tanggalAwal) {
-        //     return $query->where('tgl_keluhan', '>==', $tanggalAwal);
-        // })
-        // ->when($tanggalAkhir, function ($query) use ($tanggalAkhir) {
-        //     return $query->where('tgl_keluhan', '<==', $tanggalAkhir);
-        // })
-        // $kategoriIds = [1, 2, 3, 4, 5];
-        // $viaKeluhan = ['Visit', 'Wa/HP', 'Web', 'Walkie Talkie'];
-        // $statusKeluhan = ['menunggu verifikasi', 'dialihkan ke cs', 'ditangani oleh cs', 'selesai', 'tidak selesai'];
-
-        // // Menentukan tanggal awal dan akhir untuk filter
-        // $tanggalAwal = $request->input('tanggal_awal');
-        // $tanggalAkhir = $request->input('tanggal_akhir');
-
-
-
-        // $rekapData = [];
-        // foreach ($kategoriIds as $kategoriId) {
-        //     $rekapData[$kategoriId]['kategori'] = DB::table('data_kategori')
-        //     ->where('id_kategori', $kategoriId)
-        //     ->value('kategori_keluhan');
-
-        //     foreach ($viaKeluhan as $viaOption) {
-        //         $rekapData[$kategoriId][$viaOption] = DB::table('data_keluhan')
-        //         ->where('kategori_id', $kategoriId)
-        //             ->where('via_keluhan', $viaOption)
-        //             ->count();
-        //     }
-
-        //     $rekapData[$kategoriId]['status']['selesai'] = DB::table('data_keluhan')
-        //     ->where('kategori_id', $kategoriId)
-        //     ->whereIn('status_keluhan', ['selesai'])
-        //         // ->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir])
-
-        //     ->count();
-
-        //     $rekapData[$kategoriId]['status']['belum_selesai'] = DB::table('data_keluhan')
-        //     ->where('kategori_id', $kategoriId)
-        //     ->whereIn('status_keluhan', ['menunggu verifikasi', 'dialihkan ke cs', 'ditangani oleh cs'])
-        //         ->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir])
-
-        //     ->count();
-
-        //     $rekapData[$kategoriId]['status']['tidak_selesai'] = DB::table('data_keluhan')
-        //     ->where('kategori_id', $kategoriId)
-        //     ->whereIn('status_keluhan', ['tidak selesai'])
-        //         // ->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir])
-        //     ->count();
-
-        //     // Filter data berdasarkan tanggal 
-        //     $rekapData[$kategoriId]['total'] = DB::table('data_keluhan')
-        //     ->where('kategori_id', $kategoriId)
-        //         // ->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir])
-        //         ->count();
-        // }
         $kategoriIds = [1, 2, 3, 4, 5];
         $viaKeluhan = ['Visit', 'Wa/HP', 'Web', 'Walkie Talkie'];
         $statusKeluhan = ['menunggu verifikasi', 'dialihkan ke cs', 'ditangani oleh cs', 'selesai', 'tidak selesai'];
@@ -395,33 +337,19 @@ class AdminController extends Controller
             'file' => 'required|mimes:xls,xlsx,csv'
         ]);
         
-        try {
+        // try {
             Excel::import(new ImportKeluhan, $request->file('file')->store('files'));
             return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
-        } catch (\Exception $e) {
-            $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
-            return redirect()->back()->with('error', $errorMessage);
-        }
+        // } catch (\Exception $e) {
+        //     $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
+        //     return redirect()->back()->with('error', $errorMessage);
+        // }
     }
 
     public function exportKeluhan(Request $request)
     {
-        // $search = $request->get('cari');
-        // $filename = 'laporan_keluhan.xlsx'; // Nama file default jika tidak ada kata kunci pencarian
-
-        // if ($search) {
-            // Jika terdapat kata kunci pencarian, maka kostumisasi nama file dengan kata kunci pencarian
-        //     $filename = 'laporan_keluhan_' . $search . '.xlsx';
-        // }
-
-        // return Excel::download(new ExportKeluhan($search), $filename);
-
         return Excel::download(new ExportKeluhan(), 'laporan_keluhan.xlsx');
         return redirect()->back()->with('success', 'Data keluhan berhasil diexport.');
-        // if ($request->input('export')) {
-        //     return Excel::download(new ExportKeluhan($request), 'laporan_keluhan.xlsx');
-        // }
-
     }
     public function exportToPDF()
     {
