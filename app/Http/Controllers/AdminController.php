@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\KeluhanModel;
+use App\Models\Keluhan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -141,7 +141,7 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $totalKeluhan = KeluhanModel::count();
+        $totalKeluhan = Keluhan::count();
         $keluhanBaru = DB::table('data_keluhan')
             ->where('status_keluhan', 'menunggu verifikasi')
             ->count();

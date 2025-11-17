@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KeluhanModel;
-use App\Models\UserModel;
+use App\Models\Keluhan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -77,7 +77,7 @@ class NaiveBayesController extends Controller
             'uraian_keluhan' => 'required|max:280',
         ]);
 
-        UserModel::create([
+        User::create([
             'id' => $request->input('id'),
             'nama' => $request->input('nama'),
             'email' => $request->input('email'),
@@ -89,7 +89,7 @@ class NaiveBayesController extends Controller
 
         date_default_timezone_set('Asia/Makassar');
         $tglKeluhan = date('Y-m-d H:i:s');
-        KeluhanModel::create([
+        Keluhan::create([
             'id_keluhan' => $request->input('id_keluhan'),
             'tgl_keluhan' => $tglKeluhan,
             'id_pengguna' => $request->input('id'),

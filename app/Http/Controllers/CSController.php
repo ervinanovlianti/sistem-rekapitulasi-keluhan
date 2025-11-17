@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KeluhanModel;
+use App\Models\Keluhan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class CSController extends Controller
     {
         parent::index();
         $idCS = Auth::id();
-        $dataKeluhan = KeluhanModel::where('penanggungjawab', $idCS)
+        $dataKeluhan = Keluhan::where('penanggungjawab', $idCS)
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
             ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.*')
@@ -27,12 +27,12 @@ class CSController extends Controller
     public function dashboard(): View
     {
         $idCS = Auth::id();
-        $totalKeluhan = KeluhanModel::where('penanggungjawab', $idCS)->count();
+        $totalKeluhan = Keluhan::where('penanggungjawab', $idCS)->count();
         $keluhanBaru = DB::table('data_keluhan')
             ->where('penanggungjawab', $idCS)
             ->where('status_keluhan', 'dialihkan ke cs')
             ->count();
-        $keluhanDiproses = KeluhanModel::where('penanggungjawab', $idCS)
+        $keluhanDiproses = Keluhan::where('penanggungjawab', $idCS)
             ->where('status_keluhan', 'ditangani oleh cs')
             ->count();
         $keluhanSelesai = DB::table('data_keluhan')

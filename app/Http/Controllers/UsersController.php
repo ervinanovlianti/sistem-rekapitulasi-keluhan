@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KeluhanModel;
+use App\Models\Keluhan;
 use Carbon\Carbon;
 use Illuminate\Support\Collection as SupportCollection;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
@@ -18,7 +18,7 @@ class UsersController extends Controller
     {
         parent::index();
         $idPengguna = Auth::id();
-        $dataKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->orderBy('tgl_keluhan', 'desc')->paginate(10);
+        $dataKeluhan = Keluhan::where('id_pengguna', $idPengguna)->orderBy('tgl_keluhan', 'desc')->paginate(10);
         return view('pengguna_jasa/keluhan', compact('dataKeluhan'));
     }
 
@@ -36,26 +36,26 @@ class UsersController extends Controller
 
     private function getTotalKeluhan($idPengguna)
     {
-        return KeluhanModel::where('id_pengguna', $idPengguna)->count();
+        return Keluhan::where('id_pengguna', $idPengguna)->count();
     }
 
     private function getKeluhanBaru($idPengguna)
     {
-        return KeluhanModel::where('id_pengguna', $idPengguna)
+        return Keluhan::where('id_pengguna', $idPengguna)
             ->where('status_keluhan', 'dialihkan ke cs')
             ->count();
     }
 
     private function getKeluhanDiproses($idPengguna)
     {
-        return KeluhanModel::where('id_pengguna', $idPengguna)
+        return Keluhan::where('id_pengguna', $idPengguna)
             ->where('status_keluhan', 'ditangani oleh cs')
             ->count();
     }
 
     private function getKeluhanSelesai($idPengguna)
     {
-        return KeluhanModel::where('id_pengguna', $idPengguna)
+        return Keluhan::where('id_pengguna', $idPengguna)
             ->where('status_keluhan', 'selesai')
             ->count();
     }
@@ -65,7 +65,7 @@ class UsersController extends Controller
         date_default_timezone_set("Asia/Makassar");
         $today = date("Y-m-d");
 
-        return KeluhanModel::where('id_pengguna', $idPengguna)
+        return Keluhan::where('id_pengguna', $idPengguna)
             ->whereDate('tgl_keluhan', $today)
             ->get();
     }
