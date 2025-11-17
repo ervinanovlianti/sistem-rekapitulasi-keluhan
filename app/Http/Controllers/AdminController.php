@@ -28,7 +28,7 @@ class AdminController extends Controller
         return view('data_keluhan', compact('data_keluhan'));
     }
 
-    public function rekapitulasi(Request $request)
+    public function recapitulate(Request $request)
     {
         $kategoriIds = [1, 2, 3, 4, 5];
         $viaKeluhan = ['Visit', 'Wa/HP', 'Web', 'Walkie Talkie'];

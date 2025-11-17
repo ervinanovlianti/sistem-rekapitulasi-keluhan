@@ -30,7 +30,7 @@ Route::middleware(['auth', 'hak_akses:admin'])->group(function () {
     Route::get('/export-to-pdf', [AdminController::class, 'exportToPDF'])->name('export-to-pdf');
     Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
     Route::get('/laporan', [AdminController::class , 'cari'])->name('laporan.cari');
-    Route::get('/rekapitulasi', [AdminController::class, 'rekapitulasi']);
+    Route::get('/rekapitulasi', [AdminController::class, 'recapitulate']);
     // Route::post('/rekapitulasi', [AdminController::class, 'rekapitulasi']);
     Route::get('/notifikasi', [AdminController::class, 'notifikasi']);
     Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
@@ -43,7 +43,7 @@ Route::middleware(['auth', 'hak_akses:admin'])->group(function () {
     Route::post('/konfirmasi-selesai', [AdminController::class, 'keluhanSelesai']);
 
     Route::get('/cs', [AdminController::class, 'dataCS'])->middleware('auth');
-    
+
 });
 
 Route::middleware(['auth', 'hak_akses:pengguna_jasa'])->group(function () {
