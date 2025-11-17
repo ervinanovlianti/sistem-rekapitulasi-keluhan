@@ -46,8 +46,8 @@ class AdminController extends Controller
 
             foreach ($viaKeluhan as $viaOption) {
                 $query = DB::table('data_keluhan')
-                ->where('kategori_id', $kategoriId)
-                ->where('via_keluhan', $viaOption);
+                    ->where('kategori_id', $kategoriId)
+                    ->where('via_keluhan', $viaOption);
 
                 if ($tanggalAwal && $tanggalAkhir) {
                     $query->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir]);
@@ -58,12 +58,12 @@ class AdminController extends Controller
 
             // Filter data berdasarkan tanggal
             $rekapData[$kategoriId]['status']['selesai'] = DB::table('data_keluhan')
-            ->where('kategori_id', $kategoriId)
-            ->whereIn('status_keluhan', ['selesai'])
-            ->when($tanggalAwal && $tanggalAkhir, function ($query) use ($tanggalAwal, $tanggalAkhir) {
-                return $query->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir]);
-            })
-            ->count();
+                ->where('kategori_id', $kategoriId)
+                ->whereIn('status_keluhan', ['selesai'])
+                ->when($tanggalAwal && $tanggalAkhir, function ($query) use ($tanggalAwal, $tanggalAkhir) {
+                    return $query->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir]);
+                })
+                ->count();
 
             $rekapData[$kategoriId]['status']['belum_selesai'] = DB::table('data_keluhan')
                 ->where('kategori_id', $kategoriId)
@@ -83,11 +83,11 @@ class AdminController extends Controller
 
             // Filter data berdasarkan tanggal
             $rekapData[$kategoriId]['total'] = DB::table('data_keluhan')
-            ->where('kategori_id', $kategoriId)
-            ->when($tanggalAwal && $tanggalAkhir, function ($query) use ($tanggalAwal, $tanggalAkhir) {
-                return $query->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir]);
-            })
-            ->count();
+                ->where('kategori_id', $kategoriId)
+                ->when($tanggalAwal && $tanggalAkhir, function ($query) use ($tanggalAwal, $tanggalAkhir) {
+                    return $query->whereBetween('tgl_keluhan', [$tanggalAwal, $tanggalAkhir]);
+                })
+                ->count();
         }
 
         return view('rekapitulasi', compact(
@@ -106,6 +106,7 @@ class AdminController extends Controller
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.nama')
             ->orderBy('tgl_keluhan', 'desc')
             ->paginate(10);
+
         return view('laporan', compact('keluhan'));
     }
 
@@ -154,11 +155,8 @@ class AdminController extends Controller
             ->where('status_keluhan', 'selesai')
             ->count();
         date_default_timezone_set('Asia/Makassar');
-
-        // Mendapatkan waktu sekarang
         $today = date("Y-m-d");
 
-        // Mengambil data keluhan yang tercatat pada hari ini
         $keluhanHariIni = DB::table('data_keluhan')
             ->where('status_keluhan', 'menunggu verifikasi')
             ->whereDate('tgl_keluhan', $today)
@@ -166,17 +164,20 @@ class AdminController extends Controller
 
         return view('dashboard', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
     }
-    public function notifikasi() {
+
+    public function notifikasi()
+    {
         // Mendapatkan waktu sekarang
         $today = date('d/m/y');
         // Mengambil data keluhan yang tercatat pada hari ini
         $notifikasiKeluhan = DB::table('data_keluhan')
-            ->where('status_keluhan','menunggu verifikasi')
+            ->where('status_keluhan', 'menunggu verifikasi')
             ->whereDate('tgl_keluhan', $today)
             ->get();
 
         return view('partials/navbar', compact('notifikasiKeluhan'));
     }
+
     public function dataPenggunaJasa()
     {
         $data_penggunajasa = DB::table('users')
@@ -185,6 +186,7 @@ class AdminController extends Controller
 
         return view('data_penggunajasa', compact('data_penggunajasa'));
     }
+
     public function detailPenggunaJasa($id)
     {
         $pengguna_jasa = DB::table('data_keluhan')
@@ -201,6 +203,7 @@ class AdminController extends Controller
 
         return view('detail_penggunajasa', compact('pengguna_jasa', 'penggunajasa'));
     }
+
     public function dataCS()
     {
         $data_cs = DB::table('users')
@@ -209,14 +212,17 @@ class AdminController extends Controller
 
         return view('data_cs', compact('data_cs'));
     }
+
     public function showInputForm()
     {
         return view('input_keluhan');
     }
+
     public function formInputDataCS()
     {
         return view('input_datacs');
     }
+
     public function inputDataCS(Request $request)
     {
         // Simpan data pelanggan ke dalam database
@@ -254,6 +260,7 @@ class AdminController extends Controller
         // Redirect ke halaman sebelumnya dengan pesan sukses
         return redirect('cs');
     }
+
     public function detailKeluhan($id)
     {
         $keluhan = DB::table('data_keluhan')
@@ -272,8 +279,9 @@ class AdminController extends Controller
             ->where('hak_akses', 'customer_service')
             ->get();
 
-        return view('detail_keluhan', compact('keluhan', 'cs','namaCS'));
+        return view('detail_keluhan', compact('keluhan', 'cs', 'namaCS'));
     }
+
     public function verifikasiKeluhan(Request $request)
     {
         // Dapatkan data keluhan berdasarkan id_keluhan
@@ -293,6 +301,7 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Keluhan berhasil diverifikasi.');
     }
+
     public function terimaKeluhan($id)
     {
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $id)->first();
@@ -308,6 +317,7 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
     }
+
     public function keluhanSelesai(Request $request)
     {
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $request->id_keluhan)->first();
@@ -338,8 +348,8 @@ class AdminController extends Controller
         ]);
 
         // try {
-            Excel::import(new ImportKeluhan, $request->file('file')->store('files'));
-            return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
+        Excel::import(new ImportKeluhan, $request->file('file')->store('files'));
+        return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
         // } catch (\Exception $e) {
         //     $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
         //     return redirect()->back()->with('error', $errorMessage);
@@ -351,14 +361,15 @@ class AdminController extends Controller
         return Excel::download(new ExportKeluhan(), 'laporan_keluhan.xlsx');
         return redirect()->back()->with('success', 'Data keluhan berhasil diexport.');
     }
+
     public function exportToPDF()
     {
         // Query untuk mendapatkan data keluhan dari tiga tabel yang di-join
         $dataKeluhan = DB::table('data_keluhan')
-        ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.*', 'users.nama', 'data_kategori.kategori_keluhan')
-        ->get();
+            ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->select('data_keluhan.*', 'users.nama', 'data_kategori.kategori_keluhan')
+            ->get();
 
         $pdf = PDF::loadView('export_pdf', ['dataKeluhan' => $dataKeluhan]);
 
