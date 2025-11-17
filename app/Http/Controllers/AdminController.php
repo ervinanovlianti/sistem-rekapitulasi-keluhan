@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\KeluhanModel;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Exports\ExportKeluhan;
@@ -140,7 +141,6 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        // Menghitung total keluhan
         $totalKeluhan = KeluhanModel::count();
         $keluhanBaru = DB::table('data_keluhan')
             ->where('status_keluhan', 'menunggu verifikasi')
@@ -165,9 +165,7 @@ class AdminController extends Controller
 
     public function notifikasi()
     {
-        // Mendapatkan waktu sekarang
         $today = date('d/m/y');
-        // Mengambil data keluhan yang tercatat pada hari ini
         $notifikasiKeluhan = DB::table('data_keluhan')
             ->where('status_keluhan', 'menunggu verifikasi')
             ->whereDate('tgl_keluhan', $today)
@@ -223,26 +221,7 @@ class AdminController extends Controller
 
     public function inputDataCS(Request $request)
     {
-        // Simpan data pelanggan ke dalam database
-        $lastCS = DB::table('users')
-            ->where('id', 'like', "CS%")
-            ->orderBy('id', 'desc')
-            ->value('id');
-
-        if ($lastCS) {
-            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
-            $lastNumberCS = (int) substr($lastCS, -1);
-            $newNumberCS = str_pad($lastNumberCS + 1, 1, '0', STR_PAD_LEFT);
-        } else {
-            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
-            $newNumberCS = '01';
-        }
-        $newKodeCS = "CS-$newNumberCS";
-        // return $newKodeKeluhan;
-
-
         $dataPelanggan = [
-            // 'id' => $newKodeCS,
             'nama' => $request->input('nama'),
             'username' => $request->input('username'),
             'email' => $request->input('email'),
@@ -255,7 +234,6 @@ class AdminController extends Controller
 
         DB::table('users')->insert($dataPelanggan);
 
-        // Redirect ke halaman sebelumnya dengan pesan sukses
         return redirect('cs');
     }
 
@@ -280,16 +258,14 @@ class AdminController extends Controller
         return view('detail_keluhan', compact('keluhan', 'cs', 'namaCS'));
     }
 
-    public function verifikasiKeluhan(Request $request)
+    public function verifikasiKeluhan(Request $request): RedirectResponse
     {
-        // Dapatkan data keluhan berdasarkan id_keluhan
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $request->id_keluhan)->first();
 
         if (!$keluhan) {
             return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
 
-        // Update data keluhan dengan data verifikasi
         DB::table('data_keluhan')
             ->where('id_keluhan', $request->id_keluhan)
             ->update([
@@ -300,7 +276,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Keluhan berhasil diverifikasi.');
     }
 
-    public function terimaKeluhan($id)
+    public function terimaKeluhan($id): RedirectResponse|null
     {
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $id)->first();
         if ($keluhan) {
@@ -316,7 +292,7 @@ class AdminController extends Controller
         }
     }
 
-    public function keluhanSelesai(Request $request)
+    public function keluhanSelesai(Request $request): RedirectResponse
     {
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $request->id_keluhan)->first();
 
@@ -334,24 +310,19 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Keluhan Terselesaikan!!!');
     }
 
-    function formImportData()
+    public function formImportData()
     {
         return view('import');
     }
 
-    public function importKeluhan(Request $request)
+    public function importKeluhan(Request $request): RedirectResponse
     {
         $request->validate([
             'file' => 'required|mimes:xls,xlsx,csv'
         ]);
 
-        // try {
         Excel::import(new ImportKeluhan, $request->file('file')->store('files'));
         return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
-        // } catch (\Exception $e) {
-        //     $errorMessage = 'Terjadi kesalahan saat mengimport data keluhan. Pastikan format file Excel sesuai.';
-        //     return redirect()->back()->with('error', $errorMessage);
-        // }
     }
 
     public function exportKeluhan(Request $request)
@@ -362,15 +333,12 @@ class AdminController extends Controller
 
     public function exportToPDF()
     {
-        // Query untuk mendapatkan data keluhan dari tiga tabel yang di-join
         $dataKeluhan = DB::table('data_keluhan')
             ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
             ->select('data_keluhan.*', 'users.nama', 'data_kategori.kategori_keluhan')
             ->get();
 
-        $pdf = PDF::loadView('export_pdf', ['dataKeluhan' => $dataKeluhan]);
-
-        return $pdf->download('data_keluhan.pdf');
+        return PDF::loadView('export_pdf', compact('dataKeluhan'))->download('data_keluhan.pdf');
     }
 }
