@@ -33,8 +33,6 @@ class AdminController extends Controller
         $kategoriIds = [1, 2, 3, 4, 5];
         $viaKeluhan = ['Visit', 'Wa/HP', 'Web', 'Walkie Talkie'];
         $statusKeluhan = ['menunggu verifikasi', 'dialihkan ke cs', 'ditangani oleh cs', 'selesai', 'tidak selesai'];
-
-        // Menentukan tanggal awal dan akhir untuk filter
         $tanggalAwal = $request->input('tanggal_awal');
         $tanggalAkhir = $request->input('tanggal_akhir');
 
