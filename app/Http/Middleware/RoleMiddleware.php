@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\UserModel;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -23,5 +23,5 @@ class RoleMiddleware
 
         return redirect()
             ->to(route('login'));
-    }    
+    }
 }

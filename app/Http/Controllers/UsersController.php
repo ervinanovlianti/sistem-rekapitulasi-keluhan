@@ -2,245 +2,253 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KeluhanModel;
-use Carbon\Carbon;
+use App\Models\Keluhan;
+use Illuminate\Support\Collection as SupportCollection;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\Stemmer\StemmerFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-    public function index() {
-        // Ambil ID pengguna yang sedang login
+    public function index()
+    {
+        parent::index();
         $idPengguna = Auth::id();
-        // Ambil data keluhan berdasarkan ID pengguna yang login
-        $dataKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->orderBy('tgl_keluhan', 'desc')->paginate(10);
-        // Kirim data ke view untuk ditampilkan
+        $dataKeluhan = Keluhan::where('id_pengguna', $idPengguna)->orderBy('tgl_keluhan', 'desc')->paginate(10);
         return view('pengguna_jasa/keluhan', compact('dataKeluhan'));
     }
-    function dashboard()
+
+    public function dashboard()
     {
         $idPengguna = Auth::id();
-
-        // Menghitung total keluhan
-        $totalKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->count();
-        
-        $keluhanBaru = KeluhanModel::where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'dialihkan ke cs')
-        // ->where('status_keluhan', 'menunggu verifikasi')
-        ->count();
-
-        $keluhanDiproses = KeluhanModel::where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'ditangani oleh cs')
-        ->count();
-
-        $keluhanSelesai =KeluhanModel::where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'selesai')
-        ->count();
-
-        date_default_timezone_set("Asia/Makassar");
-        $today = date("Y-d-m H:i:s");;
-
-        $keluhanHariIni =KeluhanModel::where('id_pengguna', $idPengguna)
-        ->whereDate('tgl_keluhan', $today)
-            ->get();
+        $totalKeluhan = $this->getTotalKeluhan($idPengguna);
+        $keluhanBaru = $this->getKeluhanBaru($idPengguna);
+        $keluhanDiproses = $this->getKeluhanDiproses($idPengguna);
+        $keluhanSelesai = $this->getKeluhanSelesai($idPengguna);
+        $keluhanHariIni = $this->getKeluhanHariIni($idPengguna);
 
         return view('pengguna_jasa/dashboard_pj', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
     }
 
-    public function formInput(){
+    private function getTotalKeluhan($idPengguna)
+    {
+        return Keluhan::where('id_pengguna', $idPengguna)->count();
+    }
+
+    private function getKeluhanBaru($idPengguna)
+    {
+        return Keluhan::where('id_pengguna', $idPengguna)
+            ->where('status_keluhan', 'dialihkan ke cs')
+            ->count();
+    }
+
+    private function getKeluhanDiproses($idPengguna)
+    {
+        return Keluhan::where('id_pengguna', $idPengguna)
+            ->where('status_keluhan', 'ditangani oleh cs')
+            ->count();
+    }
+
+    private function getKeluhanSelesai($idPengguna)
+    {
+        return Keluhan::where('id_pengguna', $idPengguna)
+            ->where('status_keluhan', 'selesai')
+            ->count();
+    }
+
+    private function getKeluhanHariIni($idPengguna)
+    {
+        date_default_timezone_set("Asia/Makassar");
+        $today = date("Y-m-d");
+
+        return Keluhan::where('id_pengguna', $idPengguna)
+            ->whereDate('tgl_keluhan', $today)
+            ->get();
+    }
+
+    public function formInput()
+    {
         return view('pengguna_jasa/input_keluhan');
     }
+
     public function inputKeluhan(Request $request)
     {
-        $textkeluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
-        ->get();
+        $request->validate([
+            'uraian_keluhan' => 'required|max:280',
+            'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-        // --------------PREPROCESSING DATA LATIH---------------------------
+        $trainingData = $this->getTrainingData();
+        $processedKeluhan = $this->preprocessTrainingData($trainingData);
+        $wordCountData = $this->calculateWordCounts($processedKeluhan);
+        $probabilitas = $this->calculateCategoryProbabilities($processedKeluhan);
+        $stemmedTokens = $this->preprocessText($request->input('uraian_keluhan'));
+        $idKategori = $this->classifyComplaint($stemmedTokens, $wordCountData, $probabilitas);
+        $idKeluhan = $this->generateKeluhanId();
+        $gambarName = $this->handleImageUpload($request);
+
+        $this->saveComplaintData($idKeluhan, $request->input('uraian_keluhan'), $idKategori, $gambarName);
+
+        return redirect('data-keluhan');
+    }
+
+    private function getTrainingData(): SupportCollection
+    {
+        return DB::table('data_keluhan')
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
+            ->get();
+    }
+
+    /**
+     * Preprocess training data
+     */
+    private function preprocessTrainingData($textkeluhan): array
+    {
         $processedKeluhan = [];
-        foreach ($textkeluhan as $keluhan) {
-            $uraianKeluhan = $keluhan->uraian_keluhan;
 
-            // Case Folding
-            $text = strtolower($uraianKeluhan);
-            $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
-            $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
-            // Stopword Removal
-            $stopwordRemoverFactory = new StopWordRemoverFactory();
-            $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
-            $textWithoutStopwords = $stopwordRemover->remove($text);
-            // Menghapus karakter khusus, simbol, dan angka
-            $cleanedText = preg_replace('/[^\p{L}\s]/u', '', $textWithoutStopwords);
-            $cleanedText = preg_replace('/\d+/', '', $cleanedText);
-            // Stemming
-            $stemmerFactory = new StemmerFactory();
-            $stemmer = $stemmerFactory->createStemmer();
-            $stemmedText = $stemmer->stem($cleanedText);
-            // Memperbarui variabel $stemmedTokens menjadi array
-            $stemmedTokens = explode(' ', $stemmedText);
+        foreach ($textkeluhan as $keluhan) {
+            $stemmedTokens = $this->preprocessText($keluhan->uraian_keluhan);
 
             $processedKeluhan[] = [
-                'uraian_keluhan' => $uraianKeluhan,
-                'preprocessed_tokens' => $stemmedText,
+                'uraian_keluhan' => $keluhan->uraian_keluhan,
                 'tokens' => $stemmedTokens,
                 'kategori_keluhan' => $keluhan->kategori_keluhan,
             ];
+        }
 
-            // Inisialisasi variabel untuk menyimpan jumlah kata dalam setiap kategori
-            $wordCount = [];
-            // Iterasi melalui setiap keluhan yang telah diproses
-            foreach ($processedKeluhan as $keluhan) {
-                $kategori = $keluhan['kategori_keluhan'];
-                $tokens = $keluhan['tokens'];
-                // Periksa apakah kategori sudah ada dalam $wordCount
-                if (!isset($wordCount[$kategori])) {
-                    $wordCount[$kategori] = [];
-                }
-                // Iterasi melalui setiap token dalam keluhan dan tingkatkan jumlah kata
-                foreach ($tokens as $token) {
-                    if (!isset($wordCount[$kategori][$token])) {
-                        $wordCount[$kategori][$token] = 1;
-                    } else {
-                        $wordCount[$kategori][$token]++;
-                    }
-                }
+        return $processedKeluhan;
+    }
+
+    /**
+     * Preprocess text: case folding, stopword removal, cleaning, and stemming
+     */
+    private function preprocessText($text)
+    {
+        // Case folding
+        $text = strtolower($text);
+
+        // Stopword removal
+        $stopwordRemoverFactory = new StopWordRemoverFactory();
+        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
+        $textWithoutStopwords = $stopwordRemover->remove($text);
+
+        // Cleaning: remove special characters and numbers
+        $cleanedText = preg_replace('/[^\p{L}\s]/u', '', $textWithoutStopwords);
+        $cleanedText = preg_replace('/\d+/', '', $cleanedText);
+
+        // Stemming
+        $stemmerFactory = new StemmerFactory();
+        $stemmer = $stemmerFactory->createStemmer();
+        $stemmedText = $stemmer->stem($cleanedText);
+
+        return explode(' ', $stemmedText);
+    }
+
+    /**
+     * Calculate word counts per category
+     */
+    private function calculateWordCounts($processedKeluhan)
+    {
+        $wordCount = [];
+
+        // Count words per category
+        foreach ($processedKeluhan as $keluhan) {
+            $kategori = $keluhan['kategori_keluhan'];
+            $tokens = $keluhan['tokens'];
+
+            if (!isset($wordCount[$kategori])) {
+                $wordCount[$kategori] = [];
             }
-            // Menggabungkan jumlah bobot kata dari setiap kategori
-            $totalWordCount = [];
-            foreach ($wordCount as $kategori => $kataJumlah) {
-                foreach ($kataJumlah as $kata => $jumlah) {
-                    if (!isset($totalWordCount[$kata])) {
-                        $totalWordCount[$kata] = [
-                            'Pembayaran' => 0,
-                            'Pengiriman' => 0,
-                            'Penerimaan' => 0,
-                            'Administrasi' => 0,
-                            'Lainnya' => 0,
-                            'total' => 0,
-                        ];
-                    }
-                    // Menambahkan bobot kata ke total bobot
-                    $totalWordCount[$kata][$kategori] += $jumlah;
-                    $totalWordCount[$kata]['total'] += $jumlah;
+
+            foreach ($tokens as $token) {
+                if (empty($token)) continue;
+
+                if (!isset($wordCount[$kategori][$token])) {
+                    $wordCount[$kategori][$token] = 0;
                 }
-            }
-            // Menyusun data dengan format yang diinginkan
-            $formattedTotalWordCount = [];
-            $index = 1;
-            foreach ($totalWordCount as $kata => $bobot) {
-                $formattedTotalWordCount[] = [
-                    'index' => $index,
-                    'kata' => $kata,
-                    'Pembayaran' => $bobot['Pembayaran'],
-                    'Pengiriman' => $bobot['Pengiriman'],
-                    'Penerimaan' => $bobot['Penerimaan'],
-                    'Administrasi' => $bobot['Administrasi'],
-                    'Lainnya' => $bobot['Lainnya'],
-                    'total' => $bobot['total'],
-                ];
-                $index++;
+                $wordCount[$kategori][$token]++;
             }
         }
-        // Tahap 1 Menghitung jumlah setiap kategori
+
+        // Format total word count
+        $totalWordCount = [];
+        foreach ($wordCount as $kategori => $kataJumlah) {
+            foreach ($kataJumlah as $kata => $jumlah) {
+                if (!isset($totalWordCount[$kata])) {
+                    $totalWordCount[$kata] = [
+                        'Pembayaran' => 0,
+                        'Pengiriman' => 0,
+                        'Penerimaan' => 0,
+                        'Administrasi' => 0,
+                        'Lainnya' => 0,
+                    ];
+                }
+                $totalWordCount[$kata][$kategori] = $jumlah;
+            }
+        }
+
+        return [
+            'totalWordCount' => $totalWordCount,
+            'wordCount' => $wordCount
+        ];
+    }
+
+    /**
+     * Calculate category probabilities (prior probabilities)
+     */
+    private function calculateCategoryProbabilities($processedKeluhan)
+    {
         $kategoriCount = [];
         $totalKeluhan = count($processedKeluhan);
+
         foreach ($processedKeluhan as $keluhan) {
             $kategori = $keluhan['kategori_keluhan'];
 
             if (!isset($kategoriCount[$kategori])) {
-                $kategoriCount[$kategori] = 1;
-            } else {
-                $kategoriCount[$kategori]++;
+                $kategoriCount[$kategori] = 0;
             }
+            $kategoriCount[$kategori]++;
         }
-        // Menghitung jumlah seluruh kategori
-        $totalKategori = count($kategoriCount);
 
-        // Menghitung probabilitas
         $probabilitas = [];
         foreach ($kategoriCount as $kategori => $count) {
             $probabilitas[$kategori] = $count / $totalKeluhan;
         }
 
-        // Tahap PreProcessing Text
-        $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
-        $lastCode = DB::table('data_keluhan')
-        ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
-        ->orderBy('id_keluhan', 'desc')
-            ->value('id_keluhan');
+        return $probabilitas;
+    }
 
-        if ($lastCode) {
-            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
-            $lastNumber = (int) substr($lastCode, -5);
-            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
-        } else {
-            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
-            $newNumber = '00001';
-        }
+    /**
+     * Classify complaint using Naive Bayes
+     */
+    private function classifyComplaint($stemmedTokens, $wordCountData, $probabilitas)
+    {
+        $totalWordCount = $wordCountData['totalWordCount'];
 
-        $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
-        // Simpan data pelanggan ke dalam database
-        $kodePJ = DB::table('users')
-            ->where('id', 'like', "CUST%")
-            ->orderBy('id', 'desc')
-            ->value('id');
+        // Calculate total word count per category
+        $totalBobotKataKategori = $this->calculateTotalWordCountPerCategory($totalWordCount);
+        $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
-        if ($kodePJ) {
-            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
-            $lastNumberPJ = (int) substr($kodePJ, -4);
-            $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
-            $newNumberPJ = '0001';
-        }
-        $newKodePJ = "CUST-$newNumberPJ";
-        
-        // Mendapatkan waktu sekarang
-        $idKeluhan = $newKodeKeluhan;
-        $idPengguna = $newKodePJ;
-        $dataUji = $request->input('uraian_keluhan');
+        // Calculate likelihood for each word in test data
+        $likelihoodKategori = $this->calculateLikelihood($stemmedTokens, $totalWordCount, $totalBobotKataKategori, $totalBobotKataDataLatih);
 
-        // Case Folding
-        $textUji = strtolower($dataUji);
-        // Tokenizing
-        $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
-        $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
-        // Stopword Removal
-        $stopwordRemoverFactory = new StopWordRemoverFactory();
-        $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
-        $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
-        // Menghapus karakter khusus, simbol, dan angka
-        $cleanedTextUji = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwordsUji);
-        // Stemming
-        $stemmerFactory = new StemmerFactory();
-        $stemmer = $stemmerFactory->createStemmer();
-        $stemmedTextUji = $stemmer->stem($cleanedTextUji);
-        // Memperbarui variabel $stemmedTokens menjadi array
-        $stemmedTokensUji = explode(' ', $stemmedTextUji);
+        // Calculate final probabilities
+        $hasilAkhir = $this->calculateFinalProbabilities($likelihoodKategori, $probabilitas);
 
-        // -----------VEKTORISASI DATA UJI------------
-        // Menghitung jumlah kata pada data uji yang sama dengan kata pada data latih
-        $jumlahKataUji = [];
+        // Find category with highest probability
+        $kategoriTerbesar = $this->findMaxCategory($hasilAkhir);
 
-        foreach ($stemmedTokensUji as $kataUji) {
-            $jumlahKataUji[] = [
-                'kata' => $kataUji,
-                'jumlah_kata_uji' => 1, // Setiap kata pada data uji hanya muncul satu kali
-                'jumlah_kata_kategori' => [
-                    'Pembayaran' => isset($totalWordCount[$kataUji]['Pembayaran']) ? $totalWordCount[$kataUji]['Pembayaran'] : 0,
-                    'Pengiriman' => isset($totalWordCount[$kataUji]['Pengiriman']) ? $totalWordCount[$kataUji]['Pengiriman'] : 0,
-                    'Penerimaan' => isset($totalWordCount[$kataUji]['Penerimaan']) ? $totalWordCount[$kataUji]['Penerimaan'] : 0,
-                    'Administrasi' => isset($totalWordCount[$kataUji]['Administrasi']) ? $totalWordCount[$kataUji]['Administrasi'] : 0,
-                    'Lainnya' => isset($totalWordCount[$kataUji]['Lainnya']) ? $totalWordCount[$kataUji]['Lainnya'] : 0,
-                ],
-            ];
-        }
-        // Inisialisasi variabel untuk menyimpan total bobot kata untuk setiap kategori
+        return $this->mapCategoryToId($kategoriTerbesar);
+    }
+
+    /**
+     * Calculate total word count per category
+     */
+    private function calculateTotalWordCountPerCategory($totalWordCount)
+    {
         $totalBobotKataKategori = [
             'Pembayaran' => 0,
             'Pengiriman' => 0,
@@ -248,60 +256,44 @@ class UsersController extends Controller
             'Administrasi' => 0,
             'Lainnya' => 0,
         ];
-        // Iterasi melalui setiap kata pada data latih
-        foreach ($formattedTotalWordCount as $kata) {
-            $totalBobotKataKategori['Pembayaran'] += $kata['Pembayaran'];
-            $totalBobotKataKategori['Pengiriman'] += $kata['Pengiriman'];
-            $totalBobotKataKategori['Penerimaan'] += $kata['Penerimaan'];
-            $totalBobotKataKategori['Administrasi'] += $kata['Administrasi'];
-            $totalBobotKataKategori['Lainnya'] += $kata['Lainnya'];
-        }
-        // Menghitung total bobot kata pada data latih
-        $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
-        // Perhitungan likehood setiap kategori untuk data uji
-        $likehoodKategori = [];
-
-        foreach ($jumlahKataUji as $data) {
-            $kata = $data['kata'];
-            $likehood_pembayaran = ($data['jumlah_kata_kategori']['Pembayaran'] + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih);
-            $likehood_pengiriman = ($data['jumlah_kata_kategori']['Pengiriman'] + 1) / ($totalBobotKataKategori['Pengiriman'] + $totalBobotKataDataLatih);
-            $likehood_penerimaan = ($data['jumlah_kata_kategori']['Penerimaan'] + 1) / ($totalBobotKataKategori['Penerimaan'] + $totalBobotKataDataLatih);
-            $likehood_administrasi = ($data['jumlah_kata_kategori']['Administrasi'] + 1) / ($totalBobotKataKategori['Administrasi'] + $totalBobotKataDataLatih);
-            $likehood_lainnya = ($data['jumlah_kata_kategori']['Lainnya'] + 1) / ($totalBobotKataKategori['Lainnya'] + $totalBobotKataDataLatih);
-
-            $likehoodKategori[] = [
-                'kata' => $kata,
-                'Pembayaran' => $likehood_pembayaran,
-                'Pengiriman' => $likehood_pengiriman,
-                'Penerimaan' => $likehood_penerimaan,
-                'Administrasi' => $likehood_administrasi,
-                'Lainnya' => $likehood_lainnya,
-            ];
-            // Mengalikan semua nilai probabilitas pada kategori Pembayaran
-            $hasil_perkalian_probabilitas_pembayaran = 1;
-            $hasil_perkalian_probabilitas_pengiriman = 1;
-            $hasil_perkalian_probabilitas_penerimaan = 1;
-            $hasil_perkalian_probabilitas_administrasi = 1;
-            $hasil_perkalian_probabilitas_lainnya = 1;
-            foreach ($likehoodKategori as $data) {
-                $hasil_perkalian_probabilitas_pembayaran *= $data['Pembayaran'];
-                $hasil_perkalian_probabilitas_pengiriman *= $data['Pengiriman'];
-                $hasil_perkalian_probabilitas_penerimaan *= $data['Penerimaan'];
-                $hasil_perkalian_probabilitas_administrasi *= $data['Administrasi'];
-                $hasil_perkalian_probabilitas_lainnya *= $data['Lainnya'];
+        foreach ($totalWordCount as $kata => $bobot) {
+            foreach ($totalBobotKataKategori as $kategori => $value) {
+                $totalBobotKataKategori[$kategori] += isset($bobot[$kategori]) ? $bobot[$kategori] : 0;
             }
         }
 
-        // Menampilkan setiap kategori
-        $kategoriList = array_keys($probabilitas);
+        return $totalBobotKataKategori;
+    }
 
-        // Menampilkan hasil probabilitas untuk setiap kategori
-        $hasilProbabilitas = [];
-        foreach ($probabilitas as $kategori => $prob) {
-            $hasilProbabilitas[$kategori] = $prob;
+    /**
+     * Calculate likelihood for each word and category
+     */
+    private function calculateLikelihood($stemmedTokens, $totalWordCount, $totalBobotKataKategori, $totalBobotKataDataLatih)
+    {
+        $likelihoodKategori = [];
+
+        foreach ($stemmedTokens as $kata) {
+            if (empty($kata)) continue;
+
+            $likelihoodKategori[] = [
+                'kata' => $kata,
+                'Pembayaran' => (($totalWordCount[$kata]['Pembayaran'] ?? 0) + 1) / ($totalBobotKataKategori['Pembayaran'] + $totalBobotKataDataLatih),
+                'Pengiriman' => (($totalWordCount[$kata]['Pengiriman'] ?? 0) + 1) / ($totalBobotKataKategori['Pengiriman'] + $totalBobotKataDataLatih),
+                'Penerimaan' => (($totalWordCount[$kata]['Penerimaan'] ?? 0) + 1) / ($totalBobotKataKategori['Penerimaan'] + $totalBobotKataDataLatih),
+                'Administrasi' => (($totalWordCount[$kata]['Administrasi'] ?? 0) + 1) / ($totalBobotKataKategori['Administrasi'] + $totalBobotKataDataLatih),
+                'Lainnya' => (($totalWordCount[$kata]['Lainnya'] ?? 0) + 1) / ($totalBobotKataKategori['Lainnya'] + $totalBobotKataDataLatih),
+            ];
         }
 
+        return $likelihoodKategori;
+    }
+
+    /**
+     * Calculate final probabilities by multiplying likelihoods with prior probabilities
+     */
+    private function calculateFinalProbabilities($likelihoodKategori, $probabilitas)
+    {
         $hasilPerkalianProbabilitas = [
             'Pembayaran' => 1,
             'Pengiriman' => 1,
@@ -310,65 +302,113 @@ class UsersController extends Controller
             'Lainnya' => 1,
         ];
 
-        foreach ($likehoodKategori as $data) {
-            $kata = $data['kata'];
-            $hasilPerkalianProbabilitas['Pembayaran'] *= $data['Pembayaran'];
-            $hasilPerkalianProbabilitas['Pengiriman'] *= $data['Pengiriman'];
-            $hasilPerkalianProbabilitas['Penerimaan'] *= $data['Penerimaan'];
-            $hasilPerkalianProbabilitas['Administrasi'] *= $data['Administrasi'];
-            $hasilPerkalianProbabilitas['Lainnya'] *= $data['Lainnya'];
+        foreach ($likelihoodKategori as $data) {
+            foreach ($hasilPerkalianProbabilitas as $kategori => $value) {
+                $hasilPerkalianProbabilitas[$kategori] *= $data[$kategori];
+            }
         }
 
         $hasilAkhir = [];
         foreach ($hasilPerkalianProbabilitas as $kategori => $hasil) {
-            $hasilAkhir[$kategori] = $hasil * $probabilitas[$kategori];
+            $hasilAkhir[$kategori] = $hasil * ($probabilitas[$kategori] ?? 0);
         }
-        // Mencari kategori dengan nilai terbesar (hasil akhir maksimum)
+
+        return $hasilAkhir;
+    }
+
+    /**
+     * Find category with maximum probability
+     */
+    private function findMaxCategory($hasilAkhir)
+    {
         $kategoriTerbesar = '';
         $nilaiTerbesar = 0;
+
         foreach ($hasilAkhir as $kategori => $hasil) {
             if ($hasil > $nilaiTerbesar) {
                 $kategoriTerbesar = $kategori;
                 $nilaiTerbesar = $hasil;
             }
         }
-        if ($kategoriTerbesar == 'Pembayaran') {
-            $idKategori = '1';
-        } elseif ($kategoriTerbesar == 'Pengiriman') {
-            $idKategori = '2';
-        } elseif ($kategoriTerbesar == 'Penerimaan') {
-            $idKategori = '3';
-        } elseif ($kategoriTerbesar == 'Administrasi') {
-            $idKategori = '4';
-        } elseif ($kategoriTerbesar == 'Lainnya') {
-            $idKategori = '5';
+
+        return $kategoriTerbesar;
+    }
+
+    /**
+     * Map category name to category ID
+     */
+    private function mapCategoryToId($kategori)
+    {
+        $categoryMap = [
+            'Pembayaran' => '1',
+            'Pengiriman' => '2',
+            'Penerimaan' => '3',
+            'Administrasi' => '4',
+            'Lainnya' => '5',
+        ];
+
+        return $categoryMap[$kategori] ?? '5';
+    }
+
+    /**
+     * Generate new complaint ID
+     */
+    private function generateKeluhanId()
+    {
+        $bulanTahun = date('my');
+        $lastCode = DB::table('data_keluhan')
+            ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
+            ->orderBy('id_keluhan', 'desc')
+            ->value('id_keluhan');
+
+        if ($lastCode) {
+            $lastNumber = (int)substr($lastCode, -5);
+            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '00001';
         }
 
-        $request->validate([
-            'uraian_keluhan' => 'required|max:280',
-            'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-        // Proses upload gambar (jika ada)
+        return "KEL-$bulanTahun-$newNumber";
+    }
+
+    /**
+     * Handle image upload
+     * @return string|null
+     */
+    private function handleImageUpload(Request $request): ?string
+    {
         if ($request->hasFile('gambar')) {
+            /** @var \Illuminate\Http\UploadedFile|null $gambarKeluhan */
             $gambarKeluhan = $request->file('gambar');
-            $gambarName = time() . '_' . $gambarKeluhan->getClientOriginalName();
-            $gambarKeluhan->move(public_path('gambar_keluhan'), $gambarName);
-        } else {
-            $gambarName = null; // Jika tidak ada gambar di-upload, set nilai gambarName menjadi null
+            if ($gambarKeluhan && $gambarKeluhan->isValid()) {
+                $gambarName = time() . '_' . $gambarKeluhan->getClientOriginalName();
+                $gambarKeluhan->move(public_path('gambar_keluhan'), $gambarName);
+                return $gambarName;
+            }
         }
+
+        return null;
+    }
+
+    /**
+     * Save complaint data to database
+     */
+    private function saveComplaintData($idKeluhan, $uraianKeluhan, $idKategori, $gambarName)
+    {
         date_default_timezone_set("Asia/Makassar");
         $idPengguna = Auth::id();
+
         $dataKeluhan = [
             'id_keluhan' => $idKeluhan,
             'tgl_keluhan' => date("Y-m-d H:i:s"),
             'id_pengguna' => $idPengguna,
-            'via_keluhan' =>  'Web',
-            'uraian_keluhan' =>  $request->input('uraian_keluhan'),
-            'kategori_id' =>  $idKategori,
-            'status_keluhan' =>  'menunggu verifikasi',
+            'via_keluhan' => 'Web',
+            'uraian_keluhan' => $uraianKeluhan,
+            'kategori_id' => $idKategori,
+            'status_keluhan' => 'menunggu verifikasi',
             'gambar' => $gambarName,
         ];
+
         DB::table('data_keluhan')->insert($dataKeluhan);
-        return redirect('data-keluhan');
     }
 }

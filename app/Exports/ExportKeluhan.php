@@ -3,7 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Keluhan;
-use App\Models\KeluhanModel;
+use App\Models\Keluhan;
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
@@ -21,15 +21,15 @@ class ExportKeluhan implements FromQuery, WithHeadings
         ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
         ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
         ->select(
-            'data_keluhan.id_keluhan', 
-            'data_keluhan.tgl_keluhan', 
+            'data_keluhan.id_keluhan',
+            'data_keluhan.tgl_keluhan',
             'users.nama',
-            'data_keluhan.via_keluhan', 
+            'data_keluhan.via_keluhan',
             'data_keluhan.uraian_keluhan',
             'data_kategori.kategori_keluhan',
             'data_keluhan.status_keluhan',
             'data_keluhan.waktu_penyelesaian',
-            'data_keluhan.aksi', 
+            'data_keluhan.aksi',
             )
         ->orderBy('data_keluhan.tgl_keluhan', 'desc');
     }

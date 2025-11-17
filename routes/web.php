@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\KeluhanController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CSController;
 use App\Http\Controllers\UsersController;
@@ -29,21 +28,17 @@ Route::middleware(['auth', 'hak_akses:admin'])->group(function () {
     Route::post('/import-data', [AdminController::class, 'importKeluhan']);
     Route::get('/export-to-pdf', [AdminController::class, 'exportToPDF'])->name('export-to-pdf');
     Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
-    Route::get('/laporan', [AdminController::class , 'cari'])->name('laporan.cari');
+    Route::get('/laporan', [AdminController::class, 'cari'])->name('laporan.cari');
     Route::get('/rekapitulasi', [AdminController::class, 'recapitulate']);
-    // Route::post('/rekapitulasi', [AdminController::class, 'rekapitulasi']);
     Route::get('/notifikasi', [AdminController::class, 'notifikasi']);
     Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
     Route::post('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
     Route::post('/simpan-ke-database', [NaiveBayesController::class, 'saveDataToDatabase']);
-
     Route::get('/detail-keluhan/{id}', [AdminController::class, 'detailKeluhan']);
     Route::post('/verifikasi-keluhan', [AdminController::class, 'verifikasiKeluhan']);
     Route::get('/terima-keluhan/{id}', [AdminController::class, 'terimaKeluhan']);
     Route::post('/konfirmasi-selesai', [AdminController::class, 'keluhanSelesai']);
-
     Route::get('/cs', [AdminController::class, 'dataCS'])->middleware('auth');
-
 });
 
 Route::middleware(['auth', 'hak_akses:pengguna_jasa'])->group(function () {
@@ -52,20 +47,19 @@ Route::middleware(['auth', 'hak_akses:pengguna_jasa'])->group(function () {
     Route::get('/input-keluhan', [UsersController::class, 'formInput']);
     Route::post('/simpan', [UsersController::class, 'inputKeluhan']);
 });
+
 Route::middleware(['auth', 'hak_akses:customer_service'])->group(function () {
-    Route::get('/dashboard-cs',[CSController::class, 'dashboard'])->name('dashboard-cs');
-    Route::get('/datakeluhan',[CSController::class, 'index'])->name('datakeluhan');
+    Route::get('/dashboard-cs', [CSController::class, 'dashboard'])->name('dashboard-cs');
+    Route::get('/datakeluhan', [CSController::class, 'index'])->name('datakeluhan');
 });
-// Route::middleware(['auth', 'hak_akses:customer_service, admin'])->group(function () {
 
-    Route::get('/detail-keluhan/{id}', [AdminController::class, 'detailKeluhan']);
-    Route::post('/verifikasi-keluhan', [AdminController::class, 'verifikasiKeluhan']);
-    Route::get('/terima-keluhan/{id}', [AdminController::class, 'terimaKeluhan']);
-    Route::post('/konfirmasi-selesai', [AdminController::class, 'keluhanSelesai']);
-    // });
+Route::get('/detail-keluhan/{id}', [AdminController::class, 'detailKeluhan']);
+Route::post('/verifikasi-keluhan', [AdminController::class, 'verifikasiKeluhan']);
+Route::get('/terima-keluhan/{id}', [AdminController::class, 'terimaKeluhan']);
+Route::post('/konfirmasi-selesai', [AdminController::class, 'keluhanSelesai']);
 
-    Route::get('/profil', function () {
-        return view('profil');
-    })->middleware('auth');
+Route::get('/profil', function () {
+    return view('profil');
+})->middleware('auth');
 
 Route::get('/export', [AdminController::class, 'exportKeluhan'])->name('export');
