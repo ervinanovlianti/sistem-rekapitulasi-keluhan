@@ -18,7 +18,6 @@ class NaiveBayesController extends Controller
 {
     public function preprocessing(Request $request)
     {
-        // Mengambil data keluhan dari tabel data_keluhan
         parent::preprocessing($request);
         $textkeluhan = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -30,13 +29,7 @@ class NaiveBayesController extends Controller
         foreach ($textkeluhan as $keluhan) {
             $uraianKeluhan = $keluhan->uraian_keluhan;
 
-            // Case Folding
             $text = strtolower($uraianKeluhan);
-
-            // Memecah kalimat menjadi array kata (tokenisasi)
-            $kata = explode(' ', $text);
-
-            // Menghapus karakter khusus, simbol, dan angka (stopword)
             $stopwordRemoverFactory = new StopWordRemoverFactory();
             $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
             $textWithoutStopwords = $stopwordRemover->remove($text);
@@ -46,8 +39,6 @@ class NaiveBayesController extends Controller
             $stemmerFactory = new StemmerFactory();
             $stemmer = $stemmerFactory->createStemmer();
             $stemmedText = $stemmer->stem($cleanedText);
-
-            // Menggabungkan kembali uraian keluhan setelah proses
             $stemmedTokens = explode(' ', $stemmedText);
 
             $processedKeluhan[] = [
@@ -57,17 +48,13 @@ class NaiveBayesController extends Controller
                 'kategori_keluhan' => $keluhan->kategori_keluhan,
             ];
 
-            // Inisialisasi variabel untuk menyimpan jumlah kata dalam setiap kategori
             $wordCount = [];
-            // Iterasi melalui setiap keluhan yang telah diproses
             foreach ($processedKeluhan as $keluhan) {
                 $kategori = $keluhan['kategori_keluhan'];
                 $tokens = $keluhan['tokens'];
-                // Periksa apakah kategori sudah ada dalam $wordCount
                 if (!isset($wordCount[$kategori])) {
                     $wordCount[$kategori] = [];
                 }
-                // Iterasi melalui setiap token dalam keluhan dan tingkatkan jumlah kata
                 foreach ($tokens as $token) {
                     if (!isset($wordCount[$kategori][$token])) {
                         $wordCount[$kategori][$token] = 1;
@@ -76,7 +63,7 @@ class NaiveBayesController extends Controller
                     }
                 }
             }
-            // Menggabungkan jumlah bobot kata dari setiap kategori
+
             $totalWordCount = [];
             foreach ($wordCount as $kategori => $kataJumlah) {
                 foreach ($kataJumlah as $kata => $jumlah) {
@@ -90,12 +77,10 @@ class NaiveBayesController extends Controller
                             'total' => 0,
                         ];
                     }
-                    // Menambahkan bobot kata ke total bobot
                     $totalWordCount[$kata][$kategori] += $jumlah;
                     $totalWordCount[$kata]['total'] += $jumlah;
                 }
             }
-            // Menyusun data dengan format yang diinginkan
             $formattedTotalWordCount = [];
             $index = 1;
             foreach ($totalWordCount as $kata => $bobot) {
@@ -112,8 +97,8 @@ class NaiveBayesController extends Controller
                 $index++;
             }
         }
+
         // --------------PROBABILITAS PRIOR--------------------------
-        // Menghitung jumlah setiap kategori
         $kategoriCount = [];
         $totalKeluhan = count($processedKeluhan);
         foreach ($processedKeluhan as $keluhan) {
@@ -125,49 +110,39 @@ class NaiveBayesController extends Controller
                 $kategoriCount[$kategori]++;
             }
         }
-        // Menghitung jumlah seluruh kategori
-        $totalKategori = count($kategoriCount);
-
-        // Menghitung probabilitas
         $probabilitas = [];
         foreach ($kategoriCount as $kategori => $count) {
             $probabilitas[$kategori] = $count / $totalKeluhan;
         }
 
         // -----------------PREPROCESSING DATA UJI------------------
-        $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
+        $bulanTahun = date('my');
         $lastCode = DB::table('data_keluhan')
             ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
             ->orderBy('id_keluhan', 'desc')
             ->value('id_keluhan');
 
         if ($lastCode) {
-            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
             $lastNumber = (int)substr($lastCode, -5);
             $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
         } else {
-            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumber = '00001';
         }
-        $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
+        $newKodeKeluhan = "KEL-{$bulanTahun}-{$newNumber}";
 
-        // Simpan data pelanggan ke dalam database
         $kodePJ = DB::table('users')
             ->where('id', 'like', "2%")
             ->orderBy('id', 'desc')
             ->value('id');
         if ($kodePJ) {
-            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
             $lastNumberPJ = (int)substr($kodePJ, -4);
             $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
         } else {
-            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumberPJ = '0001';
         }
         $newKodePJ = "2$newNumberPJ";
 
         date_default_timezone_set('Asia/Makassar');
-        // Mendapatkan waktu sekarang
         $idKeluhan = $newKodeKeluhan;
         $tglKeluhan = date('d/m/y H:i:s');
         $idPengguna = $newKodePJ;
@@ -184,29 +159,26 @@ class NaiveBayesController extends Controller
         // 1. Case Folding
         $textUji = strtolower($dataUji);
         // 2. Tokenizing
-        $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
-        $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
+        $kataUji = explode(' ', $textUji);
+        $tokenUji = "'" . implode("','", $kataUji) . "'";
         // 3. Menghapus Stopword
         $stopwordRemoverFactory = new StopWordRemoverFactory();
         $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
         $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
-        // Menghapus karakter khusus, simbol, dan angka
         $cleanedTextUji = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwordsUji);
         // 4. Stemming
         $stemmerFactory = new StemmerFactory();
         $stemmer = $stemmerFactory->createStemmer();
         $stemmedTextUji = $stemmer->stem($cleanedTextUji);
-        // Memperbarui variabel $stemmedTokensUji menjadi array
         $stemmedTokensUji = explode(' ', $stemmedTextUji);
 
         // -----------VEKTORISASI DATA UJI------------
-        // Menghitung jumlah kata pada data uji yang sama dengan kata pada data latih
         $jumlahKataUji = [];
 
         foreach ($stemmedTokensUji as $kataUji) {
             $jumlahKataUji[] = [
                 'kata' => $kataUji,
-                'jumlah_kata_uji' => 1, // Setiap kata pada data uji hanya muncul satu kali
+                'jumlah_kata_uji' => 1,
                 'jumlah_kata_kategori' => [
                     'Pembayaran' => isset($totalWordCount[$kataUji]['Pembayaran']) ? $totalWordCount[$kataUji]['Pembayaran'] : 0,
                     'Pengiriman' => isset($totalWordCount[$kataUji]['Pengiriman']) ? $totalWordCount[$kataUji]['Pengiriman'] : 0,
@@ -216,7 +188,6 @@ class NaiveBayesController extends Controller
                 ],
             ];
         }
-        // Inisialisasi variabel untuk menyimpan total bobot kata untuk setiap kategori
         $totalBobotKataKategori = [
             'Pembayaran' => 0,
             'Pengiriman' => 0,
@@ -224,7 +195,6 @@ class NaiveBayesController extends Controller
             'Administrasi' => 0,
             'Lainnya' => 0,
         ];
-        // Iterasi melalui setiap kata pada data latih
         foreach ($formattedTotalWordCount as $kata) {
             $totalBobotKataKategori['Pembayaran'] += $kata['Pembayaran'];
             $totalBobotKataKategori['Pengiriman'] += $kata['Pengiriman'];
@@ -232,10 +202,8 @@ class NaiveBayesController extends Controller
             $totalBobotKataKategori['Administrasi'] += $kata['Administrasi'];
             $totalBobotKataKategori['Lainnya'] += $kata['Lainnya'];
         }
-        // Menghitung total bobot kata pada data latih
         $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
-        // Perhitungan likelihood setiap kategori untuk data uji
         $likelihoodKategori = [];
 
         foreach ($jumlahKataUji as $data) {
@@ -254,7 +222,6 @@ class NaiveBayesController extends Controller
                 'Administrasi' => $likelihood_administrasi,
                 'Lainnya' => $likelihood_lainnya,
             ];
-            // Mengalikan semua nilai probabilitas pada kategori Pembayaran
             $hasil_perkalian_probabilitas_pembayaran = 1;
             $hasil_perkalian_probabilitas_pengiriman = 1;
             $hasil_perkalian_probabilitas_penerimaan = 1;
@@ -269,10 +236,8 @@ class NaiveBayesController extends Controller
             }
         }
 
-        // Menampilkan setiap kategori
         $kategoriList = array_keys($probabilitas);
 
-        // Menampilkan hasil probabilitas untuk setiap kategori
         $hasilProbabilitas = [];
         foreach ($probabilitas as $kategori => $prob) {
             $hasilProbabilitas[$kategori] = $prob;
@@ -295,12 +260,10 @@ class NaiveBayesController extends Controller
             $hasilPerkalianProbabilitas['Lainnya'] *= $data['Lainnya'];
         }
 
-        // Menghitung hasil akhir
         $hasilAkhir = [];
         foreach ($hasilPerkalianProbabilitas as $kategori => $hasil) {
             $hasilAkhir[$kategori] = $hasil * $probabilitas[$kategori];
         }
-        // Mencari kategori dengan nilai terbesar (hasil akhir maksimum)
         $kategoriTerbesar = '';
         $nilaiTerbesar = 0;
         foreach ($hasilAkhir as $kategori => $hasil) {
@@ -357,7 +320,6 @@ class NaiveBayesController extends Controller
             'via_keluhan' => 'required',
             'uraian_keluhan' => 'required|max:280',
         ]);
-        // Simpan data pelanggan ke dalam database
         UserModel::create([
             'id' => $request->input('id'),
             'nama' => $request->input('nama'),
@@ -367,12 +329,9 @@ class NaiveBayesController extends Controller
             'jenis_pengguna' => $request->input('jenis_pengguna'),
             'hak_akses' => $request->input('hak_akses')
         ]);
-        // DB::table('users')->insert($dataPelanggan);
 
         date_default_timezone_set('Asia/Makassar');
-        // Mendapatkan waktu sekarang
         $tglKeluhan = date('Y-m-d H:i:s');
-        // Simpan data keluhan ke dalam database
         KeluhanModel::create([
             'id_keluhan' => $request->input('id_keluhan'),
             'tgl_keluhan' => $tglKeluhan,
@@ -382,7 +341,6 @@ class NaiveBayesController extends Controller
             'kategori_id' => $request->input('kategori_id'),
             'status_keluhan' => $request->input('status_keluhan'),
         ]);
-        // DB::table('data_keluhan')->insert($dataKeluhan);
 
         return redirect('keluhan');
     }
@@ -391,5 +349,4 @@ class NaiveBayesController extends Controller
     {
         return view('perhitungan_naivebayes');
     }
-
 }

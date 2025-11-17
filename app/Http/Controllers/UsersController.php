@@ -15,15 +15,13 @@ class UsersController extends Controller
 {
     public function index()
     {
-        // Ambil ID pengguna yang sedang login
+        parent::index();
         $idPengguna = Auth::id();
-        // Ambil data keluhan berdasarkan ID pengguna yang login
         $dataKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->orderBy('tgl_keluhan', 'desc')->paginate(10);
-        // Kirim data ke view untuk ditampilkan
         return view('pengguna_jasa/keluhan', compact('dataKeluhan'));
     }
 
-    function dashboard()
+    public function dashboard()
     {
         $idPengguna = Auth::id();
 
@@ -44,7 +42,7 @@ class UsersController extends Controller
             ->count();
 
         date_default_timezone_set("Asia/Makassar");
-        $today = date("Y-d-m H:i:s");;
+        $today = date("Y-d-m H:i:s");
 
         $keluhanHariIni = KeluhanModel::where('id_pengguna', $idPengguna)
             ->whereDate('tgl_keluhan', $today)
@@ -73,19 +71,14 @@ class UsersController extends Controller
             // Case Folding
             $text = strtolower($uraianKeluhan);
             $kata = explode(' ', $text); // Memecah kalimat menjadi array kata
-            $kataTerkutip = "'" . implode("','", $kata) . "'"; // Menggabungkan kata dengan tanda kutip
-            // Stopword Removal
             $stopwordRemoverFactory = new StopWordRemoverFactory();
             $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
             $textWithoutStopwords = $stopwordRemover->remove($text);
-            // Menghapus karakter khusus, simbol, dan angka
             $cleanedText = preg_replace('/[^\p{L}\s]/u', '', $textWithoutStopwords);
             $cleanedText = preg_replace('/\d+/', '', $cleanedText);
-            // Stemming
             $stemmerFactory = new StemmerFactory();
             $stemmer = $stemmerFactory->createStemmer();
             $stemmedText = $stemmer->stem($cleanedText);
-            // Memperbarui variabel $stemmedTokens menjadi array
             $stemmedTokens = explode(' ', $stemmedText);
 
             $processedKeluhan[] = [
@@ -95,17 +88,13 @@ class UsersController extends Controller
                 'kategori_keluhan' => $keluhan->kategori_keluhan,
             ];
 
-            // Inisialisasi variabel untuk menyimpan jumlah kata dalam setiap kategori
             $wordCount = [];
-            // Iterasi melalui setiap keluhan yang telah diproses
             foreach ($processedKeluhan as $keluhan) {
                 $kategori = $keluhan['kategori_keluhan'];
                 $tokens = $keluhan['tokens'];
-                // Periksa apakah kategori sudah ada dalam $wordCount
                 if (!isset($wordCount[$kategori])) {
                     $wordCount[$kategori] = [];
                 }
-                // Iterasi melalui setiap token dalam keluhan dan tingkatkan jumlah kata
                 foreach ($tokens as $token) {
                     if (!isset($wordCount[$kategori][$token])) {
                         $wordCount[$kategori][$token] = 1;
@@ -114,7 +103,6 @@ class UsersController extends Controller
                     }
                 }
             }
-            // Menggabungkan jumlah bobot kata dari setiap kategori
             $totalWordCount = [];
             foreach ($wordCount as $kategori => $kataJumlah) {
                 foreach ($kataJumlah as $kata => $jumlah) {
@@ -128,12 +116,10 @@ class UsersController extends Controller
                             'total' => 0,
                         ];
                     }
-                    // Menambahkan bobot kata ke total bobot
                     $totalWordCount[$kata][$kategori] += $jumlah;
                     $totalWordCount[$kata]['total'] += $jumlah;
                 }
             }
-            // Menyusun data dengan format yang diinginkan
             $formattedTotalWordCount = [];
             $index = 1;
             foreach ($totalWordCount as $kata => $bobot) {
@@ -150,7 +136,6 @@ class UsersController extends Controller
                 $index++;
             }
         }
-        // Tahap 1 Menghitung jumlah setiap kategori
         $kategoriCount = [];
         $totalKeluhan = count($processedKeluhan);
         foreach ($processedKeluhan as $keluhan) {
@@ -162,73 +147,54 @@ class UsersController extends Controller
                 $kategoriCount[$kategori]++;
             }
         }
-        // Menghitung jumlah seluruh kategori
-        $totalKategori = count($kategoriCount);
-
-        // Menghitung probabilitas
         $probabilitas = [];
         foreach ($kategoriCount as $kategori => $count) {
             $probabilitas[$kategori] = $count / $totalKeluhan;
         }
 
-        // Tahap PreProcessing Text
-        $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
+        $bulanTahun = date('my');
         $lastCode = DB::table('data_keluhan')
             ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
             ->orderBy('id_keluhan', 'desc')
             ->value('id_keluhan');
 
         if ($lastCode) {
-            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
             $lastNumber = (int)substr($lastCode, -5);
             $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
         } else {
-            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumber = '00001';
         }
 
         $newKodeKeluhan = "KEL-$bulanTahun-$newNumber";
-        // Simpan data pelanggan ke dalam database
         $kodePJ = DB::table('users')
             ->where('id', 'like', "CUST%")
             ->orderBy('id', 'desc')
             ->value('id');
 
         if ($kodePJ) {
-            // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
             $lastNumberPJ = (int)substr($kodePJ, -4);
             $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
         } else {
-            // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumberPJ = '0001';
         }
         $newKodePJ = "CUST-$newNumberPJ";
 
-        // Mendapatkan waktu sekarang
         $idKeluhan = $newKodeKeluhan;
-        $idPengguna = $newKodePJ;
         $dataUji = $request->input('uraian_keluhan');
 
-        // Case Folding
         $textUji = strtolower($dataUji);
-        // Tokenizing
         $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
         $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
-        // Stopword Removal
         $stopwordRemoverFactory = new StopWordRemoverFactory();
         $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
         $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
-        // Menghapus karakter khusus, simbol, dan angka
         $cleanedTextUji = preg_replace('/[^a-zA-Z\s]/', '', $textWithoutStopwordsUji);
-        // Stemming
         $stemmerFactory = new StemmerFactory();
         $stemmer = $stemmerFactory->createStemmer();
         $stemmedTextUji = $stemmer->stem($cleanedTextUji);
-        // Memperbarui variabel $stemmedTokens menjadi array
         $stemmedTokensUji = explode(' ', $stemmedTextUji);
 
         // -----------VEKTORISASI DATA UJI------------
-        // Menghitung jumlah kata pada data uji yang sama dengan kata pada data latih
         $jumlahKataUji = [];
 
         foreach ($stemmedTokensUji as $kataUji) {
@@ -244,7 +210,6 @@ class UsersController extends Controller
                 ],
             ];
         }
-        // Inisialisasi variabel untuk menyimpan total bobot kata untuk setiap kategori
         $totalBobotKataKategori = [
             'Pembayaran' => 0,
             'Pengiriman' => 0,
@@ -252,7 +217,6 @@ class UsersController extends Controller
             'Administrasi' => 0,
             'Lainnya' => 0,
         ];
-        // Iterasi melalui setiap kata pada data latih
         foreach ($formattedTotalWordCount as $kata) {
             $totalBobotKataKategori['Pembayaran'] += $kata['Pembayaran'];
             $totalBobotKataKategori['Pengiriman'] += $kata['Pengiriman'];
@@ -260,10 +224,8 @@ class UsersController extends Controller
             $totalBobotKataKategori['Administrasi'] += $kata['Administrasi'];
             $totalBobotKataKategori['Lainnya'] += $kata['Lainnya'];
         }
-        // Menghitung total bobot kata pada data latih
         $totalBobotKataDataLatih = array_sum($totalBobotKataKategori);
 
-        // Perhitungan likehood setiap kategori untuk data uji
         $likehoodKategori = [];
 
         foreach ($jumlahKataUji as $data) {
@@ -282,7 +244,6 @@ class UsersController extends Controller
                 'Administrasi' => $likehood_administrasi,
                 'Lainnya' => $likehood_lainnya,
             ];
-            // Mengalikan semua nilai probabilitas pada kategori Pembayaran
             $hasil_perkalian_probabilitas_pembayaran = 1;
             $hasil_perkalian_probabilitas_pengiriman = 1;
             $hasil_perkalian_probabilitas_penerimaan = 1;
@@ -297,10 +258,8 @@ class UsersController extends Controller
             }
         }
 
-        // Menampilkan setiap kategori
         $kategoriList = array_keys($probabilitas);
 
-        // Menampilkan hasil probabilitas untuk setiap kategori
         $hasilProbabilitas = [];
         foreach ($probabilitas as $kategori => $prob) {
             $hasilProbabilitas[$kategori] = $prob;
@@ -352,13 +311,12 @@ class UsersController extends Controller
             'uraian_keluhan' => 'required|max:280',
             'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        // Proses upload gambar (jika ada)
         if ($request->hasFile('gambar')) {
             $gambarKeluhan = $request->file('gambar');
             $gambarName = time() . '_' . $gambarKeluhan->getClientOriginalName();
             $gambarKeluhan->move(public_path('gambar_keluhan'), $gambarName);
         } else {
-            $gambarName = null; // Jika tidak ada gambar di-upload, set nilai gambarName menjadi null
+            $gambarName = null;
         }
         date_default_timezone_set("Asia/Makassar");
         $idPengguna = Auth::id();
@@ -373,6 +331,7 @@ class UsersController extends Controller
             'gambar' => $gambarName,
         ];
         DB::table('data_keluhan')->insert($dataKeluhan);
+
         return redirect('data-keluhan');
     }
 }
