@@ -1,33 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\KeluhanModel;
 use Illuminate\Support\Facades\Hash;
-use App\Models\PenggunaJasaModel;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-
-// use PDF;
 use App\Exports\ExportKeluhan;
 use App\Imports\ImportKeluhan;
 use PDF;
 use Maatwebsite\Excel\Facades\Excel;
-
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
     public function index()
     {
+        parent::index();
         $data_keluhan = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
             ->join('users', 'data_keluhan.id_pengguna', '=', 'users.id')
             ->select('data_keluhan.*', 'data_kategori.kategori_keluhan', 'users.nama')
             ->orderBy('tgl_keluhan', 'desc')
             ->paginate(10);
+
         return view('data_keluhan', compact('data_keluhan'));
     }
+
     public function rekapitulasi(Request $request)
     {
         $kategoriIds = [1, 2, 3, 4, 5];
@@ -81,7 +81,7 @@ class AdminController extends Controller
                 })
                 ->count();
 
-            // Filter data berdasarkan tanggal 
+            // Filter data berdasarkan tanggal
             $rekapData[$kategoriId]['total'] = DB::table('data_keluhan')
             ->where('kategori_id', $kategoriId)
             ->when($tanggalAwal && $tanggalAkhir, function ($query) use ($tanggalAwal, $tanggalAkhir) {
@@ -91,13 +91,13 @@ class AdminController extends Controller
         }
 
         return view('rekapitulasi', compact(
-            'rekapData', 
+            'rekapData',
             'viaKeluhan',
             'statusKeluhan',
             'kategoriIds',
         ));
     }
-    
+
     public function laporan()
     {
         $keluhan = DB::table('data_keluhan')
@@ -124,7 +124,7 @@ class AdminController extends Controller
                     $query->where('uraian_keluhan', 'LIKE', "%$keyword%")
                         ->orWhere('via_keluhan', 'LIKE', '%' . $keyword . '%')
                         ->orWhere('status_keluhan', 'LIKE', '%' . $keyword . '%')
-                        ->orWhere('users.nama', 'LIKE', '%' . $keyword . '%'); 
+                        ->orWhere('users.nama', 'LIKE', '%' . $keyword . '%');
                 }
                 if (!empty($bulan)) {
                     $query->whereRaw("DATE_FORMAT(tgl_keluhan, '%Y-%m') = ?", [$bulan]);
@@ -198,7 +198,7 @@ class AdminController extends Controller
             ->select('data_keluhan.*', 'users.nama')
             ->where('users.id', $id)
             ->first();
-            
+
         return view('detail_penggunajasa', compact('pengguna_jasa', 'penggunajasa'));
     }
     public function dataCS()
@@ -336,7 +336,7 @@ class AdminController extends Controller
         $request->validate([
             'file' => 'required|mimes:xls,xlsx,csv'
         ]);
-        
+
         // try {
             Excel::import(new ImportKeluhan, $request->file('file')->store('files'));
             return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
