@@ -13,7 +13,8 @@ use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         // Ambil ID pengguna yang sedang login
         $idPengguna = Auth::id();
         // Ambil data keluhan berdasarkan ID pengguna yang login
@@ -21,45 +22,48 @@ class UsersController extends Controller
         // Kirim data ke view untuk ditampilkan
         return view('pengguna_jasa/keluhan', compact('dataKeluhan'));
     }
+
     function dashboard()
     {
         $idPengguna = Auth::id();
 
         // Menghitung total keluhan
         $totalKeluhan = KeluhanModel::where('id_pengguna', $idPengguna)->count();
-        
+
         $keluhanBaru = KeluhanModel::where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'dialihkan ke cs')
-        // ->where('status_keluhan', 'menunggu verifikasi')
-        ->count();
+            ->where('status_keluhan', 'dialihkan ke cs')
+            // ->where('status_keluhan', 'menunggu verifikasi')
+            ->count();
 
         $keluhanDiproses = KeluhanModel::where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'ditangani oleh cs')
-        ->count();
+            ->where('status_keluhan', 'ditangani oleh cs')
+            ->count();
 
-        $keluhanSelesai =KeluhanModel::where('id_pengguna', $idPengguna)
-        ->where('status_keluhan', 'selesai')
-        ->count();
+        $keluhanSelesai = KeluhanModel::where('id_pengguna', $idPengguna)
+            ->where('status_keluhan', 'selesai')
+            ->count();
 
         date_default_timezone_set("Asia/Makassar");
         $today = date("Y-d-m H:i:s");;
 
-        $keluhanHariIni =KeluhanModel::where('id_pengguna', $idPengguna)
-        ->whereDate('tgl_keluhan', $today)
+        $keluhanHariIni = KeluhanModel::where('id_pengguna', $idPengguna)
+            ->whereDate('tgl_keluhan', $today)
             ->get();
 
         return view('pengguna_jasa/dashboard_pj', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
     }
 
-    public function formInput(){
+    public function formInput()
+    {
         return view('pengguna_jasa/input_keluhan');
     }
+
     public function inputKeluhan(Request $request)
     {
         $textkeluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
-        ->get();
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
+            ->get();
 
         // --------------PREPROCESSING DATA LATIH---------------------------
         $processedKeluhan = [];
@@ -170,13 +174,13 @@ class UsersController extends Controller
         // Tahap PreProcessing Text
         $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
         $lastCode = DB::table('data_keluhan')
-        ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
-        ->orderBy('id_keluhan', 'desc')
+            ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
+            ->orderBy('id_keluhan', 'desc')
             ->value('id_keluhan');
 
         if ($lastCode) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
-            $lastNumber = (int) substr($lastCode, -5);
+            $lastNumber = (int)substr($lastCode, -5);
             $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
         } else {
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
@@ -192,14 +196,14 @@ class UsersController extends Controller
 
         if ($kodePJ) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
-            $lastNumberPJ = (int) substr($kodePJ, -4);
+            $lastNumberPJ = (int)substr($kodePJ, -4);
             $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
         } else {
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
             $newNumberPJ = '0001';
         }
         $newKodePJ = "CUST-$newNumberPJ";
-        
+
         // Mendapatkan waktu sekarang
         $idKeluhan = $newKodeKeluhan;
         $idPengguna = $newKodePJ;
@@ -362,10 +366,10 @@ class UsersController extends Controller
             'id_keluhan' => $idKeluhan,
             'tgl_keluhan' => date("Y-m-d H:i:s"),
             'id_pengguna' => $idPengguna,
-            'via_keluhan' =>  'Web',
-            'uraian_keluhan' =>  $request->input('uraian_keluhan'),
-            'kategori_id' =>  $idKategori,
-            'status_keluhan' =>  'menunggu verifikasi',
+            'via_keluhan' => 'Web',
+            'uraian_keluhan' => $request->input('uraian_keluhan'),
+            'kategori_id' => $idKategori,
+            'status_keluhan' => 'menunggu verifikasi',
             'gambar' => $gambarName,
         ];
         DB::table('data_keluhan')->insert($dataKeluhan);

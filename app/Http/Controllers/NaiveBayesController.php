@@ -19,10 +19,11 @@ class NaiveBayesController extends Controller
     public function preprocessing(Request $request)
     {
         // Mengambil data keluhan dari tabel data_keluhan
+        parent::preprocessing($request);
         $textkeluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
-        ->get();
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
+            ->get();
 
         // --------------PREPROCESSING DATA LATIH--------------------
         $processedKeluhan = [];
@@ -33,7 +34,7 @@ class NaiveBayesController extends Controller
             $text = strtolower($uraianKeluhan);
 
             // Memecah kalimat menjadi array kata (tokenisasi)
-            $kata = explode(' ', $text); 
+            $kata = explode(' ', $text);
 
             // Menghapus karakter khusus, simbol, dan angka (stopword)
             $stopwordRemoverFactory = new StopWordRemoverFactory();
@@ -46,7 +47,7 @@ class NaiveBayesController extends Controller
             $stemmer = $stemmerFactory->createStemmer();
             $stemmedText = $stemmer->stem($cleanedText);
 
-            // Menggabungkan kembali uraian keluhan setelah proses 
+            // Menggabungkan kembali uraian keluhan setelah proses
             $stemmedTokens = explode(' ', $stemmedText);
 
             $processedKeluhan[] = [
@@ -136,13 +137,13 @@ class NaiveBayesController extends Controller
         // -----------------PREPROCESSING DATA UJI------------------
         $bulanTahun = date('my'); // Mendapatkan bulan dan tahun dalam format YYMM
         $lastCode = DB::table('data_keluhan')
-        ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
-        ->orderBy('id_keluhan', 'desc')
+            ->where('id_keluhan', 'like', "KEL-$bulanTahun%")
+            ->orderBy('id_keluhan', 'desc')
             ->value('id_keluhan');
 
         if ($lastCode) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
-            $lastNumber = (int) substr($lastCode, -5);
+            $lastNumber = (int)substr($lastCode, -5);
             $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
         } else {
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
@@ -152,12 +153,12 @@ class NaiveBayesController extends Controller
 
         // Simpan data pelanggan ke dalam database
         $kodePJ = DB::table('users')
-        ->where('id', 'like', "2%")
-        ->orderBy('id', 'desc')
-        ->value('id');
+            ->where('id', 'like', "2%")
+            ->orderBy('id', 'desc')
+            ->value('id');
         if ($kodePJ) {
             // Jika sudah ada kode keluhan pada bulan dan tahun yang sama, ambil nomor urut terakhir
-            $lastNumberPJ = (int) substr($kodePJ, -4);
+            $lastNumberPJ = (int)substr($kodePJ, -4);
             $newNumberPJ = str_pad($lastNumberPJ + 1, 4, '0', STR_PAD_LEFT);
         } else {
             // Jika belum ada kode keluhan pada bulan dan tahun yang sama, nomor urut dimulai dari 1
@@ -167,7 +168,7 @@ class NaiveBayesController extends Controller
 
         date_default_timezone_set('Asia/Makassar');
         // Mendapatkan waktu sekarang
-        $idKeluhan = $newKodeKeluhan; 
+        $idKeluhan = $newKodeKeluhan;
         $tglKeluhan = date('d/m/y H:i:s');
         $idPengguna = $newKodePJ;
         $namaPengguna = $request->input('nama');
@@ -185,7 +186,7 @@ class NaiveBayesController extends Controller
         // 2. Tokenizing
         $kataUji = explode(' ', $textUji); // Memecah kalimat menjadi array kata
         $tokenUji = "'" . implode("','", $kataUji) . "'"; // Menggabungkan kata dengan tanda kutip
-        // 3. Menghapus Stopword 
+        // 3. Menghapus Stopword
         $stopwordRemoverFactory = new StopWordRemoverFactory();
         $stopwordRemover = $stopwordRemoverFactory->createStopWordRemover();
         $textWithoutStopwordsUji = $stopwordRemover->remove($textUji);
@@ -309,41 +310,41 @@ class NaiveBayesController extends Controller
             }
         }
 
-        return view('perhitungan_naivebayes', 
-        compact(
-            'processedKeluhan', 
-            'formattedTotalWordCount',
-            'idKeluhan',
-            'tglKeluhan',
-            'idPengguna',
-            'namaPengguna',
-            'email',
-            'noTelepon',
-            'jenisPengguna',
-            'hakAkses',
-            'viaKeluhan',
-            'statusKeluhan',
-            'dataUji',
-            'textUji',
-            'tokenUji',
-            'cleanedTextUji',
-            'stemmedTextUji',
-            'stemmedTokensUji',
-            'probabilitas',
-            'kategoriCount',
-            'totalKeluhan',
-            'jumlahKataUji',
-            'totalBobotKataKategori',
-            'totalBobotKataDataLatih',
-            'likelihoodKategori',
-            'hasil_perkalian_probabilitas_pembayaran',
-            'hasil_perkalian_probabilitas_pengiriman',
-            'hasil_perkalian_probabilitas_penerimaan',
-            'hasil_perkalian_probabilitas_administrasi',
-            'hasil_perkalian_probabilitas_lainnya',
-            'kategoriList', 'hasilProbabilitas', 'hasilPerkalianProbabilitas', 'hasilAkhir',
-            'kategoriTerbesar',
-        ));
+        return view('perhitungan_naivebayes',
+            compact(
+                'processedKeluhan',
+                'formattedTotalWordCount',
+                'idKeluhan',
+                'tglKeluhan',
+                'idPengguna',
+                'namaPengguna',
+                'email',
+                'noTelepon',
+                'jenisPengguna',
+                'hakAkses',
+                'viaKeluhan',
+                'statusKeluhan',
+                'dataUji',
+                'textUji',
+                'tokenUji',
+                'cleanedTextUji',
+                'stemmedTextUji',
+                'stemmedTokensUji',
+                'probabilitas',
+                'kategoriCount',
+                'totalKeluhan',
+                'jumlahKataUji',
+                'totalBobotKataKategori',
+                'totalBobotKataDataLatih',
+                'likelihoodKategori',
+                'hasil_perkalian_probabilitas_pembayaran',
+                'hasil_perkalian_probabilitas_pengiriman',
+                'hasil_perkalian_probabilitas_penerimaan',
+                'hasil_perkalian_probabilitas_administrasi',
+                'hasil_perkalian_probabilitas_lainnya',
+                'kategoriList', 'hasilProbabilitas', 'hasilPerkalianProbabilitas', 'hasilAkhir',
+                'kategoriTerbesar',
+            ));
     }
 
     public function saveDataToDatabase(Request $request)
@@ -376,10 +377,10 @@ class NaiveBayesController extends Controller
             'id_keluhan' => $request->input('id_keluhan'),
             'tgl_keluhan' => $tglKeluhan,
             'id_pengguna' => $request->input('id'),
-            'via_keluhan' =>  $request->input('via_keluhan'),
-            'uraian_keluhan' =>  $request->input('uraian_keluhan'),
-            'kategori_id' =>  $request->input('kategori_id'),
-            'status_keluhan' =>  $request->input('status_keluhan'),
+            'via_keluhan' => $request->input('via_keluhan'),
+            'uraian_keluhan' => $request->input('uraian_keluhan'),
+            'kategori_id' => $request->input('kategori_id'),
+            'status_keluhan' => $request->input('status_keluhan'),
         ]);
         // DB::table('data_keluhan')->insert($dataKeluhan);
 
@@ -390,5 +391,5 @@ class NaiveBayesController extends Controller
     {
         return view('perhitungan_naivebayes');
     }
-    
+
 }

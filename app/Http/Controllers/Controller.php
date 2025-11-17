@@ -20,18 +20,19 @@ class Controller extends BaseController
     public function index()
     {
         $data_keluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
-        ->get();
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
+            ->get();
 
         return view('data_keluhan', compact('data_keluhan'));
     }
+
     public function preprocessing(Request $request)
     {
         $textkeluhan = DB::table('data_keluhan')
-        ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
-        ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
-        ->get();
+            ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
+            ->select('data_keluhan.*', 'data_kategori.kategori_keluhan')
+            ->get();
 
         // --------------PREPROCESSING DATA LATIH---------------------------
         $processedKeluhan = [];
@@ -312,6 +313,7 @@ class Controller extends BaseController
             )
         );
     }
+
     public function showForm()
     {
         return view('perhitungan_naivebayes');

@@ -23,7 +23,7 @@ class AuthController extends Controller
     /**
      * Display a registration form.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function register()
     {
@@ -70,7 +70,7 @@ class AuthController extends Controller
     /**
      * Display a login form.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function login()
     {
@@ -81,7 +81,7 @@ class AuthController extends Controller
      * Authenticate the user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function authenticate(Request $request)
     {
@@ -112,7 +112,7 @@ class AuthController extends Controller
     /**
      * Display a dashboard to authenticated users.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function dashboard()
     {
