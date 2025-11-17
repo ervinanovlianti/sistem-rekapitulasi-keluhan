@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Keluhan;
-use Carbon\Carbon;
 use Illuminate\Support\Collection as SupportCollection;
 use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\Stemmer\StemmerFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -107,7 +105,7 @@ class UsersController extends Controller
     /**
      * Preprocess training data
      */
-    private function preprocessTrainingData($textkeluhan)
+    private function preprocessTrainingData($textkeluhan): array
     {
         $processedKeluhan = [];
 
