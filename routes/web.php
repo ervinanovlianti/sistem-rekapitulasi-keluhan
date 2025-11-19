@@ -48,8 +48,10 @@ Route::middleware(['auth', 'hak_akses:pengguna_jasa'])->group(function () {
 });
 
 Route::middleware(['auth', 'hak_akses:customer_service'])->group(function () {
-    Route::get('/customer-service/dashboard', [CSController::class, 'dashboard'])->name('customer-service.dashboard');
-    Route::get('/customer-service/complaints', [CSController::class, 'index'])->name('customer-service.complaints');
+    Route::get('/customer-service/dashboard', [CSController::class, 'dashboard'])
+        ->name('customer-service.dashboard');
+    Route::get('/customer-service/complaints', [CSController::class, 'index'])
+        ->name('customer-service.complaints');
 });
 
 Route::get('/complaint-detail/{id}', [AdminController::class, 'complaintDetail']);
