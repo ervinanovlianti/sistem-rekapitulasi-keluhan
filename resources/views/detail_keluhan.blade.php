@@ -143,7 +143,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form method="POST" action="/verifikasi-keluhan">
+          <form method="POST" action="/verify-complaint">
             @csrf
             <div class="modal-body">
               <div class="form-group">

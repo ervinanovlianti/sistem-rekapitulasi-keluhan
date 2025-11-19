@@ -48,7 +48,7 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
 
-                  <a href="/detail-keluhan/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a>
+                  <a href="/complaint-detail/{{ $item->id_keluhan }}" class="dropdown-item">Detail</a>
                 </div>
               </td>
             </tr>
