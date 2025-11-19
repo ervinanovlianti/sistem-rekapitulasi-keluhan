@@ -285,12 +285,11 @@ class AdminController extends Controller
                 ->where('id_keluhan', $id)
                 ->update([
                     'status_keluhan' => 'ditangani oleh cs',
-                    // 'penanggungjawab' => 'CS 1',
                 ]);
             return redirect()->back()->with('success', 'Keluhan sedang ditangan CS.');
-        } else {
-            return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
         }
+
+        return redirect()->back()->with('error', 'Keluhan tidak ditemukan.');
     }
 
     public function completeComplaint(Request $request): RedirectResponse
