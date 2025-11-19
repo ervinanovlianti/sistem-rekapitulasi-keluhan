@@ -68,12 +68,12 @@ class UsersController extends Controller
             ->get();
     }
 
-    public function formInput()
+    public function showComplaintForm()
     {
         return view('pengguna_jasa/input_keluhan');
     }
 
-    public function inputKeluhan(Request $request)
+    public function storeComplaint(Request $request)
     {
         $request->validate([
             'uraian_keluhan' => 'required|max:280',
@@ -91,7 +91,7 @@ class UsersController extends Controller
 
         $this->saveComplaintData($idKeluhan, $request->input('uraian_keluhan'), $idKategori, $gambarName);
 
-        return redirect('data-keluhan');
+        return redirect('complaints');
     }
 
     private function getTrainingData(): SupportCollection
