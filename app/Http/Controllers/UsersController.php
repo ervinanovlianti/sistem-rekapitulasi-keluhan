@@ -125,7 +125,7 @@ class UsersController extends Controller
     /**
      * Preprocess text: case folding, stopword removal, cleaning, and stemming
      */
-    private function preprocessText($text)
+    private function preprocessText($text): array
     {
         // Case folding
         $text = strtolower($text);
