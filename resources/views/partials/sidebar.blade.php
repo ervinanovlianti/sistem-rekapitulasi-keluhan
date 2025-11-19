@@ -40,13 +40,13 @@
         </p>
         @if(Auth::user()->hak_akses === 'admin')
         <li class="nav-item">
-        <a href="/keluhan" aria-expanded="false" class="nav-link">
+        <a href="/complaints" aria-expanded="false" class="nav-link">
             <i class="fe fe-file fe-16"></i>
             <span class="ml-3 item-text">Keluhan</span>
         </a>
         </li>
         <li class="nav-item">
-        <a href="/pengguna-jasa" aria-expanded="false" class="nav-link">
+        <a href="/service-users" aria-expanded="false" class="nav-link">
             <i class="fe fe-users fe-16"></i>
             <span class="ml-3 item-text">Pelanggan</span>
         </a>
@@ -87,7 +87,7 @@
             <span class="ml-3 item-text">Laporan</span>
         </a>
         </li>
-        
+
         <li class="nav-item">
         <a href="/rekapitulasi" aria-expanded="false" class="nav-link">
             <i class="fe fe-file-text fe-16"></i>
