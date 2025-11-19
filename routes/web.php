@@ -13,53 +13,52 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/store', 'store')->name('store');
     Route::get('/', 'login')->name('login')->middleware('guest');
     Route::post('/authenticate', 'authenticate')->name('authenticate');
-    // Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::post('/logout', 'logout')->name('logout');
 });
 Route::middleware(['auth', 'hak_akses:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/keluhan', [AdminController::class, 'index']);
-    Route::get('/input_keluhan', [AdminController::class, 'showInputForm']);
-    Route::get('/pengguna-jasa', [AdminController::class, 'dataPenggunaJasa']);
-    Route::get('/detail-penggunajasa/{id}', [AdminController::class, 'detailPenggunaJasa']);
-    Route::get('/input_datacs', [AdminController::class, 'formInputDataCS']);
-    Route::post('/input-datacs', [AdminController::class, 'inputDataCS']);
-    Route::get('/import-data', [AdminController::class, 'formImportData']);
-    Route::post('/import-data', [AdminController::class, 'importKeluhan']);
+    Route::get('/complaints', [AdminController::class, 'index']);
+    Route::get('/complaint-form', [AdminController::class, 'showInputForm']);
+    Route::get('/service-users', [AdminController::class, 'serviceUsers']);
+    Route::get('/service-users/{id}', [AdminController::class, 'serviceUserDetail']);
+    Route::get('/customer-service/form', [AdminController::class, 'showCustomerServiceForm']);
+    Route::post('/customer-service/store', [AdminController::class, 'storeCustomerService']);
+    Route::get('/import-data', [AdminController::class, 'showImportForm']);
+    Route::post('/import-data', [AdminController::class, 'importComplaints']);
     Route::get('/export-to-pdf', [AdminController::class, 'exportToPDF'])->name('export-to-pdf');
-    Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
-    Route::get('/laporan', [AdminController::class, 'cari'])->name('laporan.cari');
-    Route::get('/rekapitulasi', [AdminController::class, 'recapitulate']);
-    Route::get('/notifikasi', [AdminController::class, 'notifikasi']);
-    Route::get('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
-    Route::post('/perhitungan-naive-bayes', [NaiveBayesController::class, 'preprocessing']);
-    Route::post('/simpan-ke-database', [NaiveBayesController::class, 'saveDataToDatabase']);
-    Route::get('/detail-keluhan/{id}', [AdminController::class, 'detailKeluhan']);
-    Route::post('/verifikasi-keluhan', [AdminController::class, 'verifikasiKeluhan']);
-    Route::get('/terima-keluhan/{id}', [AdminController::class, 'terimaKeluhan']);
-    Route::post('/konfirmasi-selesai', [AdminController::class, 'keluhanSelesai']);
-    Route::get('/cs', [AdminController::class, 'dataCS'])->middleware('auth');
+    Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
+    Route::get('/reports/search', [AdminController::class, 'searchReports'])->name('reports.search');
+    Route::get('/recapitulation', [AdminController::class, 'recapitulate']);
+    Route::get('/notifications', [AdminController::class, 'notifications']);
+    Route::get('/naive-bayes-calculation', [NaiveBayesController::class, 'preprocessing']);
+    Route::post('/naive-bayes-calculation', [NaiveBayesController::class, 'preprocessing']);
+    Route::post('/save-to-database', [NaiveBayesController::class, 'saveDataToDatabase']);
+    Route::get('/complaints/{id}/detail', [AdminController::class, 'complaintDetail']);
+    Route::post('/complaints/verify', [AdminController::class, 'verifyComplaint']);
+    Route::get('/complaints/{id}/accept', [AdminController::class, 'acceptComplaint']);
+    Route::post('/complaints/complete', [AdminController::class, 'completeComplaint']);
+    Route::get('/customer-service', [AdminController::class, 'customerServiceData'])->middleware('auth');
 });
 
 Route::middleware(['auth', 'hak_akses:pengguna_jasa'])->group(function () {
-    Route::get('/dashboard-pj', [UsersController::class, 'dashboard'])->name('dashboard-pj');
-    Route::get('/data-keluhan', [UsersController::class, 'index']);
-    Route::get('/input-keluhan', [UsersController::class, 'formInput']);
-    Route::post('/simpan', [UsersController::class, 'inputKeluhan']);
+    Route::get('/service-user/dashboard', [UsersController::class, 'dashboard'])->name('service-user.dashboard');
+    Route::get('/service-user/complaints', [UsersController::class, 'index']);
+    Route::get('/service-user/complaint-form', [UsersController::class, 'showComplaintForm']);
+    Route::post('/service-user/complaints', [UsersController::class, 'storeComplaint']);
 });
 
 Route::middleware(['auth', 'hak_akses:customer_service'])->group(function () {
-    Route::get('/dashboard-cs', [CSController::class, 'dashboard'])->name('dashboard-cs');
-    Route::get('/datakeluhan', [CSController::class, 'index'])->name('datakeluhan');
+    Route::get('/customer-service/dashboard', [CSController::class, 'dashboard'])->name('customer-service.dashboard');
+    Route::get('/customer-service/complaints', [CSController::class, 'index'])->name('customer-service.complaints');
 });
 
-Route::get('/detail-keluhan/{id}', [AdminController::class, 'detailKeluhan']);
-Route::post('/verifikasi-keluhan', [AdminController::class, 'verifikasiKeluhan']);
-Route::get('/terima-keluhan/{id}', [AdminController::class, 'terimaKeluhan']);
-Route::post('/konfirmasi-selesai', [AdminController::class, 'keluhanSelesai']);
+Route::get('/complaint-detail/{id}', [AdminController::class, 'complaintDetail']);
+Route::post('/verify-complaint', [AdminController::class, 'verifyComplaint']);
+Route::get('/accept-complaint/{id}', [AdminController::class, 'acceptComplaint']);
+Route::post('/complete-complaint', [AdminController::class, 'completeComplaint']);
 
 Route::get('/profil', function () {
     return view('profil');
 })->middleware('auth');
 
-Route::get('/export', [AdminController::class, 'exportKeluhan'])->name('export');
+Route::get('/export', [AdminController::class, 'exportComplaints'])->name('export');
