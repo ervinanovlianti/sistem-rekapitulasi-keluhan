@@ -235,7 +235,7 @@ class AdminController extends Controller
 
         DB::table('users')->insert($dataPelanggan);
 
-        return redirect('customer-service');
+        return redirect('cs');
     }
 
     public function complaintDetail($id)
