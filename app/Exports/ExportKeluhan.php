@@ -2,15 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\Keluhan;
-use App\Models\Keluhan;
-use App\Models\User;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 
 class ExportKeluhan implements FromQuery, WithHeadings
@@ -50,13 +43,3 @@ class ExportKeluhan implements FromQuery, WithHeadings
     }
 }
 
-// class ExportKeluhan implements FromCollection
-// {
-//     /**
-//      * @return \Illuminate\Support\Collection
-//      */
-//     public function collection()
-//     {
-//         return KeluhanModel::all();
-//     }
-// }
