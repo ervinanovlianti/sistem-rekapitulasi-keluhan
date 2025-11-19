@@ -13,6 +13,7 @@ use App\Imports\ImportKeluhan;
 use PDF;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AdminController extends Controller
 {
@@ -97,7 +98,7 @@ class AdminController extends Controller
         ));
     }
 
-    public function laporan()
+    public function reports()
     {
         $keluhan = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -109,7 +110,7 @@ class AdminController extends Controller
         return view('laporan', compact('keluhan'));
     }
 
-    public function cari(Request $request)
+    public function searchReports(Request $request)
     {
         $keyword = $request->input('cari');
         $bulan = $request->input('bulan');
@@ -163,7 +164,7 @@ class AdminController extends Controller
         return view('dashboard', compact('totalKeluhan', 'keluhanBaru', 'keluhanDiproses', 'keluhanSelesai', 'keluhanHariIni'));
     }
 
-    public function notifikasi()
+    public function notifications()
     {
         $today = date('d/m/y');
         $notifikasiKeluhan = DB::table('data_keluhan')
@@ -174,7 +175,7 @@ class AdminController extends Controller
         return view('partials/navbar', compact('notifikasiKeluhan'));
     }
 
-    public function dataPenggunaJasa()
+    public function serviceUsers()
     {
         $data_penggunajasa = DB::table('users')
             ->where('hak_akses', 'pengguna_jasa')
@@ -183,7 +184,7 @@ class AdminController extends Controller
         return view('data_penggunajasa', compact('data_penggunajasa'));
     }
 
-    public function detailPenggunaJasa($id)
+    public function serviceUserDetail($id)
     {
         $pengguna_jasa = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -200,7 +201,7 @@ class AdminController extends Controller
         return view('detail_penggunajasa', compact('pengguna_jasa', 'penggunajasa'));
     }
 
-    public function dataCS()
+    public function customerServiceData()
     {
         $data_cs = DB::table('users')
             ->where('hak_akses', 'customer_service')
@@ -214,12 +215,12 @@ class AdminController extends Controller
         return view('input_keluhan');
     }
 
-    public function formInputDataCS()
+    public function showCustomerServiceForm()
     {
         return view('input_datacs');
     }
 
-    public function inputDataCS(Request $request)
+    public function storeCustomerService(Request $request)
     {
         $dataPelanggan = [
             'nama' => $request->input('nama'),
@@ -234,10 +235,10 @@ class AdminController extends Controller
 
         DB::table('users')->insert($dataPelanggan);
 
-        return redirect('cs');
+        return redirect('customer-service');
     }
 
-    public function detailKeluhan($id)
+    public function complaintDetail($id)
     {
         $keluhan = DB::table('data_keluhan')
             ->join('data_kategori', 'data_keluhan.kategori_id', '=', 'data_kategori.id_kategori')
@@ -258,7 +259,7 @@ class AdminController extends Controller
         return view('detail_keluhan', compact('keluhan', 'cs', 'namaCS'));
     }
 
-    public function verifikasiKeluhan(Request $request): RedirectResponse
+    public function verifyComplaint(Request $request): RedirectResponse
     {
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $request->id_keluhan)->first();
 
@@ -276,7 +277,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Keluhan berhasil diverifikasi.');
     }
 
-    public function terimaKeluhan($id): RedirectResponse|null
+    public function acceptComplaint($id): RedirectResponse|null
     {
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $id)->first();
         if ($keluhan) {
@@ -292,7 +293,7 @@ class AdminController extends Controller
         }
     }
 
-    public function keluhanSelesai(Request $request): RedirectResponse
+    public function completeComplaint(Request $request): RedirectResponse
     {
         $keluhan = DB::table('data_keluhan')->where('id_keluhan', $request->id_keluhan)->first();
 
@@ -310,12 +311,12 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Keluhan Terselesaikan!!!');
     }
 
-    public function formImportData()
+    public function showImportForm()
     {
         return view('import');
     }
 
-    public function importKeluhan(Request $request): RedirectResponse
+    public function importComplaints(Request $request): RedirectResponse
     {
         $request->validate([
             'file' => 'required|mimes:xls,xlsx,csv'
@@ -325,7 +326,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Data keluhan berhasil diimport.');
     }
 
-    public function exportKeluhan(Request $request)
+    public function exportComplaints(Request $request): BinaryFileResponse
     {
         return Excel::download(new ExportKeluhan(), 'laporan_keluhan.xlsx');
         return redirect()->back()->with('success', 'Data keluhan berhasil diexport.');
